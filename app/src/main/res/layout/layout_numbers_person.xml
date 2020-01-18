@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:showIn="@layout/activity_main">
+
+    <TextView
+        android:id="@+id/tvNumber1"
+        android:text="1"
+        style="@style/SingleLetterStyle"
+        app:layout_constraintBottom_toTopOf="@+id/tvNumber2"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toStartOf="@+id/viewPerson"
+        app:layout_constraintTop_toTopOf="@+id/viewPerson" />
+
+    <TextView
+        android:id="@+id/tvNumber2"
+        style="@style/SingleLetterStyle"
+        android:text="2"
+        app:layout_constraintBottom_toTopOf="@+id/tvNumber3"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toStartOf="@+id/viewPerson"
+        app:layout_constraintTop_toBottomOf="@+id/tvNumber1" />
+
+    <TextView
+        android:id="@+id/tvNumber3"
+        style="@style/SingleLetterStyle"
+        android:text="3"
+        app:layout_constraintBottom_toTopOf="@+id/tvNumber4"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toStartOf="@+id/viewPerson"
+        app:layout_constraintTop_toBottomOf="@+id/tvNumber2" />
+
+    <TextView
+        android:id="@+id/tvNumber4"
+        style="@style/SingleLetterStyle"
+        android:text="4"
+        app:layout_constraintBottom_toTopOf="@+id/tvNumber5"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toStartOf="@+id/viewPerson"
+        app:layout_constraintTop_toBottomOf="@+id/tvNumber3" />
+
+    <TextView
+        android:id="@+id/tvNumber5"
+        style="@style/SingleLetterStyle"
+        android:text="5"
+        app:layout_constraintBottom_toTopOf="@+id/tvNumber6"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toStartOf="@+id/viewPerson"
+        app:layout_constraintTop_toBottomOf="@+id/tvNumber4" />
+
+    <TextView
+        android:id="@+id/tvNumber6"
+        style="@style/SingleLetterStyle"
+        android:text="6"
+        app:layout_constraintBottom_toTopOf="@+id/tvNumber7"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toStartOf="@+id/viewPerson"
+        app:layout_constraintTop_toBottomOf="@+id/tvNumber5" />
+
+    <TextView
+        android:id="@+id/tvNumber7"
+        style="@style/SingleLetterStyle"
+        android:text="7"
+        app:layout_constraintBottom_toTopOf="@+id/tvNumber8"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toStartOf="@+id/viewPerson"
+        app:layout_constraintTop_toBottomOf="@+id/tvNumber6" />
+
+    <TextView
+        android:id="@+id/tvNumber8"
+        style="@style/SingleLetterStyle"
+        android:text="8"
+        app:layout_constraintBottom_toTopOf="@+id/tvNumber9"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toStartOf="@+id/viewPerson"
+        app:layout_constraintTop_toBottomOf="@+id/tvNumber7" />
+
+    <TextView
+        android:id="@+id/tvNumber9"
+        style="@style/SingleLetterStyle"
+        android:text="9"
+        app:layout_constraintBottom_toTopOf="@+id/tvNumber10"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toStartOf="@+id/viewPerson"
+        app:layout_constraintTop_toBottomOf="@+id/tvNumber8" />
+
+    <TextView
+        android:id="@+id/tvNumber10"
+        style="@style/SingleLetterStyle"
+        android:text="10"
+        app:layout_constraintBottom_toTopOf="@+id/guideline"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toStartOf="@+id/viewPerson"
+        app:layout_constraintTop_toBottomOf="@+id/tvNumber9" />
+</merge>

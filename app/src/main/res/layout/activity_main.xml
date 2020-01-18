@@ -23,7 +23,9 @@
 
     <include
         android:id="@+id/lettersPerson"
-        layout="@layout/letters_person_layout" />
+        layout="@layout/layout_letters_person" />
+
+    <include layout="@layout/layout_numbers_person" />
 
     <View
         android:id="@+id/viewPerson"
@@ -39,9 +41,7 @@
 
     <include
         android:id="@+id/lettersPC"
-        layout="@layout/letters_pc_layout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        layout="@layout/layout_letters_pc" />
 
     <View
         android:id="@+id/viewPC"
