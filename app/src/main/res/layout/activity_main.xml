@@ -43,6 +43,8 @@
         android:id="@+id/lettersPC"
         layout="@layout/layout_letters_pc" />
 
+    <include layout="@layout/layout_numbers_pc" />
+
     <View
         android:id="@+id/viewPC"
         android:layout_width="0dp"
