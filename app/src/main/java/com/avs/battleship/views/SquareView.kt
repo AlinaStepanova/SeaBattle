@@ -35,14 +35,6 @@ abstract class SquareView : View {
         paint.strokeWidth = lineWidth
     }
 
-
-    override fun onDraw(canvas: Canvas?) {
-        paint.color = Color.BLACK
-        paint.strokeWidth = lineWidth
-        drawHorizontalLines(canvas!!)
-        drawVerticalLines(canvas)
-    }
-
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         squareWidth = (MeasureSpec.getSize(widthMeasureSpec).toDouble() / squaresCount)
@@ -50,6 +42,12 @@ abstract class SquareView : View {
         screenWidth = MeasureSpec.getSize(widthMeasureSpec).toDouble()
     }
 
+    override fun onDraw(canvas: Canvas?) {
+        paint.color = Color.BLACK
+        paint.strokeWidth = lineWidth
+        drawHorizontalLines(canvas!!)
+        drawVerticalLines(canvas)
+    }
 
     private fun drawHorizontalLines(canvas: Canvas) {
         for (i in 1..squaresCount) {
