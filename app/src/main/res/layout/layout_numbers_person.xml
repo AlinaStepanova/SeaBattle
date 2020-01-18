@@ -89,7 +89,7 @@
         android:id="@+id/tvNumber10"
         style="@style/SingleLetterStyle"
         android:text="@string/number_10"
-        app:layout_constraintBottom_toTopOf="@+id/guideline"
+        app:layout_constraintBottom_toBottomOf="@+id/viewPerson"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@+id/viewPerson"
         app:layout_constraintTop_toBottomOf="@+id/tvNumber9" />

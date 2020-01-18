@@ -41,6 +41,22 @@
         app:layout_constraintRight_toLeftOf="@+id/viewPC"
         app:layout_constraintTop_toBottomOf="@+id/tvStatus" />
 
+    <TextView
+        android:id="@+id/buttonGenerate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/square_background"
+        android:fontFamily="casual"
+        android:paddingStart="@dimen/dimen_8dp"
+        android:paddingTop="2dp"
+        android:paddingEnd="@dimen/dimen_8dp"
+        android:paddingBottom="2dp"
+        android:text="Generate Ships"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/viewPerson"
+        app:layout_constraintStart_toStartOf="@+id/viewPerson"
+        app:layout_constraintTop_toTopOf="@+id/guideline" />
+
     <include
         android:id="@+id/lettersPC"
         layout="@layout/layout_letters_pc" />
@@ -61,12 +77,45 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvStatus" />
 
+    <TextView
+        android:id="@+id/buttonFire"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/square_background"
+        android:fontFamily="casual"
+        android:paddingStart="@dimen/dimen_8dp"
+        android:paddingTop="2dp"
+        android:paddingEnd="@dimen/dimen_8dp"
+        android:paddingBottom="2dp"
+        android:text="Fire!"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/viewPC"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="@+id/viewPC"
+        app:layout_constraintTop_toTopOf="@+id/guideline" />
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.85" />
+
+    <TextView
+        android:id="@+id/buttonStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/square_background"
+        android:fontFamily="casual"
+        android:paddingStart="@dimen/dimen_8dp"
+        android:paddingTop="2dp"
+        android:paddingEnd="@dimen/dimen_8dp"
+        android:paddingBottom="2dp"
+        android:text="Start"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/viewPC"
+        app:layout_constraintStart_toEndOf="@+id/viewPerson"
+        app:layout_constraintTop_toTopOf="@+id/guideline" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
