@@ -1,3 +1,23 @@
 <resources>
     <string name="app_name">Battleship</string>
+    <string name="letter_a">A</string>
+    <string name="letter_b">B</string>
+    <string name="letter_c">C</string>
+    <string name="letter_d">D</string>
+    <string name="letter_e">E</string>
+    <string name="letter_f">F</string>
+    <string name="letter_g">G</string>
+    <string name="letter_h">H</string>
+    <string name="letter_i">I</string>
+    <string name="letter_j">J</string>
+    <string name="number_1">1</string>
+    <string name="number_2">2</string>
+    <string name="number_3">3</string>
+    <string name="number_4">4</string>
+    <string name="number_5">5</string>
+    <string name="number_6">6</string>
+    <string name="number_7">7</string>
+    <string name="number_8">8</string>
+    <string name="number_9">9</string>
+    <string name="number_10">10</string>
 </resources>

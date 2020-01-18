@@ -6,7 +6,7 @@
 
     <TextView
         android:id="@+id/tvLetterA"
-        android:text="A"
+        android:text="@string/letter_a"
         app:layout_constraintBottom_toTopOf="@+id/viewPerson"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintLeft_toLeftOf="@id/viewPerson"
@@ -16,7 +16,7 @@
 
     <TextView
         android:id="@+id/tvLetterB"
-        android:text="B"
+        android:text="@string/letter_b"
         app:layout_constraintBottom_toTopOf="@+id/viewPerson"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintLeft_toRightOf="@+id/tvLetterA"
@@ -25,7 +25,7 @@
 
     <TextView
         android:id="@+id/tvLetterC"
-        android:text="C"
+        android:text="@string/letter_c"
         app:layout_constraintBottom_toTopOf="@+id/viewPerson"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintLeft_toRightOf="@+id/tvLetterB"
@@ -34,7 +34,7 @@
 
     <TextView
         android:id="@+id/tvLetterD"
-        android:text="D"
+        android:text="@string/letter_d"
         app:layout_constraintBottom_toTopOf="@+id/viewPerson"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintLeft_toRightOf="@+id/tvLetterC"
@@ -43,7 +43,7 @@
 
     <TextView
         android:id="@+id/tvLetterE"
-        android:text="E"
+        android:text="@string/letter_e"
         app:layout_constraintBottom_toTopOf="@+id/viewPerson"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintLeft_toRightOf="@+id/tvLetterD"
@@ -52,7 +52,7 @@
 
     <TextView
         android:id="@+id/tvLetterF"
-        android:text="F"
+        android:text="@string/letter_f"
         app:layout_constraintBottom_toTopOf="@+id/viewPerson"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintLeft_toRightOf="@+id/tvLetterE"
@@ -61,7 +61,7 @@
 
     <TextView
         android:id="@+id/tvLetterG"
-        android:text="G"
+        android:text="@string/letter_g"
         app:layout_constraintBottom_toTopOf="@+id/viewPerson"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintLeft_toRightOf="@+id/tvLetterF"
@@ -70,7 +70,7 @@
 
     <TextView
         android:id="@+id/tvLetterH"
-        android:text="H"
+        android:text="@string/letter_h"
         app:layout_constraintBottom_toTopOf="@+id/viewPerson"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintLeft_toRightOf="@+id/tvLetterG"
@@ -79,7 +79,7 @@
 
     <TextView
         android:id="@+id/tvLetterI"
-        android:text="I"
+        android:text="@string/letter_i"
         app:layout_constraintBottom_toTopOf="@+id/viewPerson"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintLeft_toRightOf="@+id/tvLetterH"
@@ -88,7 +88,7 @@
 
     <TextView
         android:id="@+id/tvLetterJ"
-        android:text="J"
+        android:text="@string/letter_j"
         app:layout_constraintBottom_toTopOf="@+id/viewPerson"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintLeft_toRightOf="@+id/tvLetterI"

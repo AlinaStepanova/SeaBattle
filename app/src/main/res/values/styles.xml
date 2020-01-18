@@ -14,7 +14,7 @@
         <item name="android:fontFamily">casual</item>
         <item name="android:gravity">center_horizontal|bottom</item>
         <item name="android:textAlignment">center</item>
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">@dimen/text_size_12sp</item>
     </style>
 
 </resources>
