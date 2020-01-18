@@ -17,4 +17,15 @@
         <item name="android:textSize">@dimen/text_size_12sp</item>
     </style>
 
+    <style name="MainButtonStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/square_background</item>
+        <item name="android:fontFamily">casual</item>
+        <item name="android:paddingStart">@dimen/dimen_8dp</item>
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingEnd">@dimen/dimen_8dp</item>
+        <item name="android:paddingBottom">2dp</item>
+    </style>
+
 </resources>
