@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/tvLetterPCA"
+        android:text="A"
+        app:layout_constraintBottom_toTopOf="@+id/viewPC"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintLeft_toLeftOf="@id/viewPC"
+        app:layout_constraintRight_toLeftOf="@+id/tvLetterPCB"
+        style="@style/SingleLetterStyle" />
+
+
+    <TextView
+        android:id="@+id/tvLetterPCB"
+        android:text="B"
+        app:layout_constraintBottom_toTopOf="@+id/viewPC"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintLeft_toRightOf="@+id/tvLetterPCA"
+        app:layout_constraintRight_toLeftOf="@+id/tvLetterPCC"
+        style="@style/SingleLetterStyle" />
+
+    <TextView
+        android:id="@+id/tvLetterPCC"
+        android:text="C"
+        app:layout_constraintBottom_toTopOf="@+id/viewPC"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintLeft_toRightOf="@+id/tvLetterPCB"
+        app:layout_constraintRight_toLeftOf="@+id/tvLetterPCD"
+        style="@style/SingleLetterStyle" />
+
+    <TextView
+        android:id="@+id/tvLetterPCD"
+        android:text="D"
+        app:layout_constraintBottom_toTopOf="@+id/viewPC"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintLeft_toRightOf="@+id/tvLetterPCC"
+        app:layout_constraintRight_toLeftOf="@+id/tvLetterPCE"
+        style="@style/SingleLetterStyle" />
+
+    <TextView
+        android:id="@+id/tvLetterPCE"
+        android:text="E"
+        app:layout_constraintBottom_toTopOf="@+id/viewPC"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintLeft_toRightOf="@+id/tvLetterPCD"
+        app:layout_constraintRight_toLeftOf="@+id/tvLetterPCF"
+        style="@style/SingleLetterStyle" />
+
+    <TextView
+        android:id="@+id/tvLetterPCF"
+        android:text="F"
+        app:layout_constraintBottom_toTopOf="@+id/viewPC"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintLeft_toRightOf="@+id/tvLetterPCE"
+        app:layout_constraintRight_toLeftOf="@+id/tvLetterPCG"
+        style="@style/SingleLetterStyle" />
+
+    <TextView
+        android:id="@+id/tvLetterPCG"
+        android:text="G"
+        app:layout_constraintBottom_toTopOf="@+id/viewPC"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintLeft_toRightOf="@+id/tvLetterPCF"
+        app:layout_constraintRight_toLeftOf="@+id/tvLetterPCH"
+        style="@style/SingleLetterStyle" />
+
+    <TextView
+        android:id="@+id/tvLetterPCH"
+        android:text="H"
+        app:layout_constraintBottom_toTopOf="@+id/viewPC"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintLeft_toRightOf="@+id/tvLetterPCG"
+        app:layout_constraintRight_toLeftOf="@+id/tvLetterPCI"
+        style="@style/SingleLetterStyle" />
+
+    <TextView
+        android:id="@+id/tvLetterPCI"
+        android:text="I"
+        app:layout_constraintBottom_toTopOf="@+id/viewPC"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintLeft_toRightOf="@+id/tvLetterPCH"
+        app:layout_constraintRight_toLeftOf="@+id/tvLetterPCJ"
+        style="@style/SingleLetterStyle" />
+
+    <TextView
+        android:id="@+id/tvLetterPCJ"
+        android:text="J"
+        app:layout_constraintBottom_toTopOf="@+id/viewPC"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintLeft_toRightOf="@+id/tvLetterPCI"
+        app:layout_constraintRight_toRightOf="@id/viewPC"
+        style="@style/SingleLetterStyle" />
+</merge>
