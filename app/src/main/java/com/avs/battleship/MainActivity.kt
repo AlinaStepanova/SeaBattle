@@ -13,32 +13,8 @@ import com.avs.battleship.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private val customOnTouchListener = View.OnTouchListener { v: View, event: MotionEvent ->
-        when (event.action) {
-            MotionEvent.ACTION_DOWN -> {
-                v.setBackgroundColor(
-                    ContextCompat.getColor(
-                        this,
-                        R.color.black
-                    )
-                )
-                if (v is TextView) v.setTextColor(ContextCompat.getColor(this, R.color.white))
-            }
-            MotionEvent.ACTION_UP -> {
-                v.background =
-                    ContextCompat.getDrawable(this, R.drawable.square_background)
-                if (v is TextView)
-                    v.setTextColor(
-                        ContextCompat.getColor(
-                            this,
-                            R.color.greyDefault
-                        )
-                    )
-                v.performClick()
-            }
-        }
-        true
-    }
+    private val customOnTouchListener = View.OnTouchListener(implementCustomTouchListener())
+
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,5 +24,34 @@ class MainActivity : AppCompatActivity() {
         binding.buttonGenerate.setOnTouchListener(customOnTouchListener)
         binding.buttonFire.setOnTouchListener(customOnTouchListener)
         binding.buttonStart.setOnTouchListener(customOnTouchListener)
+    }
+
+    private fun implementCustomTouchListener(): (View, MotionEvent) -> Boolean {
+        return { v: View, event: MotionEvent ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    v.setBackgroundColor(
+                        ContextCompat.getColor(
+                            this,
+                            R.color.black
+                        )
+                    )
+                    if (v is TextView) v.setTextColor(ContextCompat.getColor(this, R.color.white))
+                }
+                MotionEvent.ACTION_UP -> {
+                    v.background =
+                        ContextCompat.getDrawable(this, R.drawable.square_background)
+                    if (v is TextView)
+                        v.setTextColor(
+                            ContextCompat.getColor(
+                                this,
+                                R.color.greyDefault
+                            )
+                        )
+                    v.performClick()
+                }
+            }
+            true
+        }
     }
 }
