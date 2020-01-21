@@ -24,9 +24,9 @@ class MainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
 
-        binding.buttonGenerate.setOnTouchListener(customOnTouchListener)
-        binding.buttonFire.setOnTouchListener(customOnTouchListener)
-        binding.buttonStart.setOnTouchListener(customOnTouchListener)
+        binding.viewGenerate.setOnTouchListener(customOnTouchListener)
+        binding.viewFire.setOnTouchListener(customOnTouchListener)
+        binding.viewStart.setOnTouchListener(customOnTouchListener)
     }
 
     private fun implementCustomTouchListener(): (View, MotionEvent) -> Boolean {
@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
                             )
                         )
                     v.performClick()
-
+                    viewModel.handleUIEventById(v.id)
                 }
             }
             true
