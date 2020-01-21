@@ -8,11 +8,13 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProviders
 import com.avs.battleship.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var viewModel: MainViewModel
     private val customOnTouchListener = View.OnTouchListener(implementCustomTouchListener())
 
 
@@ -20,6 +22,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
 
         binding.buttonGenerate.setOnTouchListener(customOnTouchListener)
         binding.buttonFire.setOnTouchListener(customOnTouchListener)
@@ -49,6 +52,7 @@ class MainActivity : AppCompatActivity() {
                             )
                         )
                     v.performClick()
+
                 }
             }
             true

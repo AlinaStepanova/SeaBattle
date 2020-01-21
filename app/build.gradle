@@ -40,4 +40,5 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 
     kapt "com.android.databinding:compiler:3.1.4"
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
 }
