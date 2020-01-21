@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.avs.battleship.databinding.ActivityMainBinding
 
@@ -23,6 +24,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+
+        viewModel.status.observe(this, Observer { newStatusId ->
+            binding.tvStatus.text = resources.getText(newStatusId)
+        })
 
         binding.viewGenerate.setOnTouchListener(customOnTouchListener)
         binding.viewFire.setOnTouchListener(customOnTouchListener)

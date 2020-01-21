@@ -1,8 +1,15 @@
 package com.avs.battleship
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class MainViewModel : ViewModel() {
+
+    var status = MutableLiveData<Int>()
+
+    init {
+        status.value = R.string.welcome_text
+    }
 
     override fun onCleared() {
         super.onCleared()
