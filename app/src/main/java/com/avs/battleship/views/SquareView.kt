@@ -89,4 +89,18 @@ abstract class SquareView : View {
             )
         }
     }
+
+    protected fun createSingleSquarePath(
+        i: Int,
+        j: Int
+    ): Path? {
+        val path = Path()
+        val delta: Float = (j * squareWidth - squareWidth).toFloat()
+        path.moveTo(i * squareWidth.toFloat(), delta)
+        path.lineTo(i * squareWidth.toFloat(), delta - squareWidth.toFloat())
+        path.lineTo((i * squareWidth + squareWidth).toFloat(), delta - squareWidth.toFloat())
+        path.lineTo((i * squareWidth + squareWidth).toFloat(), delta)
+        path.close()
+        return path
+    }
 }
