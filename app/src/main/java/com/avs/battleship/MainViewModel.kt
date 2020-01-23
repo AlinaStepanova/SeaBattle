@@ -29,6 +29,17 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun handlePlayingAreaClick(id: Int, x: Float, y: Float) {
+        when (id) {
+            R.id.viewPC -> {
+
+            }
+            R.id.viewPerson -> {
+
+            }
+        }
+    }
+
     private fun makeFire() {
 
     }

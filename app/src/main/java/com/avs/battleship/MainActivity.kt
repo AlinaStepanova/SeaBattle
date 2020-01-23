@@ -25,6 +25,9 @@ class MainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
 
+        binding.viewPerson.provideViewModel(viewModel)
+        binding.viewPC.provideViewModel(viewModel)
+
         viewModel.status.observe(this, Observer { newStatusId ->
             binding.tvStatus.text = resources.getText(newStatusId)
         })
