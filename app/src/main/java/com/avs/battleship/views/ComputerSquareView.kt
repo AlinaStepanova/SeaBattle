@@ -2,10 +2,13 @@ package com.avs.battleship.views
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Paint
 import android.graphics.PointF
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import androidx.core.content.ContextCompat
+import com.avs.battleship.R
 
 class ComputerSquareView : SquareView {
 

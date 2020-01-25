@@ -10,7 +10,7 @@ abstract class SquareView : View {
 
     private val squaresCount = 10
     private val lineWidth = 1f
-    protected val circleRadius = 5f
+    protected val circleRadius = 4f
     protected var squareWidth = 0f
     protected var screenHeight = 0f
     protected var screenWidth = 0f
@@ -80,10 +80,10 @@ abstract class SquareView : View {
         j: Int
     ): Path? {
         val path = Path()
-        val delta: Float = (j * squareWidth - squareWidth)
+        val delta: Float = (j * squareWidth)
         path.moveTo(i * squareWidth, delta)
-        path.lineTo(i * squareWidth, delta - squareWidth)
-        path.lineTo((i * squareWidth + squareWidth), delta - squareWidth)
+        path.lineTo(i * squareWidth, delta + squareWidth)
+        path.lineTo((i * squareWidth + squareWidth), delta + squareWidth)
         path.lineTo((i * squareWidth + squareWidth), delta)
         path.close()
         return path
@@ -97,5 +97,22 @@ abstract class SquareView : View {
             (i * squareWidth + squareWidth / 2),
             (j * squareWidth + squareWidth / 2)
         )
+    }
+
+    protected fun getCrossCoordinates(
+        i: Int,
+        j: Int
+    ): FloatArray {
+        val pts = FloatArray(8)
+        pts[0] = (i * squareWidth)
+        pts[1] = (j * squareWidth)
+        pts[2] = (i * squareWidth + squareWidth)
+        pts[3] = (j * squareWidth + squareWidth)
+
+        pts[4] = (i * squareWidth + squareWidth)
+        pts[5] = (j * squareWidth)
+        pts[6] = (i * squareWidth)
+        pts[7] = (j * squareWidth + squareWidth)
+        return pts
     }
 }
