@@ -4,7 +4,9 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
+import androidx.core.content.ContextCompat
 import com.avs.battleship.MainViewModel
+import com.avs.battleship.R
 
 abstract class SquareView : View {
 
@@ -15,6 +17,7 @@ abstract class SquareView : View {
     protected var screenHeight = 0f
     protected var screenWidth = 0f
     protected lateinit var paint: Paint
+    protected lateinit var paintSquare: Paint
     protected lateinit var viewModel: MainViewModel
 
     constructor(context: Context) : super(context) {
@@ -34,6 +37,8 @@ abstract class SquareView : View {
         paint = Paint()
         paint.color = Color.BLACK
         paint.strokeWidth = lineWidth
+        paintSquare = Paint()
+        paintSquare.color = ContextCompat.getColor(context, R.color.greyTransparent)
     }
 
     fun provideViewModel(mainViewModel: MainViewModel) {
@@ -73,6 +78,18 @@ abstract class SquareView : View {
                 paint
             )
         }
+    }
+
+    fun Canvas.drawDot(pointF: PointF) {
+        this.drawCircle(pointF.x, pointF.y, circleRadius, paint)
+    }
+
+    fun Canvas.drawCross(pts : FloatArray) {
+        this.drawLines(pts, paint)
+    }
+
+    fun Canvas.drawSqure(path: Path) {
+        this.drawPath(path, paintSquare)
     }
 
     protected fun getSingleSquarePath(
