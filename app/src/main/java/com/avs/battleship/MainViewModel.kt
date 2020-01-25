@@ -29,15 +29,8 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun handlePlayingAreaClick(id: Int, x: Float, y: Float) {
-        when (id) {
-            R.id.viewPC -> {
+    fun handlePCAreaClick(x: Float, y: Float) {
 
-            }
-            R.id.viewPerson -> {
-
-            }
-        }
     }
 
     private fun makeFire() {

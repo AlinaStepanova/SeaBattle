@@ -6,7 +6,6 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.util.AttributeSet
-import android.view.MotionEvent
 import android.view.View
 import com.avs.battleship.MainViewModel
 
@@ -37,7 +36,6 @@ abstract class SquareView : View {
         paint = Paint()
         paint.color = Color.BLACK
         paint.strokeWidth = lineWidth
-        setOnTouchListener(OnTouchListener(implementCustomTouchListener()))
     }
 
     fun provideViewModel(mainViewModel: MainViewModel) {
@@ -56,17 +54,6 @@ abstract class SquareView : View {
         paint.strokeWidth = lineWidth
         drawHorizontalLines(canvas!!)
         drawVerticalLines(canvas)
-    }
-
-    private fun implementCustomTouchListener(): (View, MotionEvent) -> Boolean {
-        return { v: View, event: MotionEvent ->
-            when (event.action) {
-                MotionEvent.ACTION_UP -> {
-                    viewModel.handlePlayingAreaClick(v.id, event.x, event.y)
-                }
-            }
-            true
-        }
     }
 
     private fun drawHorizontalLines(canvas: Canvas) {
