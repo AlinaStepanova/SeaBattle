@@ -12,12 +12,12 @@ abstract class SquareView : View {
 
     private val squaresCount = 10
     private val lineWidth = 1f
-    protected val circleRadius = 4f
-    protected var squareWidth = 0f
-    protected var screenHeight = 0f
-    protected var screenWidth = 0f
-    protected lateinit var paint: Paint
-    protected lateinit var paintSquare: Paint
+    private val circleRadius = 4f
+    private var screenHeight = 0f
+    private var screenWidth = 0f
+    private lateinit var paint: Paint
+    private lateinit var paintSquare: Paint
+    private var squareWidth = 0f
     protected lateinit var viewModel: MainViewModel
 
     constructor(context: Context) : super(context) {

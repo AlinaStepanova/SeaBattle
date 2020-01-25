@@ -27,7 +27,7 @@ class ComputerSquareView : SquareView {
         super.onDraw(canvas)
         if (pointsList.isNotEmpty()) {
             for (point in pointsList) {
-                canvas?.drawCircle(point.x, point.y, circleRadius, paint)
+                canvas?.drawDot(point)
             }
         }
     }
