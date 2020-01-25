@@ -1,10 +1,7 @@
 package com.avs.battleship.views
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Path
+import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
 import com.avs.battleship.MainViewModel
@@ -13,6 +10,7 @@ abstract class SquareView : View {
 
     private val squaresCount = 10
     private val lineWidth = 1f
+    protected val circleRadius = 5f
     protected var squareWidth = 0.0
     protected var screenHeight = 0.0
     protected var screenWidth = 0.0
@@ -77,7 +75,7 @@ abstract class SquareView : View {
         }
     }
 
-    protected fun createSingleSquarePath(
+    protected fun getSingleSquarePath(
         i: Int,
         j: Int
     ): Path? {
@@ -89,5 +87,15 @@ abstract class SquareView : View {
         path.lineTo((i * squareWidth + squareWidth).toFloat(), delta)
         path.close()
         return path
+    }
+
+    protected fun getCirclePath(
+        i: Int,
+        j: Int
+    ): PointF {
+        return PointF(
+            (i * squareWidth + squareWidth / 2).toFloat(),
+            (j * squareWidth + squareWidth / 2).toFloat()
+        )
     }
 }
