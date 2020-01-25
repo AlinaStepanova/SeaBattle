@@ -11,9 +11,9 @@ abstract class SquareView : View {
     private val squaresCount = 10
     private val lineWidth = 1f
     protected val circleRadius = 5f
-    protected var squareWidth = 0.0
-    protected var screenHeight = 0.0
-    protected var screenWidth = 0.0
+    protected var squareWidth = 0f
+    protected var screenHeight = 0f
+    protected var screenWidth = 0f
     protected lateinit var paint: Paint
     protected lateinit var viewModel: MainViewModel
 
@@ -42,9 +42,9 @@ abstract class SquareView : View {
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        squareWidth = (MeasureSpec.getSize(widthMeasureSpec).toDouble() / squaresCount)
-        screenHeight = MeasureSpec.getSize(heightMeasureSpec).toDouble()
-        screenWidth = MeasureSpec.getSize(widthMeasureSpec).toDouble()
+        squareWidth = (MeasureSpec.getSize(widthMeasureSpec).toFloat() / squaresCount)
+        screenHeight = MeasureSpec.getSize(heightMeasureSpec).toFloat()
+        screenWidth = MeasureSpec.getSize(widthMeasureSpec).toFloat()
     }
 
     override fun onDraw(canvas: Canvas?) {
@@ -57,8 +57,8 @@ abstract class SquareView : View {
     private fun drawHorizontalLines(canvas: Canvas) {
         for (i in 1..squaresCount) {
             canvas.drawLine(
-                0f, (screenHeight - squareWidth * i).toFloat(), screenWidth.toFloat(),
-                (screenHeight - squareWidth * i).toFloat(), paint
+                0f, (screenHeight - squareWidth * i), screenWidth,
+                (screenHeight - squareWidth * i), paint
             )
         }
     }
@@ -66,10 +66,10 @@ abstract class SquareView : View {
     private fun drawVerticalLines(canvas: Canvas) {
         for (i in 1..squaresCount) {
             canvas.drawLine(
-                i * squareWidth.toFloat(),
+                i * squareWidth,
                 0f,
-                i * squareWidth.toFloat(),
-                screenHeight.toFloat(),
+                i * squareWidth,
+                screenHeight,
                 paint
             )
         }
@@ -80,22 +80,22 @@ abstract class SquareView : View {
         j: Int
     ): Path? {
         val path = Path()
-        val delta: Float = (j * squareWidth - squareWidth).toFloat()
-        path.moveTo(i * squareWidth.toFloat(), delta)
-        path.lineTo(i * squareWidth.toFloat(), delta - squareWidth.toFloat())
-        path.lineTo((i * squareWidth + squareWidth).toFloat(), delta - squareWidth.toFloat())
-        path.lineTo((i * squareWidth + squareWidth).toFloat(), delta)
+        val delta: Float = (j * squareWidth - squareWidth)
+        path.moveTo(i * squareWidth, delta)
+        path.lineTo(i * squareWidth, delta - squareWidth)
+        path.lineTo((i * squareWidth + squareWidth), delta - squareWidth)
+        path.lineTo((i * squareWidth + squareWidth), delta)
         path.close()
         return path
     }
 
-    protected fun getCirclePath(
+    protected fun getCirclePoint(
         i: Int,
         j: Int
     ): PointF {
         return PointF(
-            (i * squareWidth + squareWidth / 2).toFloat(),
-            (j * squareWidth + squareWidth / 2).toFloat()
+            (i * squareWidth + squareWidth / 2),
+            (j * squareWidth + squareWidth / 2)
         )
     }
 }
