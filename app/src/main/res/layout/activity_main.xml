@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
@@ -98,6 +98,18 @@
             app:layout_constraintEnd_toStartOf="@+id/viewPC"
             app:layout_constraintStart_toEndOf="@+id/viewPerson"
             app:layout_constraintTop_toTopOf="@+id/guideline" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:visibility="invisible"
+            style="?android:attr/progressBarStyleSmall"
+            android:layout_width="0dp"
+            android:indeterminateTint="@color/black"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/viewFire"
+            app:layout_constraintEnd_toEndOf="@+id/viewFire"
+            app:layout_constraintStart_toStartOf="@+id/viewFire"
+            app:layout_constraintTop_toTopOf="@+id/viewFire" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
