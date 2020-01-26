@@ -7,17 +7,17 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import com.avs.battleship.MainViewModel
 import com.avs.battleship.R
+import com.avs.battleship.SQUARES_COUNT
 
 abstract class SquareView : View {
 
-    private val squaresCount = 10
     private val lineWidth = 1f
     private val circleRadius = 4f
     private var screenHeight = 0f
     private var screenWidth = 0f
+    private var squareWidth = 0f
     private lateinit var paint: Paint
     private lateinit var paintSquare: Paint
-    private var squareWidth = 0f
     protected lateinit var viewModel: MainViewModel
 
     constructor(context: Context) : super(context) {
@@ -47,7 +47,7 @@ abstract class SquareView : View {
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        squareWidth = (MeasureSpec.getSize(widthMeasureSpec).toFloat() / squaresCount)
+        squareWidth = (MeasureSpec.getSize(widthMeasureSpec).toFloat() / SQUARES_COUNT)
         screenHeight = MeasureSpec.getSize(heightMeasureSpec).toFloat()
         screenWidth = MeasureSpec.getSize(widthMeasureSpec).toFloat()
     }
@@ -60,7 +60,7 @@ abstract class SquareView : View {
     }
 
     private fun drawHorizontalLines(canvas: Canvas) {
-        for (i in 1..squaresCount) {
+        for (i in 1..SQUARES_COUNT) {
             canvas.drawLine(
                 0f, (screenHeight - squareWidth * i), screenWidth,
                 (screenHeight - squareWidth * i), paint
@@ -69,7 +69,7 @@ abstract class SquareView : View {
     }
 
     private fun drawVerticalLines(canvas: Canvas) {
-        for (i in 1..squaresCount) {
+        for (i in 1..SQUARES_COUNT) {
             canvas.drawLine(
                 i * squareWidth,
                 0f,
@@ -84,7 +84,7 @@ abstract class SquareView : View {
         this.drawCircle(pointF.x, pointF.y, circleRadius, paint)
     }
 
-    fun Canvas.drawCross(pts : FloatArray) {
+    fun Canvas.drawCross(pts: FloatArray) {
         this.drawLines(pts, paint)
     }
 
