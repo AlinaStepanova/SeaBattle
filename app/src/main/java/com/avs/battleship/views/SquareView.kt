@@ -5,7 +5,7 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
-import com.avs.battleship.MainViewModel
+import com.avs.battleship.main.MainViewModel
 import com.avs.battleship.R
 import com.avs.battleship.SQUARES_COUNT
 

@@ -1,4 +1,4 @@
-package com.avs.battleship
+package com.avs.battleship.main
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.avs.battleship.R
 import com.avs.battleship.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -22,7 +23,9 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding = DataBindingUtil.setContentView(this,
+            R.layout.activity_main
+        )
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
 
         binding.viewPerson.provideViewModel(viewModel)
@@ -47,11 +50,15 @@ class MainActivity : AppCompatActivity() {
                             R.color.black
                         )
                     )
-                    if (v is TextView) v.setTextColor(ContextCompat.getColor(this, R.color.white))
+                    if (v is TextView) v.setTextColor(ContextCompat.getColor(this,
+                        R.color.white
+                    ))
                 }
                 MotionEvent.ACTION_UP -> {
                     v.background =
-                        ContextCompat.getDrawable(this, R.drawable.square_background)
+                        ContextCompat.getDrawable(this,
+                            R.drawable.square_background
+                        )
                     if (v is TextView)
                         v.setTextColor(
                             ContextCompat.getColor(

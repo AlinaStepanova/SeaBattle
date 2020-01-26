@@ -1,7 +1,8 @@
-package com.avs.battleship
+package com.avs.battleship.main
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.avs.battleship.R
 
 class MainViewModel : ViewModel() {
 
