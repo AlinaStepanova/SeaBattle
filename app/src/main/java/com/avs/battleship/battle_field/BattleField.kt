@@ -16,7 +16,7 @@ class BattleField {
     private fun initBattleShip() {
         for (i in battleField.indices) {
             for (j in battleField[i].indices) {
-                battleField[i][j] = Cell()
+                battleField[i][j] = Cell(i, j)
             }
         }
     }
