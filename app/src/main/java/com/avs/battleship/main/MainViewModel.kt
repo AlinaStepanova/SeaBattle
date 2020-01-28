@@ -3,6 +3,7 @@ package com.avs.battleship.main
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.avs.battleship.R
+import com.avs.battleship.battle_field.BattleField
 
 class MainViewModel : ViewModel() {
 
@@ -11,6 +12,8 @@ class MainViewModel : ViewModel() {
     init {
         status.value = R.string.welcome_text
     }
+
+    var battleField = BattleField()
 
     override fun onCleared() {
         super.onCleared()

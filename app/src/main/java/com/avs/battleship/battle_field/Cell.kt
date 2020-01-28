@@ -35,4 +35,8 @@ class Cell() {
     public fun getJ(): Int {
         return point.y
     }
+
+    override fun toString(): String {
+        return this.getCellState().toString()
+    }
 }
