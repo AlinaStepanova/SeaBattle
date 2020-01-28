@@ -8,9 +8,8 @@ class Cell() {
 
     private var cellState: CellState = CellState.EMPTY
 
-    constructor(cellState: CellState, i: Int, j: Int) : this() {
+    constructor(cellState: CellState) : this() {
         this.cellState = cellState
-        this.point.set(i, j)
     }
 
     constructor(i: Int, j: Int) : this() {
