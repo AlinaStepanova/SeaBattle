@@ -24,6 +24,10 @@ class Cell() {
         return point
     }
 
+    public fun setCoordinates(i: Int, j: Int) {
+        point.set(i, j)
+    }
+
     public fun getI(): Int {
         return point.x
     }
