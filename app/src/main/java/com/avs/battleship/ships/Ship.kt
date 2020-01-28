@@ -8,20 +8,12 @@ import kotlin.collections.ArrayList
 
 abstract class Ship {
 
-    enum class Orientation {
-        VERTICAL, HORIZONTAL
-    }
-
     protected var cells: ArrayList<Cell> = ArrayList(MAX_SHIP_SIZE)
-    protected var orientation: Orientation
     protected lateinit var row: IntRange
     protected lateinit var column: IntRange
-
-    init {
-        orientation = when (Random().nextBoolean()) {
-            true -> Orientation.VERTICAL
-            false -> Orientation.HORIZONTAL
-        }
+    protected var orientation: Orientation = when (Random().nextBoolean()) {
+        true -> Orientation.VERTICAL
+        false -> Orientation.HORIZONTAL
     }
 
     protected fun initCells() {
