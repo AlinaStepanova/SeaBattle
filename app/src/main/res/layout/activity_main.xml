@@ -10,22 +10,35 @@
         android:orientation="horizontal"
         tools:context=".main.MainActivity">
 
+        <ImageView
+            android:id="@+id/ivMore"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/dimen_8dp"
+            android:paddingEnd="@dimen/dimen_8dp"
+            android:src="@drawable/ic_more"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+        </ImageView>
+
         <TextView
             android:id="@+id/tvStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingStart="@dimen/dimen_10dp"
             android:layout_marginTop="@dimen/dimen_10dp"
-            android:paddingEnd="@dimen/dimen_10dp"
+            android:ellipsize="end"
             android:fontFamily="casual"
             android:gravity="center"
+            android:paddingStart="@dimen/dimen_10dp"
+            android:paddingEnd="@dimen/dimen_10dp"
             android:singleLine="true"
-            android:ellipsize="end"
             android:text="@string/welcome_text"
             android:textColor="@color/black"
             android:textSize="@dimen/text_size_14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/viewPC"
+            app:layout_constraintStart_toStartOf="@+id/viewPerson"
             app:layout_constraintTop_toTopOf="parent" />
 
         <include
