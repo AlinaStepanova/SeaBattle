@@ -15,9 +15,9 @@ abstract class SquareView : View {
     private val circleRadius = 4f
     private var screenHeight = 0f
     private var screenWidth = 0f
-    private var squareWidth = 0f
     private lateinit var paint: Paint
     private lateinit var paintSquare: Paint
+    protected var squareWidth = 0f
     protected lateinit var viewModel: MainViewModel
 
     constructor(context: Context) : super(context) {

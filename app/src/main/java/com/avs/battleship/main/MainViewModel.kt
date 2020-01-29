@@ -1,5 +1,7 @@
 package com.avs.battleship.main
 
+import android.graphics.Point
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.avs.battleship.R
@@ -33,7 +35,7 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun handlePCAreaClick(x: Float, y: Float) {
+    fun handlePCAreaClick(point: Point) {
 
     }
 
