@@ -2,11 +2,18 @@ package com.avs.battleship.battle_field
 
 import android.util.Log
 import com.avs.battleship.SQUARES_COUNT
+import com.avs.battleship.ships.*
 
 class BattleField {
 
     private val battleField =
         Array(SQUARES_COUNT) { arrayOfNulls<Cell>(SQUARES_COUNT) }
+
+    private val ships: List<Ship> = listOf(
+        FourDeckShip(), ThreeDeckShip(), ThreeDeckShip(),
+        TwoDeckShip(), TwoDeckShip(), TwoDeckShip(),
+        OneDeckShip(), OneDeckShip(), OneDeckShip(), OneDeckShip()
+    )
 
     init {
         initBattleShip()

@@ -64,4 +64,7 @@ abstract class Ship {
 
     abstract fun getLength(): Int
 
+    override fun toString(): String {
+        return getLength().toString() + " " + orientation + " " + cells.toString()
+    }
 }
