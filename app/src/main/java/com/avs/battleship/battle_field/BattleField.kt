@@ -59,15 +59,39 @@ class BattleField {
     }
 
     fun getShipsCoordinates(): ArrayList<Point> {
-        val shipCoordinates = arrayListOf<Point>()
+        val shipsCoordinates = arrayListOf<Point>()
         for (i in battleField.indices) {
             for (j in battleField[i].indices) {
                 if (battleField[i][j]?.getCellState() == CellState.SHIP) {
-                    shipCoordinates.add(Point(i, j))
+                    shipsCoordinates.add(Point(i, j))
                 }
             }
         }
-        return shipCoordinates
+        return shipsCoordinates
+    }
+
+    fun getDotsCoordinates(): ArrayList<Point> {
+        val dotsCoordinates = arrayListOf<Point>()
+        for (i in battleField.indices) {
+            for (j in battleField[i].indices) {
+                if (battleField[i][j]?.getCellState() == CellState.SHOT_FAILURE) {
+                    dotsCoordinates.add(Point(i, j))
+                }
+            }
+        }
+        return dotsCoordinates
+    }
+
+    fun getCrossesCoordinates(): ArrayList<Point> {
+        val crossesCoordinates = arrayListOf<Point>()
+        for (i in battleField.indices) {
+            for (j in battleField[i].indices) {
+                if (battleField[i][j]?.getCellState() == CellState.SHOT_SUCCESS) {
+                    crossesCoordinates.add(Point(i, j))
+                }
+            }
+        }
+        return crossesCoordinates
     }
 
     private fun isStartCellEmpty(point: Point): Boolean {
