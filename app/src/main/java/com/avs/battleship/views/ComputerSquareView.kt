@@ -6,28 +6,42 @@ import android.graphics.Point
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import com.avs.battleship.MAX_SHIP_SIZE
 
 class ComputerSquareView : SquareView {
 
-    private lateinit var pointsList : ArrayList<Point>
+    private lateinit var pointsCoordinates: ArrayList<Point>
+    private lateinit var crossesCoordinates: ArrayList<Point>
 
-    constructor(context: Context) : super(context) { init() }
+    constructor(context: Context) : super(context) {
+        init()
+    }
 
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {init()}
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
+        init()
+    }
 
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int)
-            : super(context, attrs, defStyleAttr) {init()}
+            : super(context, attrs, defStyleAttr) {
+        init()
+    }
 
     private fun init() {
-        pointsList = arrayListOf()
+        pointsCoordinates = arrayListOf()
+        crossesCoordinates = arrayListOf()
         setOnTouchListener(OnTouchListener(getCustomOnTouchListener()))
     }
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-        if (pointsList.isNotEmpty()) {
-            for (point in pointsList) {
+        if (pointsCoordinates.isNotEmpty()) {
+            for (point in pointsCoordinates) {
                 canvas?.drawDot(point)
+            }
+        }
+        if (crossesCoordinates.isNotEmpty()) {
+            for (cross in crossesCoordinates) {
+                canvas?.drawCross(cross.x, cross.y)
             }
         }
     }
@@ -46,8 +60,8 @@ class ComputerSquareView : SquareView {
     private fun convertUICoordinates(x: Float, y: Float): Point {
         var i = y.toInt() / squareWidth.toInt()
         var j = x.toInt() / squareWidth.toInt()
-        if (i == 10) i--
-        if (j == 10) j--
+        if (i == MAX_SHIP_SIZE) i--
+        if (j == MAX_SHIP_SIZE) j--
         return Point(i, j)
     }
 }

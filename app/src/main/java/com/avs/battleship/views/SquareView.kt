@@ -117,7 +117,7 @@ abstract class SquareView : View {
         )
     }
 
-    protected fun getCrossCoordinates(
+    private fun getCrossCoordinates(
         i: Int,
         j: Int
     ): FloatArray {

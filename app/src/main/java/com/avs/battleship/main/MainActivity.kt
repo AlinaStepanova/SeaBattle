@@ -19,11 +19,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: MainViewModel
     private val customOnTouchListener = View.OnTouchListener(implementCustomTouchListener())
 
-
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this,
+        binding = DataBindingUtil.setContentView(
+            this,
             R.layout.activity_main
         )
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
@@ -54,13 +54,17 @@ class MainActivity : AppCompatActivity() {
                             R.color.black
                         )
                     )
-                    if (v is TextView) v.setTextColor(ContextCompat.getColor(this,
-                        R.color.white
-                    ))
+                    if (v is TextView) v.setTextColor(
+                        ContextCompat.getColor(
+                            this,
+                            R.color.white
+                        )
+                    )
                 }
                 MotionEvent.ACTION_UP -> {
                     v.background =
-                        ContextCompat.getDrawable(this,
+                        ContextCompat.getDrawable(
+                            this,
                             R.drawable.square_background
                         )
                     if (v is TextView)
