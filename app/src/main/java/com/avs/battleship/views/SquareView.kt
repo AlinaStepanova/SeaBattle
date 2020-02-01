@@ -88,14 +88,14 @@ abstract class SquareView : View {
         this.drawLines(pts, paint)
     }
 
-    fun Canvas.drawSqure(path: Path) {
-        this.drawPath(path, paintSquare)
+    fun Canvas.drawSquare(i: Int, j: Int) {
+        this.drawPath(getSingleSquarePath(i, j), paintSquare)
     }
 
-    protected fun getSingleSquarePath(
+    private fun getSingleSquarePath(
         i: Int,
         j: Int
-    ): Path? {
+    ): Path {
         val path = Path()
         val delta: Float = (j * squareWidth)
         path.moveTo(i * squareWidth, delta)

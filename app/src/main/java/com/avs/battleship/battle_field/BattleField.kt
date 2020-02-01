@@ -18,11 +18,9 @@ class BattleField {
 
     init {
         initBattleShip()
-        randomizeShips()
-        printBattleField()
     }
 
-    private fun initBattleShip() {
+    public fun initBattleShip() {
         for (i in battleField.indices) {
             for (j in battleField[i].indices) {
                 battleField[i][j] = Cell(i, j)
@@ -30,7 +28,7 @@ class BattleField {
         }
     }
 
-    private fun randomizeShips() {
+    fun randomizeShips() {
         var isAdded: Boolean
         for (ship in ships) {
             isAdded = false
@@ -57,6 +55,19 @@ class BattleField {
                 }
             }
         }
+        printBattleField()
+    }
+
+    fun getShipsCoordinates(): ArrayList<Point> {
+        val shipCoordinates = arrayListOf<Point>()
+        for (i in battleField.indices) {
+            for (j in battleField[i].indices) {
+                if (battleField[i][j]?.getCellState() == CellState.SHIP) {
+                    shipCoordinates.add(Point(i, j))
+                }
+            }
+        }
+        return shipCoordinates
     }
 
     private fun isEndCellEmpty(

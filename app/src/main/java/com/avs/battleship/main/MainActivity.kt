@@ -35,6 +35,10 @@ class MainActivity : AppCompatActivity() {
             binding.tvStatus.text = resources.getText(newStatusId)
         })
 
+        viewModel.computerShips.observe(this, Observer { coordinates ->
+            binding.viewPerson.getShipsCoordinates(coordinates)
+        })
+
         binding.viewGenerate.setOnTouchListener(customOnTouchListener)
         binding.viewFire.setOnTouchListener(customOnTouchListener)
         binding.viewStart.setOnTouchListener(customOnTouchListener)
