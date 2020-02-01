@@ -64,38 +64,33 @@ class BattleField {
         point: Point,
         length: Int
     ): Boolean {
-        val copyPoint = Point(point.x, point.y)
-        return ((copyPoint.y + length == SQUARES_COUNT - 1) || (copyPoint.y < SQUARES_COUNT - 1 &&
-                battleField[copyPoint.x][copyPoint.y + length]?.getCellState() == CellState.EMPTY))
+        return ((point.y + length == SQUARES_COUNT - 1) || (point.y < SQUARES_COUNT - 1 &&
+                battleField[point.x][point.y + length]?.getCellState() == CellState.EMPTY))
     }
 
     private fun isStartCellEmpty(point: Point): Boolean {
-        val copyPoint = Point(point.x, point.y)
-        return ((copyPoint.y == 0) || (copyPoint.y > 0 &&
-                battleField[copyPoint.x][copyPoint.y - 1]?.getCellState() == CellState.EMPTY))
+        return ((point.y == 0) || (point.y > 0 &&
+                battleField[point.x][point.y - 1]?.getCellState() == CellState.EMPTY))
     }
 
     private fun isBottomCellEmpty(
         point: Point,
         length: Int
     ): Boolean {
-        val copyPoint = Point(point.x, point.y)
-        return ((copyPoint.x + length == SQUARES_COUNT - 1) || (copyPoint.x < SQUARES_COUNT - 1 &&
-                battleField[copyPoint.x + length][copyPoint.y]?.getCellState() == CellState.EMPTY))
+        return ((point.x + length == SQUARES_COUNT - 1) || (point.x < SQUARES_COUNT - 1 &&
+                battleField[point.x + length][point.y]?.getCellState() == CellState.EMPTY))
     }
 
     private fun isUpCellEmpty(point: Point): Boolean {
-        val copyPoint = Point(point.x, point.y)
-        return ((copyPoint.x == 0) || (copyPoint.x > 0 &&
-                battleField[copyPoint.x - 1][copyPoint.y]?.getCellState() == CellState.EMPTY))
+        return ((point.x == 0) || (point.x > 0 &&
+                battleField[point.x - 1][point.y]?.getCellState() == CellState.EMPTY))
     }
 
     private fun isLeftSideEmpty(point: Point, length: Int): Boolean {
-        val copyPoint = Point(point.x, point.y)
         var isEmpty = true
-        if (copyPoint.y > 0) {
+        if (point.y > 0) {
             for (i in 0 until length) {
-                if (battleField[copyPoint.x + i][copyPoint.y - 1]?.getCellState() != CellState.EMPTY) {
+                if (battleField[point.x + i][point.y - 1]?.getCellState() != CellState.EMPTY) {
                     isEmpty = false
                     break
                 }
@@ -105,10 +100,9 @@ class BattleField {
     }
 
     private fun isVerticalCellsEmpty(point: Point, length: Int): Boolean {
-        val copyPoint = Point(point.x, point.y)
         var isEmpty = true
         for (i in 0 until length) {
-            if (battleField[copyPoint.x + i][copyPoint.y]?.getCellState() != CellState.EMPTY) {
+            if (battleField[point.x + i][point.y]?.getCellState() != CellState.EMPTY) {
                 isEmpty = false
                 break
             }
@@ -117,11 +111,10 @@ class BattleField {
     }
 
     private fun isRightSideEmpty(point: Point, length: Int): Boolean {
-        val copyPoint = Point(point.x, point.y)
         var isEmpty = true
-        if (copyPoint.y < SQUARES_COUNT - 1) {
+        if (point.y < SQUARES_COUNT - 1) {
             for (i in 0 until length) {
-                if (battleField[copyPoint.x + i][copyPoint.y + 1]?.getCellState() != CellState.EMPTY) {
+                if (battleField[point.x + i][point.y + 1]?.getCellState() != CellState.EMPTY) {
                     isEmpty = false
                     break
                 }
@@ -131,10 +124,9 @@ class BattleField {
     }
 
     private fun isHorizontalCellsEmpty(point: Point, length: Int): Boolean {
-        val copyPoint = Point(point.x, point.y)
         var isEmpty = true
         for (i in 0 until length) {
-            if (battleField[copyPoint.x][copyPoint.y + i]?.getCellState() != CellState.EMPTY) {
+            if (battleField[point.x][point.y + i]?.getCellState() != CellState.EMPTY) {
                 isEmpty = false
                 break
             }
@@ -143,11 +135,10 @@ class BattleField {
     }
 
     private fun isTopSideEmpty(point: Point, length: Int): Boolean {
-        val copyPoint = Point(point.x, point.y)
         var isEmpty = true
-        if (copyPoint.x > 0) {
+        if (point.x > 0) {
             for (i in 0 until length) {
-                if (battleField[copyPoint.x - 1][copyPoint.y + i]?.getCellState() != CellState.EMPTY) {
+                if (battleField[point.x - 1][point.y + i]?.getCellState() != CellState.EMPTY) {
                     isEmpty = false
                     break
                 }
@@ -157,11 +148,10 @@ class BattleField {
     }
 
     private fun isBottomSideEmpty(point: Point, length: Int): Boolean {
-        val copyPoint = Point(point.x, point.y)
         var isEmpty = true
-        if (copyPoint.x < SQUARES_COUNT - 1) {
+        if (point.x < SQUARES_COUNT - 1) {
             for (i in 0 until length) {
-                if (battleField[copyPoint.x + 1][copyPoint.y + i]?.getCellState() != CellState.EMPTY) {
+                if (battleField[point.x + 1][point.y + i]?.getCellState() != CellState.EMPTY) {
                     isEmpty = false
                     break
                 }
