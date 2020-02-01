@@ -23,6 +23,14 @@ abstract class Ship {
         cells.trimToSize()
     }
 
+    public fun getShipCells(): ArrayList<Cell> {
+        return cells
+    }
+
+    public fun getShipOrientation(): Orientation {
+        return orientation
+    }
+
     public fun getRowCoordinates(): IntRange {
         return row
     }

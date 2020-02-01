@@ -16,6 +16,10 @@ class Cell() {
         this.point.set(i, j)
     }
 
+    fun setCellState(cellState: CellState) {
+        this.cellState = cellState
+    }
+
     fun getCellState(): CellState {
         return cellState
     }
@@ -37,6 +41,6 @@ class Cell() {
     }
 
     override fun toString(): String {
-        return this.getCellState().toString()
+        return this.getCellState().toString() + " i = " + getI() + " j = " + getJ()
     }
 }
