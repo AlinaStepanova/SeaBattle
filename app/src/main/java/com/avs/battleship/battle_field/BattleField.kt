@@ -16,8 +16,6 @@ class BattleField {
         OneDeckShip(), OneDeckShip(), OneDeckShip(), OneDeckShip()
     )
 
-    private var isAdded = false
-
     init {
         initBattleShip()
         randomizeShips()
@@ -33,6 +31,7 @@ class BattleField {
     }
 
     private fun randomizeShips() {
+        var isAdded: Boolean
         for (ship in ships) {
             isAdded = false
             while (!isAdded) {
