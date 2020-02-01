@@ -80,12 +80,13 @@ abstract class SquareView : View {
         }
     }
 
-    fun Canvas.drawDot(pointF: PointF) {
+    fun Canvas.drawDot(point: Point) {
+        val pointF: PointF = getCirclePoint(point.x, point.y)
         this.drawCircle(pointF.x, pointF.y, circleRadius, paint)
     }
 
-    fun Canvas.drawCross(pts: FloatArray) {
-        this.drawLines(pts, paint)
+    fun Canvas.drawCross(i: Int, j: Int) {
+        this.drawLines(getCrossCoordinates(i, j), paint)
     }
 
     fun Canvas.drawSquare(i: Int, j: Int) {
@@ -106,7 +107,7 @@ abstract class SquareView : View {
         return path
     }
 
-    protected fun getCirclePoint(
+    private fun getCirclePoint(
         i: Int,
         j: Int
     ): PointF {

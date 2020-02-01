@@ -20,7 +20,7 @@ class BattleField {
         initBattleShip()
     }
 
-    public fun initBattleShip() {
+    fun initBattleShip() {
         for (i in battleField.indices) {
             for (j in battleField[i].indices) {
                 battleField[i][j] = Cell(i, j)
@@ -70,6 +70,11 @@ class BattleField {
         return shipCoordinates
     }
 
+    private fun isStartCellEmpty(point: Point): Boolean {
+        return ((point.y == 0) || (point.y > 0 &&
+                battleField[point.x][point.y - 1]?.getCellState() == CellState.EMPTY))
+    }
+
     private fun isEndCellEmpty(
         point: Point,
         length: Int
@@ -78,9 +83,9 @@ class BattleField {
                 battleField[point.x][point.y + length]?.getCellState() == CellState.EMPTY))
     }
 
-    private fun isStartCellEmpty(point: Point): Boolean {
-        return ((point.y == 0) || (point.y > 0 &&
-                battleField[point.x][point.y - 1]?.getCellState() == CellState.EMPTY))
+    private fun isUpCellEmpty(point: Point): Boolean {
+        return ((point.x == 0) || (point.x > 0 &&
+                battleField[point.x - 1][point.y]?.getCellState() == CellState.EMPTY))
     }
 
     private fun isBottomCellEmpty(
@@ -89,11 +94,6 @@ class BattleField {
     ): Boolean {
         return ((point.x + length == SQUARES_COUNT - 1) || (point.x < SQUARES_COUNT - 1 &&
                 battleField[point.x + length][point.y]?.getCellState() == CellState.EMPTY))
-    }
-
-    private fun isUpCellEmpty(point: Point): Boolean {
-        return ((point.x == 0) || (point.x > 0 &&
-                battleField[point.x - 1][point.y]?.getCellState() == CellState.EMPTY))
     }
 
     private fun isLeftSideEmpty(point: Point, length: Int): Boolean {
@@ -109,17 +109,6 @@ class BattleField {
         return isEmpty
     }
 
-    private fun isVerticalCellsEmpty(point: Point, length: Int): Boolean {
-        var isEmpty = true
-        for (i in 0 until length) {
-            if (battleField[point.x + i][point.y]?.getCellState() != CellState.EMPTY) {
-                isEmpty = false
-                break
-            }
-        }
-        return isEmpty
-    }
-
     private fun isRightSideEmpty(point: Point, length: Int): Boolean {
         var isEmpty = true
         if (point.y < SQUARES_COUNT - 1) {
@@ -128,6 +117,17 @@ class BattleField {
                     isEmpty = false
                     break
                 }
+            }
+        }
+        return isEmpty
+    }
+
+    private fun isVerticalCellsEmpty(point: Point, length: Int): Boolean {
+        var isEmpty = true
+        for (i in 0 until length) {
+            if (battleField[point.x + i][point.y]?.getCellState() != CellState.EMPTY) {
+                isEmpty = false
+                break
             }
         }
         return isEmpty

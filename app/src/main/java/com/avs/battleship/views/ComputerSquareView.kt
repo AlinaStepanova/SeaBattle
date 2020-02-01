@@ -3,14 +3,13 @@ package com.avs.battleship.views
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Point
-import android.graphics.PointF
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 
 class ComputerSquareView : SquareView {
 
-    private lateinit var pointsList : ArrayList<PointF>
+    private lateinit var pointsList : ArrayList<Point>
 
     constructor(context: Context) : super(context) { init() }
 
