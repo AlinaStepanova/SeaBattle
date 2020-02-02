@@ -1,6 +1,7 @@
 package com.avs.battleship.main
 
 import android.graphics.Point
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.avs.battleship.R
@@ -8,14 +9,17 @@ import com.avs.battleship.battle_field.BattleField
 
 class MainViewModel : ViewModel() {
 
-    var status = MutableLiveData<Int>()
-    var personShips = MutableLiveData<ArrayList<Point>>()
+    private var _status = MutableLiveData<Int>()
+    val status: LiveData<Int>
+        get() = _status
+    private var _personShips = MutableLiveData<ArrayList<Point>>()
+    val personShips: LiveData<ArrayList<Point>>
+        get() = _personShips
     private var personBattleField = BattleField()
-    private var computerBattleField: BattleField
+    private var computerBattleField = BattleField()
 
     init {
-        status.value = R.string.welcome_text
-        computerBattleField = BattleField()
+        _status.value = R.string.welcome_text
         computerBattleField.randomizeShips()
     }
 
@@ -40,7 +44,7 @@ class MainViewModel : ViewModel() {
     private fun generateShips() {
         personBattleField.initBattleShip()
         personBattleField.randomizeShips()
-        personShips.value = personBattleField.getShipsCoordinates()
+        _personShips.value = personBattleField.getShipsCoordinates()
     }
 
     fun handlePCAreaClick(point: Point) {
