@@ -9,13 +9,15 @@ import com.avs.battleship.battle_field.BattleField
 class MainViewModel : ViewModel() {
 
     var status = MutableLiveData<Int>()
-    var computerShips = MutableLiveData<ArrayList<Point>>()
+    var personShips = MutableLiveData<ArrayList<Point>>()
+    private var personBattleField = BattleField()
+    private var computerBattleField: BattleField
 
     init {
         status.value = R.string.welcome_text
+        computerBattleField = BattleField()
+        computerBattleField.randomizeShips()
     }
-
-    var battleField = BattleField()
 
     override fun onCleared() {
         super.onCleared()
@@ -36,9 +38,9 @@ class MainViewModel : ViewModel() {
     }
 
     private fun generateShips() {
-        battleField.initBattleShip()
-        battleField.randomizeShips()
-        computerShips.value = battleField.getShipsCoordinates()
+        personBattleField.initBattleShip()
+        personBattleField.randomizeShips()
+        personShips.value = personBattleField.getShipsCoordinates()
     }
 
     fun handlePCAreaClick(point: Point) {

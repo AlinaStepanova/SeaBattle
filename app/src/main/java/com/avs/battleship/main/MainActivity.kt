@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
             binding.tvStatus.text = resources.getText(newStatusId)
         })
 
-        viewModel.computerShips.observe(this, Observer { coordinates ->
+        viewModel.personShips.observe(this, Observer { coordinates ->
             binding.viewPerson.getShipsCoordinates(coordinates)
         })
 
