@@ -25,5 +25,5 @@
     <string name="start_text">Start</string>
     <string name="status_welcome_text">Welcome!</string>
     <string name="status_generate_or_start_text">Generate ships again or start the game</string>
-    <string name="status_select_to_fire_text">Select square to make a fire</string>
+    <string name="status_select_to_fire_text">Select a cell to make a fire</string>
 </resources>

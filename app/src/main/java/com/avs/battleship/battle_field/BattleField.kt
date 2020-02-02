@@ -2,7 +2,6 @@ package com.avs.battleship.battle_field
 
 import android.graphics.Point
 import android.util.Log
-import com.avs.battleship.MAX_SHIP_SIZE
 import com.avs.battleship.SQUARES_COUNT
 import com.avs.battleship.ships.*
 
@@ -59,7 +58,7 @@ class BattleField {
         printBattleField()
     }
 
-    fun isCellAvailableToBeSelected(point: Point): Boolean {
+    fun isCellFreeToBeSelected(point: Point): Boolean {
         return (point.x in 0..SQUARES_COUNT
                 && point.y in 0..SQUARES_COUNT
                 && (battleField[point.x][point.y]?.getCellState() == CellState.EMPTY

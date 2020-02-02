@@ -44,7 +44,7 @@ class MainViewModel : ViewModel() {
 
     fun handlePCAreaClick(point: Point) {
         if (activePlayer == Player.PERSON) {
-            if (computerBattleField.isCellAvailableToBeSelected(point)) {
+            if (computerBattleField.isCellFreeToBeSelected(point)) {
                 _selectedPoint.value = point
             }
         }

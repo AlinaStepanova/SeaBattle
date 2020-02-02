@@ -38,6 +38,7 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.selectedPoint.observe(this, Observer { point ->
             binding.viewPC.getSelectedPoint(point)
+            binding.viewFire.visibility = View.VISIBLE
         })
 
         viewModel.personShips.observe(this, Observer { coordinates ->
