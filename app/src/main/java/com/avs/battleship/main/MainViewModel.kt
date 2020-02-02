@@ -9,17 +9,25 @@ import com.avs.battleship.battle_field.BattleField
 
 class MainViewModel : ViewModel() {
 
+    private var activePlayer = Player.NONE
+    private var _selectedPoint = MutableLiveData<Point>()
+    val selectedPoint: LiveData<Point>
+        get() = _selectedPoint
     private var _status = MutableLiveData<Int>()
     val status: LiveData<Int>
         get() = _status
     private var _personShips = MutableLiveData<ArrayList<Point>>()
     val personShips: LiveData<ArrayList<Point>>
         get() = _personShips
+    private var _startGameEvent = MutableLiveData<Boolean>()
+    val startGameEvent: LiveData<Boolean>
+        get() = _startGameEvent
     private var personBattleField = BattleField()
     private var computerBattleField = BattleField()
 
     init {
-        _status.value = R.string.welcome_text
+        _status.value = R.string.status_welcome_text
+        _startGameEvent.value = false
         computerBattleField.randomizeShips()
     }
 
@@ -31,17 +39,26 @@ class MainViewModel : ViewModel() {
         personBattleField.initBattleShip()
         personBattleField.randomizeShips()
         _personShips.value = personBattleField.getShipsCoordinates()
+        _status.value = R.string.status_generate_or_start_text
     }
 
     fun handlePCAreaClick(point: Point) {
-
+        if (activePlayer == Player.PERSON) {
+            if (computerBattleField.isCellAvailableToBeSelected(point)) {
+                _selectedPoint.value = point
+            }
+        }
     }
 
     fun makeFire() {
+        if (activePlayer == Player.PERSON) {
 
+        }
     }
 
     fun startGame() {
-
+        activePlayer = Player.PERSON
+        _startGameEvent.value = true
+        _status.value = R.string.status_select_to_fire_text
     }
 }

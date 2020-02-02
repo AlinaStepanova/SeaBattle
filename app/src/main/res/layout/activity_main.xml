@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="mainViewModel"
             type="com.avs.battleship.main.MainViewModel" />
@@ -41,7 +40,7 @@
             android:paddingStart="@dimen/dimen_10dp"
             android:paddingEnd="@dimen/dimen_10dp"
             android:singleLine="true"
-            android:text="@string/welcome_text"
+            android:text="@string/status_welcome_text"
             android:textColor="@color/black"
             android:textSize="@dimen/text_size_14sp"
             app:layout_constraintEnd_toEndOf="@+id/viewPC"

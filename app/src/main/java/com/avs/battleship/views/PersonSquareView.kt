@@ -26,17 +26,17 @@ class PersonSquareView : SquareView {
         shipsCoordinates = arrayListOf()
     }
 
-    fun getShipsCoordinates(coordinates: ArrayList<Point>) {
-        this.shipsCoordinates = coordinates
-        invalidate()
-    }
-
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
         if (shipsCoordinates.isNotEmpty()) {
             for (ship in shipsCoordinates) {
-                canvas?.drawSquare(ship.y, ship.x)
+                canvas?.drawSquare(ship.y, ship.x, paintShipSquare)
             }
         }
+    }
+
+    fun getShipsCoordinates(coordinates: ArrayList<Point>) {
+        this.shipsCoordinates = coordinates
+        invalidate()
     }
 }

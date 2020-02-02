@@ -16,7 +16,7 @@ abstract class SquareView : View {
     private var screenHeight = 0f
     private var screenWidth = 0f
     private lateinit var paint: Paint
-    private lateinit var paintSquare: Paint
+    protected lateinit var paintShipSquare: Paint
     protected var squareWidth = 0f
     protected lateinit var viewModel: MainViewModel
 
@@ -37,8 +37,8 @@ abstract class SquareView : View {
         paint = Paint()
         paint.color = Color.BLACK
         paint.strokeWidth = lineWidth
-        paintSquare = Paint()
-        paintSquare.color = ContextCompat.getColor(context, R.color.greyTransparent)
+        paintShipSquare = Paint()
+        paintShipSquare.color = ContextCompat.getColor(context, R.color.greyTransparent)
     }
 
     fun provideViewModel(mainViewModel: MainViewModel) {
@@ -89,8 +89,8 @@ abstract class SquareView : View {
         this.drawLines(getCrossCoordinates(i, j), paint)
     }
 
-    fun Canvas.drawSquare(i: Int, j: Int) {
-        this.drawPath(getSingleSquarePath(i, j), paintSquare)
+    fun Canvas.drawSquare(i: Int, j: Int, paint: Paint) {
+        this.drawPath(getSingleSquarePath(i, j), paint)
     }
 
     private fun getSingleSquarePath(

@@ -2,16 +2,21 @@ package com.avs.battleship.views
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Paint
 import android.graphics.Point
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
-import com.avs.battleship.MAX_SHIP_SIZE
+import androidx.core.content.ContextCompat
+import com.avs.battleship.R
+import com.avs.battleship.SQUARES_COUNT
 
 class ComputerSquareView : SquareView {
 
     private lateinit var pointsCoordinates: ArrayList<Point>
     private lateinit var crossesCoordinates: ArrayList<Point>
+    private lateinit var paintSelected: Paint
+    private var selectedSquare: Point? = null
 
     constructor(context: Context) : super(context) {
         init()
@@ -29,6 +34,8 @@ class ComputerSquareView : SquareView {
     private fun init() {
         pointsCoordinates = arrayListOf()
         crossesCoordinates = arrayListOf()
+        paintSelected = Paint()
+        paintSelected.color = ContextCompat.getColor(context, R.color.blue_selected)
         setOnTouchListener(OnTouchListener(getCustomOnTouchListener()))
     }
 
@@ -43,6 +50,9 @@ class ComputerSquareView : SquareView {
             for (cross in crossesCoordinates) {
                 canvas?.drawCross(cross.x, cross.y)
             }
+        }
+        if (selectedSquare != null) {
+            canvas?.drawSquare(selectedSquare!!.x, selectedSquare!!.y, paintSelected)
         }
     }
 
@@ -60,8 +70,13 @@ class ComputerSquareView : SquareView {
     private fun convertUICoordinates(x: Float, y: Float): Point {
         var i = y.toInt() / squareWidth.toInt()
         var j = x.toInt() / squareWidth.toInt()
-        if (i == MAX_SHIP_SIZE) i--
-        if (j == MAX_SHIP_SIZE) j--
+        if (i == SQUARES_COUNT) i--
+        if (j == SQUARES_COUNT) j--
         return Point(i, j)
+    }
+
+    fun getSelectedPoint(selectedSquare: Point) {
+        this.selectedSquare = Point(selectedSquare.y, selectedSquare.x)
+        invalidate()
     }
 }

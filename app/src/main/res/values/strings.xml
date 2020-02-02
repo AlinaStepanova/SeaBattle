@@ -23,5 +23,7 @@
     <string name="generate_ships_text">Generate Ships</string>
     <string name="fire_text">Fire!</string>
     <string name="start_text">Start</string>
-    <string name="welcome_text">Welcome!</string>
+    <string name="status_welcome_text">Welcome!</string>
+    <string name="status_generate_or_start_text">Generate ships again or start the game</string>
+    <string name="status_select_to_fire_text">Select square to make a fire</string>
 </resources>

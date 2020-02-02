@@ -36,8 +36,20 @@ class MainActivity : AppCompatActivity() {
             binding.tvStatus.text = resources.getText(newStatusId)
         })
 
+        viewModel.selectedPoint.observe(this, Observer { point ->
+            binding.viewPC.getSelectedPoint(point)
+        })
+
         viewModel.personShips.observe(this, Observer { coordinates ->
             binding.viewPerson.getShipsCoordinates(coordinates)
+            binding.viewStart.visibility = View.VISIBLE
+        })
+
+        viewModel.startGameEvent.observe(this, Observer { isStarted ->
+            if (isStarted) {
+                binding.viewStart.visibility = View.INVISIBLE
+                binding.viewGenerate.visibility = View.INVISIBLE
+            }
         })
 
         binding.viewGenerate.setOnTouchListener(customOnTouchListener)
