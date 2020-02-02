@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
             R.layout.activity_main
         )
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+        binding.mainViewModel = viewModel
 
         binding.viewPerson.provideViewModel(viewModel)
         binding.viewPC.provideViewModel(viewModel)
@@ -75,7 +76,6 @@ class MainActivity : AppCompatActivity() {
                             )
                         )
                     v.performClick()
-                    viewModel.handleUIEventById(v.id)
                 }
             }
             true

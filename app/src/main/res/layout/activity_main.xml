@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <variable
+            name="mainViewModel"
+            type="com.avs.battleship.main.MainViewModel" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -12,12 +19,12 @@
 
         <ImageView
             android:id="@+id/ivMore"
-            android:visibility="invisible"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/dimen_8dp"
             android:paddingEnd="@dimen/dimen_8dp"
             android:src="@drawable/ic_more"
+            android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -64,6 +71,7 @@
         <TextView
             android:id="@+id/viewGenerate"
             style="@style/MainButtonStyle"
+            android:onClick="@{() -> mainViewModel.generateShips()}"
             android:text="@string/generate_ships_text"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/viewPerson"
@@ -93,6 +101,7 @@
         <TextView
             android:id="@+id/viewFire"
             style="@style/MainButtonStyle"
+            android:onClick="@{() -> mainViewModel.makeFire()}"
             android:text="@string/fire_text"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -110,6 +119,7 @@
         <TextView
             android:id="@+id/viewStart"
             style="@style/MainButtonStyle"
+            android:onClick="@{() -> mainViewModel.startGame()}"
             android:text="@string/start_text"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -119,11 +129,11 @@
 
         <ProgressBar
             android:id="@+id/progressBar"
-            android:visibility="invisible"
             style="?android:attr/progressBarStyleSmall"
             android:layout_width="0dp"
-            android:indeterminateTint="@color/black"
             android:layout_height="wrap_content"
+            android:indeterminateTint="@color/black"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@+id/viewFire"
             app:layout_constraintEnd_toEndOf="@+id/viewFire"
             app:layout_constraintStart_toStartOf="@+id/viewFire"

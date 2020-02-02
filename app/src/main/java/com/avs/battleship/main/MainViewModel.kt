@@ -27,21 +27,7 @@ class MainViewModel : ViewModel() {
         super.onCleared()
     }
 
-    fun handleUIEventById(id: Int) {
-        when (id) {
-            R.id.viewGenerate -> {
-                generateShips()
-            }
-            R.id.viewStart -> {
-                startGame()
-            }
-            R.id.viewFire -> {
-                makeFire()
-            }
-        }
-    }
-
-    private fun generateShips() {
+    fun generateShips() {
         personBattleField.initBattleShip()
         personBattleField.randomizeShips()
         _personShips.value = personBattleField.getShipsCoordinates()
@@ -51,11 +37,11 @@ class MainViewModel : ViewModel() {
 
     }
 
-    private fun makeFire() {
+    fun makeFire() {
 
     }
 
-    private fun startGame() {
+    fun startGame() {
 
     }
 }
