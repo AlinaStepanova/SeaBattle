@@ -82,7 +82,7 @@ abstract class SquareView : View {
 
     fun Canvas.drawDot(point: Point) {
         val pointF: PointF = getCirclePoint(point.x, point.y)
-        this.drawCircle(pointF.x, pointF.y, circleRadius, paint)
+        this.drawCircle(pointF.y, pointF.x, circleRadius, paint)
     }
 
     fun Canvas.drawCross(i: Int, j: Int) {

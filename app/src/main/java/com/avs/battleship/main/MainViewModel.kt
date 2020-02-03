@@ -1,6 +1,7 @@
 package com.avs.battleship.main
 
 import android.graphics.Point
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -19,6 +20,12 @@ class MainViewModel : ViewModel() {
     private var _personShips = MutableLiveData<ArrayList<Point>>()
     val personShips: LiveData<ArrayList<Point>>
         get() = _personShips
+    private var _computerFailShots = MutableLiveData<ArrayList<Point>>()
+    val computerFailedShots: LiveData<ArrayList<Point>>
+        get() = _computerFailShots
+    private var _computerSuccessfulShots = MutableLiveData<ArrayList<Point>>()
+    val computerSuccessfulShots: LiveData<ArrayList<Point>>
+        get() = _computerSuccessfulShots
     private var _startGameEvent = MutableLiveData<Boolean>()
     val startGameEvent: LiveData<Boolean>
         get() = _startGameEvent
@@ -52,6 +59,16 @@ class MainViewModel : ViewModel() {
 
     fun makeFire() {
         if (activePlayer == Player.PERSON) {
+            val isShipHit = computerBattleField.handleShot(_selectedPoint.value)
+            _selectedPoint.value = null
+            if (isShipHit) {
+                _computerSuccessfulShots.value = computerBattleField.getCrossesCoordinates()
+                startGame()
+            } else {
+                _computerFailShots.value = computerBattleField.getDotsCoordinates()
+                activePlayer = Player.COMPUTER
+            }
+        } else {
 
         }
     }

@@ -13,7 +13,7 @@ import com.avs.battleship.SQUARES_COUNT
 
 class ComputerSquareView : SquareView {
 
-    private lateinit var pointsCoordinates: ArrayList<Point>
+    private lateinit var dotsCoordinates: ArrayList<Point>
     private lateinit var crossesCoordinates: ArrayList<Point>
     private lateinit var paintSelected: Paint
     private var selectedSquare: Point? = null
@@ -32,23 +32,23 @@ class ComputerSquareView : SquareView {
     }
 
     private fun init() {
-        pointsCoordinates = arrayListOf()
+        dotsCoordinates = arrayListOf()
         crossesCoordinates = arrayListOf()
         paintSelected = Paint()
-        paintSelected.color = ContextCompat.getColor(context, R.color.blue_selected)
+        paintSelected.color = ContextCompat.getColor(context, R.color.greySelected)
         setOnTouchListener(OnTouchListener(getCustomOnTouchListener()))
     }
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-        if (pointsCoordinates.isNotEmpty()) {
-            for (point in pointsCoordinates) {
+        if (dotsCoordinates.isNotEmpty()) {
+            for (point in dotsCoordinates) {
                 canvas?.drawDot(point)
             }
         }
         if (crossesCoordinates.isNotEmpty()) {
             for (cross in crossesCoordinates) {
-                canvas?.drawCross(cross.x, cross.y)
+                canvas?.drawCross(cross.y, cross.x)
             }
         }
         if (selectedSquare != null) {
@@ -75,8 +75,22 @@ class ComputerSquareView : SquareView {
         return Point(i, j)
     }
 
-    fun getSelectedPoint(selectedSquare: Point) {
-        this.selectedSquare = Point(selectedSquare.y, selectedSquare.x)
+    fun getSelectedPoint(selectedSquare: Point?) {
+        if (selectedSquare == null) {
+            this.selectedSquare = null
+        } else {
+            this.selectedSquare = Point(selectedSquare.y, selectedSquare.x)
+        }
+        invalidate()
+    }
+
+    fun getDotsCoordinates(coordinates: ArrayList<Point>) {
+        this.dotsCoordinates.addAll(coordinates)
+        invalidate()
+    }
+
+    fun getCrossesCoordinates(coordinates: ArrayList<Point>) {
+        this.crossesCoordinates.addAll(coordinates)
         invalidate()
     }
 }

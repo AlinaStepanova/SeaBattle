@@ -46,6 +46,15 @@ class MainActivity : AppCompatActivity() {
             binding.viewStart.visibility = View.VISIBLE
         })
 
+        viewModel.computerSuccessfulShots.observe(this, Observer { coordinates ->
+            binding.viewPC.getCrossesCoordinates(coordinates)
+        })
+
+        viewModel.computerFailedShots.observe(this, Observer { coordinates ->
+            binding.viewPC.getDotsCoordinates(coordinates)
+            binding.viewFire.visibility = View.INVISIBLE
+        })
+
         viewModel.startGameEvent.observe(this, Observer { isStarted ->
             if (isStarted) {
                 binding.viewStart.visibility = View.INVISIBLE

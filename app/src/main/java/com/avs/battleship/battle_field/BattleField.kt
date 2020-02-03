@@ -58,6 +58,19 @@ class BattleField {
         printBattleField()
     }
 
+    fun handleShot(point: Point?) : Boolean {
+        var isShipHit = false
+        if (point != null) {
+            if (battleField[point.x][point.y]?.getCellState() == CellState.EMPTY) {
+                battleField[point.x][point.y]?.setCellState(CellState.SHOT_FAILURE)
+            } else {
+                battleField[point.x][point.y]?.setCellState(CellState.SHOT_SUCCESS)
+                isShipHit = true
+            }
+        }
+        return isShipHit
+    }
+
     fun isCellFreeToBeSelected(point: Point): Boolean {
         return (point.x in 0..SQUARES_COUNT
                 && point.y in 0..SQUARES_COUNT
