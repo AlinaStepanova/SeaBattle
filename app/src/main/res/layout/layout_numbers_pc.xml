@@ -10,8 +10,8 @@
         style="@style/SingleDigitStyle"
         app:layout_constraintBottom_toTopOf="@+id/tvNumber2PC"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toStartOf="@+id/viewPC"
-        app:layout_constraintTop_toTopOf="@+id/viewPC" />
+        app:layout_constraintEnd_toStartOf="@+id/view_computer"
+        app:layout_constraintTop_toTopOf="@+id/view_computer" />
 
     <TextView
         android:id="@+id/tvNumber2PC"
@@ -19,7 +19,7 @@
         android:text="@string/number_2"
         app:layout_constraintBottom_toTopOf="@+id/tvNumber3PC"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toStartOf="@+id/viewPC"
+        app:layout_constraintEnd_toStartOf="@+id/view_computer"
         app:layout_constraintTop_toBottomOf="@+id/tvNumber1" />
 
     <TextView
@@ -28,7 +28,7 @@
         android:text="@string/number_3"
         app:layout_constraintBottom_toTopOf="@+id/tvNumber4PC"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toStartOf="@+id/viewPC"
+        app:layout_constraintEnd_toStartOf="@+id/view_computer"
         app:layout_constraintTop_toBottomOf="@+id/tvNumber2PC" />
 
     <TextView
@@ -37,7 +37,7 @@
         android:text="@string/number_4"
         app:layout_constraintBottom_toTopOf="@+id/tvNumber5PC"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toStartOf="@+id/viewPC"
+        app:layout_constraintEnd_toStartOf="@+id/view_computer"
         app:layout_constraintTop_toBottomOf="@+id/tvNumber3PC" />
 
     <TextView
@@ -46,7 +46,7 @@
         android:text="@string/number_5"
         app:layout_constraintBottom_toTopOf="@+id/tvNumber6PC"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toStartOf="@+id/viewPC"
+        app:layout_constraintEnd_toStartOf="@+id/view_computer"
         app:layout_constraintTop_toBottomOf="@+id/tvNumber4PC" />
 
     <TextView
@@ -55,7 +55,7 @@
         android:text="@string/number_6"
         app:layout_constraintBottom_toTopOf="@+id/tvNumber7PC"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toStartOf="@+id/viewPC"
+        app:layout_constraintEnd_toStartOf="@+id/view_computer"
         app:layout_constraintTop_toBottomOf="@+id/tvNumber5PC" />
 
     <TextView
@@ -64,7 +64,7 @@
         android:text="@string/number_7"
         app:layout_constraintBottom_toTopOf="@+id/tvNumber8PC"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toStartOf="@+id/viewPC"
+        app:layout_constraintEnd_toStartOf="@+id/view_computer"
         app:layout_constraintTop_toBottomOf="@+id/tvNumber6PC" />
 
     <TextView
@@ -73,7 +73,7 @@
         android:text="@string/number_8"
         app:layout_constraintBottom_toTopOf="@+id/tvNumber9PC"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toStartOf="@+id/viewPC"
+        app:layout_constraintEnd_toStartOf="@+id/view_computer"
         app:layout_constraintTop_toBottomOf="@+id/tvNumber7PC" />
 
     <TextView
@@ -82,15 +82,15 @@
         android:text="@string/number_9"
         app:layout_constraintBottom_toTopOf="@+id/tvNumber10PC"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toStartOf="@+id/viewPC"
+        app:layout_constraintEnd_toStartOf="@+id/view_computer"
         app:layout_constraintTop_toBottomOf="@+id/tvNumber8PC" />
 
     <TextView
         android:id="@+id/tvNumber10PC"
         style="@style/SingleDigitStyle"
         android:text="@string/number_10"
-        app:layout_constraintBottom_toBottomOf="@+id/viewPC"
+        app:layout_constraintBottom_toBottomOf="@+id/view_computer"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toStartOf="@+id/viewPC"
+        app:layout_constraintEnd_toStartOf="@+id/view_computer"
         app:layout_constraintTop_toBottomOf="@+id/tvNumber9PC" />
 </merge>

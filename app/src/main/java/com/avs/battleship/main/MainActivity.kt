@@ -30,14 +30,14 @@ class MainActivity : AppCompatActivity() {
         binding.mainViewModel = viewModel
 
         binding.viewPerson.provideViewModel(viewModel)
-        binding.viewPC.provideViewModel(viewModel)
+        binding.viewComputer.provideViewModel(viewModel)
 
         viewModel.status.observe(this, Observer { newStatusId ->
             binding.tvStatus.text = resources.getText(newStatusId)
         })
 
         viewModel.selectedPoint.observe(this, Observer { point ->
-            binding.viewPC.getSelectedPoint(point)
+            binding.viewComputer.getSelectedPoint(point)
             binding.viewFire.visibility = View.VISIBLE
         })
 
@@ -47,11 +47,11 @@ class MainActivity : AppCompatActivity() {
         })
 
         viewModel.computerSuccessfulShots.observe(this, Observer { coordinates ->
-            binding.viewPC.getCrossesCoordinates(coordinates)
+            binding.viewComputer.getCrossesCoordinates(coordinates)
         })
 
         viewModel.computerFailedShots.observe(this, Observer { coordinates ->
-            binding.viewPC.getDotsCoordinates(coordinates)
+            binding.viewComputer.getDotsCoordinates(coordinates)
             binding.viewFire.visibility = View.INVISIBLE
         })
 
