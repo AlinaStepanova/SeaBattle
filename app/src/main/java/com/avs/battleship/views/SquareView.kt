@@ -12,7 +12,7 @@ import com.avs.battleship.SQUARES_COUNT
 abstract class SquareView : View {
 
     private val lineWidth = 1f
-    private val circleRadius = 4f
+    private val circleRadius = 5f
     private var screenHeight = 0f
     private var screenWidth = 0f
     private lateinit var paint: Paint
@@ -60,6 +60,7 @@ abstract class SquareView : View {
     }
 
     private fun drawHorizontalLines(canvas: Canvas) {
+        paint.strokeWidth = lineWidth
         for (i in 1..SQUARES_COUNT) {
             canvas.drawLine(
                 0f, (screenHeight - squareWidth * i), screenWidth,
@@ -69,6 +70,7 @@ abstract class SquareView : View {
     }
 
     private fun drawVerticalLines(canvas: Canvas) {
+        paint.strokeWidth = lineWidth
         for (i in 1..SQUARES_COUNT) {
             canvas.drawLine(
                 i * squareWidth,
@@ -86,6 +88,7 @@ abstract class SquareView : View {
     }
 
     fun Canvas.drawCross(i: Int, j: Int) {
+        paint.strokeWidth = lineWidth * 2
         this.drawLines(getCrossCoordinates(i, j), paint)
     }
 

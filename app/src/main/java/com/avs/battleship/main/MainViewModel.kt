@@ -8,6 +8,7 @@ import com.avs.battleship.R
 import com.avs.battleship.SQUARES_COUNT
 import com.avs.battleship.battle_field.BattleField
 import kotlinx.coroutines.*
+import java.util.logging.Handler
 
 class MainViewModel : ViewModel() {
 
@@ -30,7 +31,6 @@ class MainViewModel : ViewModel() {
     private var _personSuccessfulShots = MutableLiveData<ArrayList<Point>>()
     val personSuccessfulShots: LiveData<ArrayList<Point>>
         get() = _personSuccessfulShots
-
     private var _computerFailShots = MutableLiveData<ArrayList<Point>>()
     val computerFailedShots: LiveData<ArrayList<Point>>
         get() = _computerFailShots
