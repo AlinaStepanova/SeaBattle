@@ -36,9 +36,13 @@ class MainActivity : AppCompatActivity() {
             binding.tvStatus.text = resources.getText(newStatusId)
         })
 
-        viewModel.selectedPoint.observe(this, Observer { point ->
+        viewModel.selectedByPersonPoint.observe(this, Observer { point ->
             binding.viewComputer.getSelectedPoint(point)
             binding.viewFire.visibility = View.VISIBLE
+        })
+
+        viewModel.selectedByComputerPoint.observe(this, Observer { point ->
+            binding.progressBar.visibility = View.INVISIBLE
         })
 
         viewModel.personShips.observe(this, Observer { coordinates ->
@@ -46,13 +50,23 @@ class MainActivity : AppCompatActivity() {
             binding.viewStart.visibility = View.VISIBLE
         })
 
-        viewModel.computerSuccessfulShots.observe(this, Observer { coordinates ->
+        viewModel.personSuccessfulShots.observe(this, Observer { coordinates ->
             binding.viewComputer.getCrossesCoordinates(coordinates)
+            binding.viewFire.visibility = View.INVISIBLE
+        })
+
+        viewModel.personFailedShots.observe(this, Observer { coordinates ->
+            binding.viewComputer.getDotsCoordinates(coordinates)
+            binding.viewFire.visibility = View.INVISIBLE
+            binding.progressBar.visibility = View.VISIBLE
+        })
+
+        viewModel.computerSuccessfulShots.observe(this, Observer { coordinates ->
+            binding.viewPerson.getCrossesCoordinates(coordinates)
         })
 
         viewModel.computerFailedShots.observe(this, Observer { coordinates ->
-            binding.viewComputer.getDotsCoordinates(coordinates)
-            binding.viewFire.visibility = View.INVISIBLE
+            binding.viewPerson.getDotsCoordinates(coordinates)
         })
 
         viewModel.startGameEvent.observe(this, Observer { isStarted ->
