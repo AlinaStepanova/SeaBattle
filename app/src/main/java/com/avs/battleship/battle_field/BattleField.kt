@@ -71,6 +71,17 @@ class BattleField {
         return isShipHit
     }
 
+    fun isGameOver(): Boolean {
+        var result = true
+        for (ship in ships) {
+            if (!ship.isDead()) {
+                result = false
+                break
+            }
+        }
+        return result
+    }
+
     fun isCellFreeToBeSelected(point: Point): Boolean {
         return (point.x in 0..SQUARES_COUNT
                 && point.y in 0..SQUARES_COUNT

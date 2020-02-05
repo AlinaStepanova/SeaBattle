@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         })
 
         viewModel.selectedByComputerPoint.observe(this, Observer { point ->
-            binding.progressBar.visibility = View.INVISIBLE
+
         })
 
         viewModel.personShips.observe(this, Observer { coordinates ->
@@ -63,10 +63,12 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.computerSuccessfulShots.observe(this, Observer { coordinates ->
             binding.viewPerson.getCrossesCoordinates(coordinates)
+            binding.progressBar.visibility = View.INVISIBLE
         })
 
         viewModel.computerFailedShots.observe(this, Observer { coordinates ->
             binding.viewPerson.getDotsCoordinates(coordinates)
+            binding.progressBar.visibility = View.INVISIBLE
         })
 
         viewModel.startGameEvent.observe(this, Observer { isStarted ->

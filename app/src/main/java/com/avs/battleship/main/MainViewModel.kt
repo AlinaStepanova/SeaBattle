@@ -1,6 +1,8 @@
 package com.avs.battleship.main
 
 import android.graphics.Point
+import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,7 +10,6 @@ import com.avs.battleship.R
 import com.avs.battleship.SQUARES_COUNT
 import com.avs.battleship.battle_field.BattleField
 import kotlinx.coroutines.*
-import java.util.logging.Handler
 
 class MainViewModel : ViewModel() {
 
@@ -41,7 +42,7 @@ class MainViewModel : ViewModel() {
     val startGameEvent: LiveData<Boolean>
         get() = _startGameEvent
     private var viewModelJob = Job()
-    private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
+    private var uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
     private var personBattleField = BattleField()
     private var computerBattleField = BattleField()
 
@@ -90,15 +91,21 @@ class MainViewModel : ViewModel() {
         while (activePlayer == Player.COMPUTER) {
             val point: Point = generatePointAsComputer()
             uiScope.launch {
-                delay(2000)
+                delay(1000)
                 _selectedByComputerPoint.value = point
             }
             val isShipHit = personBattleField.handleShot(point)
             if (isShipHit) {
-                _computerSuccessfulShots.value = personBattleField.getCrossesCoordinates()
+                uiScope.launch {
+                    delay(1000)
+                    _computerSuccessfulShots.value = personBattleField.getCrossesCoordinates()
+                }
             } else {
-                _computerFailShots.value = personBattleField.getDotsCoordinates()
-                activePlayer = Player.PERSON
+                uiScope.launch {
+                    delay(1000)
+                    _computerFailShots.value = personBattleField.getDotsCoordinates()
+                    activePlayer = Player.PERSON
+                }
                 startGame()
             }
         }
