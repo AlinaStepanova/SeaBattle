@@ -58,17 +58,28 @@ class BattleField {
         printBattleField()
     }
 
-    fun handleShot(point: Point?) : Boolean {
+    fun handleShot(point: Point?): Boolean {
         var isShipHit = false
         if (point != null) {
             if (battleField[point.x][point.y]?.getCellState() == CellState.EMPTY) {
                 battleField[point.x][point.y]?.setCellState(CellState.SHOT_FAILURE)
+                defineShipByPoint(point, CellState.SHOT_FAILURE)
             } else {
                 battleField[point.x][point.y]?.setCellState(CellState.SHOT_SUCCESS)
+                defineShipByPoint(point, CellState.SHOT_SUCCESS)
                 isShipHit = true
             }
         }
         return isShipHit
+    }
+
+    private fun defineShipByPoint(point: Point, cellState: CellState) {
+        for (ship in ships) {
+            if (point.x in ship.getRowCoordinates() && point.y in ship.getColumnCoordinates()) {
+                ship.setCellState(point, cellState)
+                break
+            }
+        }
     }
 
     fun isGameOver(): Boolean {

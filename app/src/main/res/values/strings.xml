@@ -26,4 +26,6 @@
     <string name="status_welcome_text">Welcome!</string>
     <string name="status_generate_or_start_text">Generate ships again or start the game</string>
     <string name="status_select_to_fire_text">Select a cell to make a fire</string>
+    <string name="status_game_over_you_win_text">Game over you win!</string>
+    <string name="status_game_over_you_lose_text">Game over you lose</string>
 </resources>

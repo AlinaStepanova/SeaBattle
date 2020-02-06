@@ -1,8 +1,6 @@
 package com.avs.battleship.main
 
 import android.graphics.Point
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -78,7 +76,11 @@ class MainViewModel : ViewModel() {
             _selectedByPersonPoint.value = null
             if (isShipHit) {
                 _personSuccessfulShots.value = computerBattleField.getCrossesCoordinates()
-                startGame()
+                if (computerBattleField.isGameOver()) {
+                    endGame(true)
+                } else {
+                    startGame()
+                }
             } else {
                 _personFailShots.value = computerBattleField.getDotsCoordinates()
                 activePlayer = Player.COMPUTER
@@ -91,14 +93,17 @@ class MainViewModel : ViewModel() {
         while (activePlayer == Player.COMPUTER) {
             val point: Point = generatePointAsComputer()
             uiScope.launch {
-                delay(1000)
                 _selectedByComputerPoint.value = point
+                delay(1000)
             }
             val isShipHit = personBattleField.handleShot(point)
             if (isShipHit) {
                 uiScope.launch {
                     delay(1000)
                     _computerSuccessfulShots.value = personBattleField.getCrossesCoordinates()
+                }
+                if (personBattleField.isGameOver()) {
+                    endGame(false)
                 }
             } else {
                 uiScope.launch {
@@ -123,5 +128,14 @@ class MainViewModel : ViewModel() {
         activePlayer = Player.PERSON
         _startGameEvent.value = true
         _status.value = R.string.status_select_to_fire_text
+    }
+
+    private fun endGame(isPersonWon: Boolean) {
+        activePlayer = Player.NONE
+        if (isPersonWon) {
+            _status.value = R.string.status_game_over_you_win_text
+        } else {
+            _status.value = R.string.status_game_over_you_lose_text
+        }
     }
 }

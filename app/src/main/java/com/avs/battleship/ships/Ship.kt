@@ -1,5 +1,6 @@
 package com.avs.battleship.ships
 
+import android.graphics.Point
 import com.avs.battleship.MAX_SHIP_SIZE
 import com.avs.battleship.battle_field.Cell
 import com.avs.battleship.battle_field.CellState
@@ -59,7 +60,16 @@ abstract class Ship {
         }
     }
 
-    public fun isDead(): Boolean {
+    fun setCellState(point: Point, cellState: CellState) {
+        for (cell in cells) {
+            if (cell.getI() == point.x && cell.getJ() == point.y) {
+                cell.setCellState(cellState)
+                break
+            }
+        }
+    }
+
+    fun isDead(): Boolean {
         var isDead = true
         for (cell in cells) {
             if (cell.getCellState() == CellState.SHIP) {
