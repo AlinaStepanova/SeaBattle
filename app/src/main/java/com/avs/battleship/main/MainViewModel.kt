@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.avs.battleship.R
+import com.avs.battleship.SECOND_IN_MILLIS
 import com.avs.battleship.SQUARES_COUNT
 import com.avs.battleship.battle_field.BattleField
 import kotlinx.coroutines.*
@@ -94,12 +95,12 @@ class MainViewModel : ViewModel() {
             val point: Point = generatePointAsComputer()
             uiScope.launch {
                 _selectedByComputerPoint.value = point
-                delay(1000)
+                delay(SECOND_IN_MILLIS)
             }
             val isShipHit = personBattleField.handleShot(point)
             if (isShipHit) {
                 uiScope.launch {
-                    delay(1000)
+                    delay(SECOND_IN_MILLIS)
                     _computerSuccessfulShots.value = personBattleField.getCrossesCoordinates()
                 }
                 if (personBattleField.isGameOver()) {
@@ -107,7 +108,7 @@ class MainViewModel : ViewModel() {
                 }
             } else {
                 uiScope.launch {
-                    delay(1000)
+                    delay(SECOND_IN_MILLIS)
                     _computerFailShots.value = personBattleField.getDotsCoordinates()
                     activePlayer = Player.PERSON
                 }
