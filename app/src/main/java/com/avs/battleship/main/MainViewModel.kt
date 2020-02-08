@@ -80,40 +80,45 @@ class MainViewModel : ViewModel() {
                 if (computerBattleField.isGameOver()) {
                     endGame(true)
                 } else {
-                    startGame()
+                    playAsPerson()
                 }
             } else {
                 _personFailShots.value = computerBattleField.getDotsCoordinates()
                 activePlayer = Player.COMPUTER
-                makeFireAsComputer()
+                playAsComputer()
             }
         }
     }
 
-    private fun makeFireAsComputer() {
-        while (activePlayer == Player.COMPUTER) {
-            val point: Point = generatePointAsComputer()
+    private fun playAsComputer() {
+        val point: Point = generatePointAsComputer()
+        _selectedByComputerPoint.value = point
+        val isShipHit = personBattleField.handleShot(point)
+        if (isShipHit) {
             uiScope.launch {
-                _selectedByComputerPoint.value = point
-                delay(SECOND_IN_MILLIS)
-            }
-            val isShipHit = personBattleField.handleShot(point)
-            if (isShipHit) {
-                uiScope.launch {
-                    delay(SECOND_IN_MILLIS)
-                    _computerSuccessfulShots.value = personBattleField.getCrossesCoordinates()
-                }
+                delay(SECOND_IN_MILLIS * 2)
+                _computerSuccessfulShots.value = personBattleField.getCrossesCoordinates()
                 if (personBattleField.isGameOver()) {
                     endGame(false)
+                } else {
+                    checkCurrentPlayer()
                 }
-            } else {
-                uiScope.launch {
-                    delay(SECOND_IN_MILLIS)
-                    _computerFailShots.value = personBattleField.getDotsCoordinates()
-                    activePlayer = Player.PERSON
-                }
-                startGame()
             }
+        } else {
+            uiScope.launch {
+                delay(SECOND_IN_MILLIS * 2)
+                _computerFailShots.value = personBattleField.getDotsCoordinates()
+                activePlayer = Player.PERSON
+                checkCurrentPlayer()
+            }
+        }
+    }
+
+    private fun checkCurrentPlayer() {
+        if (activePlayer == Player.PERSON) {
+            playAsPerson()
+        } else {
+            playAsComputer()
         }
     }
 
@@ -125,7 +130,7 @@ class MainViewModel : ViewModel() {
         return point
     }
 
-    fun startGame() {
+    fun playAsPerson() {
         activePlayer = Player.PERSON
         _startGameEvent.value = true
         _status.value = R.string.status_select_to_fire_text
