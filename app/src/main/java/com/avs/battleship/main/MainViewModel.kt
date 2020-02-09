@@ -12,7 +12,7 @@ import kotlinx.coroutines.*
 
 class MainViewModel : ViewModel() {
 
-    private var activePlayer = Player.NONE
+    private lateinit var activePlayer: Player
     private var _selectedByPersonPoint = MutableLiveData<Point>()
     val selectedByPersonPoint: LiveData<Point>
         get() = _selectedByPersonPoint
@@ -40,20 +40,30 @@ class MainViewModel : ViewModel() {
     private var _startGameEvent = MutableLiveData<Boolean>()
     val startGameEvent: LiveData<Boolean>
         get() = _startGameEvent
+    private var _endGameEvent = MutableLiveData<Boolean>()
+    val endGameEvent: LiveData<Boolean>
+        get() = _endGameEvent
     private var viewModelJob = Job()
     private var uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
-    private var personBattleField = BattleField()
-    private var computerBattleField = BattleField()
+    private lateinit var personBattleField: BattleField
+    private lateinit var computerBattleField: BattleField
 
     init {
-        _status.value = R.string.status_welcome_text
-        _startGameEvent.value = false
-        computerBattleField.randomizeShips()
+        initValues()
     }
 
     override fun onCleared() {
         super.onCleared()
         viewModelJob.cancel()
+    }
+
+    private fun initValues() {
+        activePlayer = Player.NONE
+        personBattleField = BattleField()
+        computerBattleField = BattleField()
+        _status.value = R.string.status_welcome_text
+        _startGameEvent.value = false
+        computerBattleField.randomizeShips()
     }
 
     fun generateShips() {
@@ -130,6 +140,15 @@ class MainViewModel : ViewModel() {
         return point
     }
 
+    fun startNewGame() {
+        initValues()
+        _personShips.value = ArrayList()
+        _personFailShots.value = ArrayList()
+        _personSuccessfulShots.value = ArrayList()
+        _computerFailShots.value = ArrayList()
+        _computerSuccessfulShots.value = ArrayList()
+    }
+
     fun playAsPerson() {
         activePlayer = Player.PERSON
         _startGameEvent.value = true
@@ -138,6 +157,7 @@ class MainViewModel : ViewModel() {
 
     private fun endGame(isPersonWon: Boolean) {
         activePlayer = Player.NONE
+        _endGameEvent.value = true
         if (isPersonWon) {
             _status.value = R.string.status_game_over_you_win_text
         } else {

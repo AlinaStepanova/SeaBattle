@@ -126,6 +126,17 @@
             app:layout_constraintStart_toEndOf="@+id/viewPerson"
             app:layout_constraintTop_toTopOf="@+id/guideline" />
 
+        <TextView
+            android:id="@+id/viewNewGame"
+            style="@style/MainButtonStyle"
+            android:onClick="@{() -> mainViewModel.startNewGame()}"
+            android:text="@string/new_game_text"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/view_computer"
+            app:layout_constraintStart_toEndOf="@+id/viewPerson"
+            app:layout_constraintTop_toTopOf="@+id/guideline" />
+
         <ProgressBar
             android:id="@+id/progressBar"
             style="?android:attr/progressBarStyleSmall"

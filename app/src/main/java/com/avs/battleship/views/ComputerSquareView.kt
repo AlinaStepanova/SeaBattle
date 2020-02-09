@@ -85,12 +85,12 @@ class ComputerSquareView : SquareView {
     }
 
     fun getDotsCoordinates(coordinates: ArrayList<Point>) {
-        this.dotsCoordinates.addAll(coordinates)
+        this.dotsCoordinates = coordinates
         invalidate()
     }
 
     fun getCrossesCoordinates(coordinates: ArrayList<Point>) {
-        this.crossesCoordinates.addAll(coordinates)
+        this.crossesCoordinates = coordinates
         invalidate()
     }
 }

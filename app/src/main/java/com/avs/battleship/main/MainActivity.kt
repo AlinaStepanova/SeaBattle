@@ -47,7 +47,9 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.personShips.observe(this, Observer { coordinates ->
             binding.viewPerson.getShipsCoordinates(coordinates)
-            binding.viewStart.visibility = View.VISIBLE
+            if (coordinates.isNotEmpty()) {
+                binding.viewStart.visibility = View.VISIBLE
+            }
         })
 
         viewModel.personSuccessfulShots.observe(this, Observer { coordinates ->
@@ -71,15 +73,19 @@ class MainActivity : AppCompatActivity() {
         })
 
         viewModel.startGameEvent.observe(this, Observer { isStarted ->
-            if (isStarted) {
-                binding.viewStart.visibility = View.INVISIBLE
-                binding.viewGenerate.visibility = View.INVISIBLE
-            }
+            if (isStarted) binding.viewStart.visibility = View.INVISIBLE
+            if (!isStarted) binding.viewNewGame.visibility = View.INVISIBLE
+            binding.viewGenerate.visibility = if (isStarted) View.INVISIBLE else View.VISIBLE
+        })
+
+        viewModel.endGameEvent.observe(this, Observer { isEnded ->
+            binding.viewNewGame.visibility = if (isEnded) View.VISIBLE else View.INVISIBLE
         })
 
         binding.viewGenerate.setOnTouchListener(customOnTouchListener)
         binding.viewFire.setOnTouchListener(customOnTouchListener)
         binding.viewStart.setOnTouchListener(customOnTouchListener)
+        binding.viewNewGame.setOnTouchListener(customOnTouchListener)
     }
 
     private fun implementCustomTouchListener(): (View, MotionEvent) -> Boolean {
