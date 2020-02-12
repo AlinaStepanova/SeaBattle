@@ -12,7 +12,7 @@ import com.avs.battleship.SQUARES_COUNT
 abstract class SquareView : View {
 
     private val lineWidth = 1f
-    private val circleRadius = 5f
+    private var circleRadius = 1f
     private var screenHeight = 0f
     private var screenWidth = 0f
     private lateinit var paint: Paint
@@ -21,19 +21,20 @@ abstract class SquareView : View {
     protected lateinit var viewModel: MainViewModel
 
     constructor(context: Context) : super(context) {
-        init()
+        init(context)
     }
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        init()
+        init(context)
     }
 
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int)
             : super(context, attrs, defStyleAttr) {
-        init()
+        init(context)
     }
 
-    private fun init() {
+    private fun init(context: Context) {
+        circleRadius = context.resources.getFloat(R.dimen.circle_radius)
         paint = Paint()
         paint.color = Color.BLACK
         paint.strokeWidth = lineWidth
