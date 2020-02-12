@@ -24,19 +24,19 @@ class Cell() {
         return cellState
     }
 
-    public fun getPoint(): Point {
+    fun getPoint(): Point {
         return point
     }
 
-    public fun setCoordinates(i: Int, j: Int) {
+    fun setCoordinates(i: Int, j: Int) {
         point.set(i, j)
     }
 
-    public fun getI(): Int {
+    fun getI(): Int {
         return point.x
     }
 
-    public fun getJ(): Int {
+    fun getJ(): Int {
         return point.y
     }
 

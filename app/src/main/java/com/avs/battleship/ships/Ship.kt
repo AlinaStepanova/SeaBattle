@@ -9,10 +9,10 @@ import kotlin.collections.ArrayList
 
 abstract class Ship {
 
-    protected var cells: ArrayList<Cell> = ArrayList(MAX_SHIP_SIZE)
-    protected lateinit var row: IntRange
-    protected lateinit var column: IntRange
-    protected var orientation: Orientation = when (Random().nextBoolean()) {
+    private var cells: ArrayList<Cell> = ArrayList(MAX_SHIP_SIZE)
+    private lateinit var row: IntRange
+    private lateinit var column: IntRange
+    private var orientation: Orientation = when (Random().nextBoolean()) {
         true -> Orientation.VERTICAL
         false -> Orientation.HORIZONTAL
     }
@@ -24,23 +24,23 @@ abstract class Ship {
         cells.trimToSize()
     }
 
-    public fun getShipCells(): ArrayList<Cell> {
+    fun getShipCells(): ArrayList<Cell> {
         return cells
     }
 
-    public fun getShipOrientation(): Orientation {
+    fun getShipOrientation(): Orientation {
         return orientation
     }
 
-    public fun getRowCoordinates(): IntRange {
+    fun getRowCoordinates(): IntRange {
         return row
     }
 
-    public fun getColumnCoordinates(): IntRange {
+    fun getColumnCoordinates(): IntRange {
         return column
     }
 
-    public fun setCellsCoordinates(i: Int, j: Int) {
+    fun setCellsCoordinates(i: Int, j: Int) {
         var iPos = i
         var jPos = j
         if (orientation == Orientation.VERTICAL) {
