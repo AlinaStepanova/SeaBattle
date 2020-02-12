@@ -92,36 +92,22 @@ class MainActivity : AppCompatActivity() {
         return { v: View, event: MotionEvent ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    v.setBackgroundColor(
-                        ContextCompat.getColor(
-                            this,
-                            R.color.black
-                        )
-                    )
-                    if (v is TextView) v.setTextColor(
-                        ContextCompat.getColor(
-                            this,
-                            R.color.white
-                        )
-                    )
+                    v.setBackgroundColor(ContextCompat.getColor(this, R.color.black))
+                    setTextColor(v, R.color.white)
                 }
                 MotionEvent.ACTION_UP -> {
-                    v.background =
-                        ContextCompat.getDrawable(
-                            this,
-                            R.drawable.square_background
-                        )
-                    if (v is TextView)
-                        v.setTextColor(
-                            ContextCompat.getColor(
-                                this,
-                                R.color.greyDefault
-                            )
-                        )
+                    v.background = ContextCompat.getDrawable(this, R.drawable.square_background)
+                    setTextColor(v, R.color.greyDefault)
                     v.performClick()
                 }
             }
             true
         }
+    }
+
+    private fun setTextColor(v: View, color: Int) {
+        if (v is TextView) v.setTextColor(
+            ContextCompat.getColor(this, color)
+        )
     }
 }
