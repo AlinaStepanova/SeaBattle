@@ -1,32 +1,16 @@
 package com.avs.battleship.battle_field
 
 import android.graphics.Point
-import android.util.Log
 import com.avs.battleship.SQUARES_COUNT
 import com.avs.battleship.ships.*
 
-class BattleField {
-
-    private val battleField =
-        Array(SQUARES_COUNT) { arrayOfNulls<Cell>(SQUARES_COUNT) }
+class BattleField : BaseBattleField() {
 
     private val ships: List<Ship> = listOf(
         FourDeckShip(), ThreeDeckShip(), ThreeDeckShip(),
         TwoDeckShip(), TwoDeckShip(), TwoDeckShip(),
         OneDeckShip(), OneDeckShip(), OneDeckShip(), OneDeckShip()
     )
-
-    init {
-        initBattleShip()
-    }
-
-    fun initBattleShip() {
-        for (i in battleField.indices) {
-            for (j in battleField[i].indices) {
-                battleField[i][j] = Cell(i, j)
-            }
-        }
-    }
 
     fun randomizeShips() {
         var isAdded: Boolean
@@ -91,13 +75,6 @@ class BattleField {
             }
         }
         return result
-    }
-
-    fun isCellFreeToBeSelected(point: Point): Boolean {
-        return (point.x in 0..SQUARES_COUNT
-                && point.y in 0..SQUARES_COUNT
-                && (battleField[point.x][point.y]?.getCellState() == CellState.EMPTY
-                || battleField[point.x][point.y]?.getCellState() == CellState.SHIP))
     }
 
     fun getShipsCoordinates(): ArrayList<Point> {
@@ -246,16 +223,5 @@ class BattleField {
             point.y = (0 until SQUARES_COUNT).random()
         }
         return point
-    }
-
-    private fun printBattleField() {
-        var result = "\n"
-        for (i in battleField.indices) {
-            for (j in battleField[i].indices) {
-                result += battleField[i][j]?.getCellState()?.state + " "
-            }
-            result += "\n"
-        }
-        Log.d(this.javaClass.simpleName, result)
     }
 }

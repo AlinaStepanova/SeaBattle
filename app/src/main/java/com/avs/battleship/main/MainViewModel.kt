@@ -103,7 +103,7 @@ class MainViewModel : ViewModel() {
     }
 
     private fun playAsComputer() {
-        val point: Point = shotManager.getPointToShoot()
+        val point: Point = shotManager.getRandomPoint()
         _selectedByComputerPoint.value = point
         val isShipHit = personBattleField.handleShot(point)
         shotManager.handleShot(isShipHit)
@@ -133,14 +133,6 @@ class MainViewModel : ViewModel() {
         } else {
             playAsComputer()
         }
-    }
-
-    private fun generatePointAsComputer(): Point {
-        var point: Point
-        do {
-            point = Point((0 until SQUARES_COUNT).random(), (0 until SQUARES_COUNT).random())
-        } while (!personBattleField.isCellFreeToBeSelected(point))
-        return point
     }
 
     fun startNewGame() {
