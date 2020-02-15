@@ -1,6 +1,6 @@
 package com.avs.battleship.ships
 
-import com.avs.battleship.MAX_SHIP_SIZE
+import com.avs.battleship.FOUR_DECK_SHIP_SIZE
 
 class FourDeckShip : Ship() {
 
@@ -9,6 +9,6 @@ class FourDeckShip : Ship() {
     }
 
     override fun getLength(): Int {
-        return MAX_SHIP_SIZE
+        return FOUR_DECK_SHIP_SIZE
     }
 }

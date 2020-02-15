@@ -1,7 +1,7 @@
 package com.avs.battleship.ships
 
 import android.graphics.Point
-import com.avs.battleship.MAX_SHIP_SIZE
+import com.avs.battleship.FOUR_DECK_SHIP_SIZE
 import com.avs.battleship.battle_field.Cell
 import com.avs.battleship.battle_field.CellState
 import java.util.*
@@ -9,7 +9,7 @@ import kotlin.collections.ArrayList
 
 abstract class Ship {
 
-    private var cells: ArrayList<Cell> = ArrayList(MAX_SHIP_SIZE)
+    private var cells: ArrayList<Cell> = ArrayList(FOUR_DECK_SHIP_SIZE)
     private lateinit var row: IntRange
     private lateinit var column: IntRange
     private var orientation: Orientation = when (Random().nextBoolean()) {

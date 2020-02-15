@@ -118,7 +118,7 @@
         <TextView
             android:id="@+id/viewStart"
             style="@style/MainButtonStyle"
-            android:onClick="@{() -> mainViewModel.playAsPerson()}"
+            android:onClick="@{() -> mainViewModel.startGame()}"
             android:text="@string/start_text"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"

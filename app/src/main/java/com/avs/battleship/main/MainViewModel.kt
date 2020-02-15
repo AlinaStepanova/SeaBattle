@@ -47,6 +47,7 @@ class MainViewModel : ViewModel() {
     private var uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
     private lateinit var personBattleField: BattleField
     private lateinit var computerBattleField: BattleField
+    private lateinit var shotManager: ShotManager
 
     init {
         initValues()
@@ -59,6 +60,7 @@ class MainViewModel : ViewModel() {
 
     private fun initValues() {
         activePlayer = Player.NONE
+        shotManager = ShotManager()
         personBattleField = BattleField()
         computerBattleField = BattleField()
         _status.value = R.string.status_welcome_text
@@ -101,9 +103,10 @@ class MainViewModel : ViewModel() {
     }
 
     private fun playAsComputer() {
-        val point: Point = generatePointAsComputer()
+        val point: Point = shotManager.getPointToShoot()
         _selectedByComputerPoint.value = point
         val isShipHit = personBattleField.handleShot(point)
+        shotManager.handleShot(isShipHit)
         if (isShipHit) {
             uiScope.launch {
                 delay(SECOND_IN_MILLIS * 2)
@@ -149,10 +152,14 @@ class MainViewModel : ViewModel() {
         _computerSuccessfulShots.value = ArrayList()
     }
 
-    fun playAsPerson() {
+    private fun playAsPerson() {
         activePlayer = Player.PERSON
-        _startGameEvent.value = true
         _status.value = R.string.status_select_to_fire_text
+    }
+
+    fun startGame() {
+        _startGameEvent.value = true
+        playAsPerson()
     }
 
     private fun endGame(isPersonWon: Boolean) {
