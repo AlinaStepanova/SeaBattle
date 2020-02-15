@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.avs.battleship.R
 import com.avs.battleship.SECOND_IN_MILLIS
-import com.avs.battleship.SQUARES_COUNT
 import com.avs.battleship.battle_field.BattleField
 import kotlinx.coroutines.*
 
@@ -68,11 +67,25 @@ class MainViewModel : ViewModel() {
         computerBattleField.randomizeShips()
     }
 
+    fun startGame() {
+        _startGameEvent.value = true
+        playAsPerson()
+    }
+
     fun generateShips() {
         personBattleField.initBattleShip()
         personBattleField.randomizeShips()
         _personShips.value = personBattleField.getShipsCoordinates()
         _status.value = R.string.status_generate_or_start_text
+    }
+
+    fun startNewGame() {
+        initValues()
+        _personShips.value = ArrayList()
+        _personFailShots.value = ArrayList()
+        _personSuccessfulShots.value = ArrayList()
+        _computerFailShots.value = ArrayList()
+        _computerSuccessfulShots.value = ArrayList()
     }
 
     fun handlePCAreaClick(point: Point) {
@@ -81,6 +94,11 @@ class MainViewModel : ViewModel() {
                 _selectedByPersonPoint.value = point
             }
         }
+    }
+
+    private fun playAsPerson() {
+        activePlayer = Player.PERSON
+        _status.value = R.string.status_select_to_fire_text
     }
 
     fun makeFireAsPerson() {
@@ -133,25 +151,6 @@ class MainViewModel : ViewModel() {
         } else {
             playAsComputer()
         }
-    }
-
-    fun startNewGame() {
-        initValues()
-        _personShips.value = ArrayList()
-        _personFailShots.value = ArrayList()
-        _personSuccessfulShots.value = ArrayList()
-        _computerFailShots.value = ArrayList()
-        _computerSuccessfulShots.value = ArrayList()
-    }
-
-    private fun playAsPerson() {
-        activePlayer = Player.PERSON
-        _status.value = R.string.status_select_to_fire_text
-    }
-
-    fun startGame() {
-        _startGameEvent.value = true
-        playAsPerson()
     }
 
     private fun endGame(isPersonWon: Boolean) {
