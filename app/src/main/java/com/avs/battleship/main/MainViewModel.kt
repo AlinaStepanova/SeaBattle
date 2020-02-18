@@ -121,7 +121,7 @@ class MainViewModel : ViewModel() {
     }
 
     private fun playAsComputer() {
-        val point: Point = shotManager.getRandomPoint()
+        val point: Point = shotManager.getPointToShot()
         _selectedByComputerPoint.value = point
         val isShipHit = personBattleField.handleShot(point)
         shotManager.handleShot(isShipHit)

@@ -22,14 +22,14 @@ open class BaseBattleField {
     }
 
     fun setCellState(point: Point, cellState: CellState) {
-        if (point.x in 0..SQUARES_COUNT && point.y in 0..SQUARES_COUNT) {
+        if (point.x in 0 until SQUARES_COUNT && point.y in 0 until SQUARES_COUNT) {
             battleField[point.x][point.y]?.setCellState(cellState)
         }
     }
 
     fun isCellFreeToBeSelected(point: Point): Boolean {
-        return (point.x in 0..SQUARES_COUNT
-                && point.y in 0..SQUARES_COUNT
+        return (point.x in 0 until SQUARES_COUNT
+                && point.y in 0 until SQUARES_COUNT
                 && (battleField[point.x][point.y]?.getCellState() == CellState.EMPTY
                 || battleField[point.x][point.y]?.getCellState() == CellState.SHIP))
     }
