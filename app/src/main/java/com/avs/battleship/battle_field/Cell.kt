@@ -20,6 +20,10 @@ class Cell() {
         this.cellState = cellState
     }
 
+    fun isState(cellState: CellState) : Boolean {
+        return this.getCellState() == cellState
+    }
+
     fun getCellState(): CellState {
         return cellState
     }
