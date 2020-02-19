@@ -150,16 +150,44 @@ class ShotManager {
             && (secondCell.isState(EMPTY) || secondCell.isState(SHOT_FAILURE))
         ) {
             updateBattleField(shipHit, secondCell)
+            if (shipHit) {
+                markNeighbours(firstCell)
+                markNeighbours(secondCell)
+            }
         } else if (firstCell.isState(SHOT_SUCCESS) && secondCell.isState(SHOT_SUCCESS)
             && (thirdCell.isState(EMPTY) || thirdCell.isState(SHOT_FAILURE))
         ) {
             updateBattleField(shipHit, thirdCell)
+            if (shipHit) {
+                markNeighbours(thirdCell)
+            }
         } else if (firstCell.isState(SHOT_SUCCESS) && secondCell.isState(SHOT_SUCCESS)
             && thirdCell.isState(SHOT_SUCCESS) && (fourthCell.isState(EMPTY)
                     || fourthCell.isState(SHOT_FAILURE))
         ) {
             updateBattleField(shipHit, fourthCell)
+            if (shipHit) {
+                markNeighbours(fourthCell)
+            }
         }
+    }
+
+    private fun markNeighbours(cell: Cell) {
+        if (firstCell.getI() == secondCell.getI()) {
+            markVerticalNeighbours(cell)
+        } else if (firstCell.getJ() == secondCell.getJ()) {
+            markHorizontalNeighbours(cell)
+        }
+    }
+
+    private fun markHorizontalNeighbours(cell: Cell) {
+        battleField.setCellState(Point(cell.getI(), cell.getJ() - 1), SHOT_FAILURE)
+        battleField.setCellState(Point(cell.getI(), cell.getJ() + 1), SHOT_FAILURE)
+    }
+
+    private fun markVerticalNeighbours(cell: Cell) {
+        battleField.setCellState(Point(cell.getI() - 1, cell.getJ()), SHOT_FAILURE)
+        battleField.setCellState(Point(cell.getI() + 1, cell.getJ()), SHOT_FAILURE)
     }
 
     private fun updateBattleField(shipHit: Boolean, currentCell: Cell) {
