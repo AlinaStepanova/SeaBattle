@@ -22,39 +22,19 @@ class ShotManager {
     )
 
     fun getPointToShot(): Point {
-        var point = Point(-1, -1)
+        var point: Point
         if (firstCell.isState(EMPTY) || firstCell.isState(SHOT_FAILURE)) {
             point = getRandomPoint()
             firstCell = Cell(point.x, point.y)
         } else if (firstCell.isState(SHOT_SUCCESS)
-            && secondCell.isState(EMPTY) || secondCell.isState(SHOT_FAILURE)
+            && (secondCell.isState(EMPTY) || secondCell.isState(SHOT_FAILURE))
         ) {
             point = getNextPointToShot(firstCell)
             secondCell = Cell(point.x, point.y)
         } else if (firstCell.isState(SHOT_SUCCESS) && secondCell.isState(SHOT_SUCCESS)
             && (thirdCell.isState(EMPTY) || thirdCell.isState(SHOT_FAILURE))
         ) {
-            if (firstCell.getI() == secondCell.getI()) {
-                if (isLeftCellAvailable(secondCell.getPoint())) {
-                    point = Point(secondCell.getI(), secondCell.getJ() - 1)
-                } else if (isRightCellAvailable(secondCell.getPoint())) {
-                    point = Point(secondCell.getI(), secondCell.getJ() + 1)
-                } else if (isLeftCellAvailable(firstCell.getPoint())) {
-                    point = Point(firstCell.getI(), firstCell.getJ() - 1)
-                } else if (isRightCellAvailable(firstCell.getPoint())) {
-                    point = Point(firstCell.getI(), firstCell.getJ() + 1)
-                }
-            } else if (firstCell.getJ() == secondCell.getJ()) {
-                if (isTopCellAvailable(secondCell.getPoint())) {
-                    point = Point(secondCell.getI() - 1, this.secondCell.getJ())
-                } else if (isBottomCellAvailable(secondCell.getPoint())) {
-                    point = Point(secondCell.getI() + 1, secondCell.getJ())
-                } else if (isTopCellAvailable(firstCell.getPoint())) {
-                    point = Point(firstCell.getI() - 1, firstCell.getJ())
-                } else if (isBottomCellAvailable(firstCell.getPoint())) {
-                    point = Point(firstCell.getI() + 1, firstCell.getJ())
-                }
-            }
+            point = checkNeighbourCells(firstCell, secondCell)
             if (point.x == -1) {
                 resetValues()
                 point = getRandomPoint()
@@ -64,27 +44,7 @@ class ShotManager {
         } else if (firstCell.isState(SHOT_SUCCESS) && secondCell.isState(SHOT_SUCCESS)
             && thirdCell.isState(SHOT_SUCCESS)
         ) {
-            if (firstCell.getI() == secondCell.getI()) {
-                if (isLeftCellAvailable(thirdCell.getPoint())) {
-                    point = Point(thirdCell.getI(), thirdCell.getJ() - 1)
-                } else if (isRightCellAvailable(thirdCell.getPoint())) {
-                    point = Point(thirdCell.getI(), thirdCell.getJ() + 1)
-                } else if (isLeftCellAvailable(firstCell.getPoint())) {
-                    point = Point(firstCell.getI(), firstCell.getJ() - 1)
-                } else if (isRightCellAvailable(firstCell.getPoint())) {
-                    point = Point(firstCell.getI(), firstCell.getJ() + 1)
-                }
-            } else if (thirdCell.getJ() == thirdCell.getJ()) {
-                if (isTopCellAvailable(thirdCell.getPoint())) {
-                    point = Point(thirdCell.getI() - 1, thirdCell.getJ())
-                } else if (isBottomCellAvailable(thirdCell.getPoint())) {
-                    point = Point(thirdCell.getI() + 1, thirdCell.getJ())
-                } else if (isTopCellAvailable(firstCell.getPoint())) {
-                    point = Point(firstCell.getI() - 1, firstCell.getJ())
-                } else if (isBottomCellAvailable(firstCell.getPoint())) {
-                    point = Point(firstCell.getI() + 1, firstCell.getJ())
-                }
-            }
+            point = checkNeighbourCells(firstCell, thirdCell)
             if (point.x == -1) {
                 resetValues()
                 point = getRandomPoint()
@@ -94,6 +54,54 @@ class ShotManager {
         } else {
             resetValues()
             point = getRandomPoint()
+        }
+        return point
+    }
+
+    private fun checkNeighbourCells(cell1: Cell, cell2: Cell): Point {
+        var point = Point(-1, -1)
+        if (cell1.getI() == cell2.getI()) {
+            point = checkVerticalPoints(cell2.getPoint(), cell1.getPoint())
+        } else if (cell1.getJ() == cell2.getJ()) {
+            point = checkHorizontalPoints(cell2.getPoint(), cell1.getPoint())
+        }
+        return point
+    }
+
+    private fun checkHorizontalPoints(pointFirst: Point, pointSecond: Point): Point {
+        var point = Point(-1, -1)
+        when {
+            isTopCellAvailable(pointFirst) -> {
+                point = Point(pointFirst.x - 1, pointFirst.y)
+            }
+            isBottomCellAvailable(pointFirst) -> {
+                point = Point(pointFirst.x + 1, pointFirst.y)
+            }
+            isTopCellAvailable(pointSecond) -> {
+                point = Point(pointSecond.x - 1, pointSecond.y)
+            }
+            isBottomCellAvailable(pointSecond) -> {
+                point = Point(pointSecond.x + 1, pointSecond.y)
+            }
+        }
+        return point
+    }
+
+    private fun checkVerticalPoints(pointFirst: Point, pointSecond: Point): Point {
+        var point = Point(-1, -1)
+        when {
+            isLeftCellAvailable(pointFirst) -> {
+                point = Point(pointFirst.x, pointFirst.y - 1)
+            }
+            isRightCellAvailable(pointFirst) -> {
+                point = Point(pointFirst.x, pointFirst.y + 1)
+            }
+            isLeftCellAvailable(pointSecond) -> {
+                point = Point(pointSecond.x, pointSecond.y - 1)
+            }
+            isRightCellAvailable(pointSecond) -> {
+                point = Point(pointSecond.x, pointSecond.y + 1)
+            }
         }
         return point
     }
@@ -137,25 +145,26 @@ class ShotManager {
 
     fun handleShot(shipHit: Boolean) {
         if (firstCell.isState(EMPTY) || firstCell.isState(SHOT_FAILURE)) {
-            firstCell.setCellState(if (shipHit) SHOT_SUCCESS else SHOT_FAILURE)
-            battleField.setCellState(firstCell.getPoint(), firstCell.getCellState())
+            updateBattleField(shipHit, firstCell)
         } else if (firstCell.isState(SHOT_SUCCESS)
             && (secondCell.isState(EMPTY) || secondCell.isState(SHOT_FAILURE))
         ) {
-            secondCell.setCellState(if (shipHit) SHOT_SUCCESS else SHOT_FAILURE)
-            battleField.setCellState(secondCell.getPoint(), secondCell.getCellState())
+            updateBattleField(shipHit, secondCell)
         } else if (firstCell.isState(SHOT_SUCCESS) && secondCell.isState(SHOT_SUCCESS)
             && (thirdCell.isState(EMPTY) || thirdCell.isState(SHOT_FAILURE))
         ) {
-            thirdCell.setCellState(if (shipHit) SHOT_SUCCESS else SHOT_FAILURE)
-            battleField.setCellState(thirdCell.getPoint(), thirdCell.getCellState())
+            updateBattleField(shipHit, thirdCell)
         } else if (firstCell.isState(SHOT_SUCCESS) && secondCell.isState(SHOT_SUCCESS)
             && thirdCell.isState(SHOT_SUCCESS) && (fourthCell.isState(EMPTY)
                     || fourthCell.isState(SHOT_FAILURE))
         ) {
-            fourthCell.setCellState(if (shipHit) SHOT_SUCCESS else SHOT_FAILURE)
-            battleField.setCellState(fourthCell.getPoint(), fourthCell.getCellState())
+            updateBattleField(shipHit, fourthCell)
         }
+    }
+
+    private fun updateBattleField(shipHit: Boolean, currentCell: Cell) {
+        currentCell.setCellState(if (shipHit) SHOT_SUCCESS else SHOT_FAILURE)
+        battleField.setCellState(currentCell.getPoint(), currentCell.getCellState())
     }
 
     private fun isLeftCellAvailable(point: Point): Boolean {
