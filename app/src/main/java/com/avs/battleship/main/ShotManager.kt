@@ -35,25 +35,28 @@ class ShotManager {
             && (thirdCell.isState(EMPTY) || thirdCell.isState(SHOT_FAILURE))
         ) {
             if (firstCell.getI() == secondCell.getI()) {
-                //think here
                 if (isLeftCellAvailable(secondCell.getPoint())) {
                     point = Point(secondCell.getI(), secondCell.getJ() - 1)
                 } else if (isRightCellAvailable(secondCell.getPoint())) {
                     point = Point(secondCell.getI(), secondCell.getJ() + 1)
+                } else if (isLeftCellAvailable(firstCell.getPoint())) {
+                    point = Point(firstCell.getI(), firstCell.getJ() - 1)
+                } else if (isRightCellAvailable(firstCell.getPoint())) {
+                    point = Point(firstCell.getI(), firstCell.getJ() + 1)
                 }
             } else if (firstCell.getJ() == secondCell.getJ()) {
                 if (isTopCellAvailable(secondCell.getPoint())) {
                     point = Point(secondCell.getI() - 1, this.secondCell.getJ())
                 } else if (isBottomCellAvailable(secondCell.getPoint())) {
                     point = Point(secondCell.getI() + 1, secondCell.getJ())
+                } else if (isTopCellAvailable(firstCell.getPoint())) {
+                    point = Point(firstCell.getI() - 1, firstCell.getJ())
+                } else if (isBottomCellAvailable(firstCell.getPoint())) {
+                    point = Point(firstCell.getI() + 1, firstCell.getJ())
                 }
             }
             if (point.x == -1) {
-                // create method
-                firstCell.setCellState(EMPTY)
-                secondCell.setCellState(EMPTY)
-                thirdCell.setCellState(EMPTY)
-                fourthCell.setCellState(EMPTY)
+                resetValues()
                 point = getRandomPoint()
             } else {
                 thirdCell = Cell(point.x, point.y)
@@ -83,22 +86,23 @@ class ShotManager {
                 }
             }
             if (point.x == -1) {
-                firstCell.setCellState(EMPTY)
-                secondCell.setCellState(EMPTY)
-                thirdCell.setCellState(EMPTY)
-                fourthCell.setCellState(EMPTY)
+                resetValues()
                 point = getRandomPoint()
             } else {
                 fourthCell = Cell(point.x, point.y)
             }
         } else {
-            firstCell.setCellState(EMPTY)
-            secondCell.setCellState(EMPTY)
-            thirdCell.setCellState(EMPTY)
-            fourthCell.setCellState(EMPTY)
+            resetValues()
             point = getRandomPoint()
         }
         return point
+    }
+
+    private fun resetValues() {
+        firstCell.setCellState(EMPTY)
+        secondCell.setCellState(EMPTY)
+        thirdCell.setCellState(EMPTY)
+        fourthCell.setCellState(EMPTY)
     }
 
     private fun getNextPointToShot(cell: Cell): Point {
