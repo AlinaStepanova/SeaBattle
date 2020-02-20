@@ -1,6 +1,7 @@
 package com.avs.battleship.main
 
 import android.graphics.Point
+import android.util.Log
 import com.avs.battleship.*
 import com.avs.battleship.battle_field.BaseBattleField
 import com.avs.battleship.battle_field.Cell
@@ -15,7 +16,7 @@ class ShotManager {
     private var thirdCell = Cell()
     private var fourthCell = Cell()
 
-    private val shipsLength: List<Int> = listOf(
+    private var shipsLength = mutableListOf(
         FOUR_DECK_SHIP_SIZE, THREE_DECK_SHIP_SIZE, THREE_DECK_SHIP_SIZE,
         TWO_DECK_SHIP_SIZE, TWO_DECK_SHIP_SIZE, TWO_DECK_SHIP_SIZE,
         ONE_DECK_SHIP_SIZE, ONE_DECK_SHIP_SIZE, ONE_DECK_SHIP_SIZE, ONE_DECK_SHIP_SIZE
@@ -30,13 +31,36 @@ class ShotManager {
             && (secondCell.isState(EMPTY) || secondCell.isState(SHOT_FAILURE))
         ) {
             point = getNextPointToShot(firstCell)
-            secondCell = Cell(point.x, point.y)
+            if (point.x == -1) {
+                shipsLength.remove(ONE_DECK_SHIP_SIZE)
+                point = getRandomPoint()
+            } else {
+                secondCell = Cell(point.x, point.y)
+            }
         } else if (firstCell.isState(SHOT_SUCCESS) && secondCell.isState(SHOT_SUCCESS)
             && (thirdCell.isState(EMPTY) || thirdCell.isState(SHOT_FAILURE))
         ) {
             point = checkNeighbourCells(firstCell, secondCell)
             if (point.x == -1) {
+                shipsLength.remove(TWO_DECK_SHIP_SIZE)
                 resetValues()
+                /*if (firstCell.getI() == secondCell.getI()) {
+                    if (firstCell.getJ() < secondCell.getJ()) {
+                        battleField.setCellState(Point(firstCell.getI(), firstCell.getJ() - 1), SHOT_FAILURE)
+                        battleField.setCellState(Point(secondCell.getI(), secondCell.getJ() + 1), SHOT_FAILURE)
+                    } else {
+                        battleField.setCellState(Point(secondCell.getI(), secondCell.getJ() - 1), SHOT_FAILURE)
+                        battleField.setCellState(Point(firstCell.getI(), firstCell.getJ() + 1), SHOT_FAILURE)
+                    }
+                } else if (firstCell.getJ() == secondCell.getJ()) {
+                    if (firstCell.getI() < secondCell.getI()) {
+                        battleField.setCellState(Point(firstCell.getI() - 1, firstCell.getJ()), SHOT_FAILURE)
+                        battleField.setCellState(Point(secondCell.getI() + 1, secondCell.getJ()), SHOT_FAILURE)
+                    } else {
+                        battleField.setCellState(Point(secondCell.getI() - 1, secondCell.getJ()), SHOT_FAILURE)
+                        battleField.setCellState(Point(firstCell.getI() + 1, firstCell.getJ()), SHOT_FAILURE)
+                    }
+                }*/
                 point = getRandomPoint()
             } else {
                 thirdCell = Cell(point.x, point.y)
@@ -46,6 +70,7 @@ class ShotManager {
         ) {
             point = checkNeighbourCells(firstCell, thirdCell)
             if (point.x == -1) {
+                shipsLength.remove(THREE_DECK_SHIP_SIZE)
                 resetValues()
                 point = getRandomPoint()
             } else {
@@ -114,7 +139,7 @@ class ShotManager {
     }
 
     private fun getNextPointToShot(cell: Cell): Point {
-        var point: Point? = null
+        var point = Point(-1, -1)
         when {
             isLeftCellAvailable(cell.getPoint()) -> {
                 point = Point(cell.getI(), cell.getJ() - 1)
@@ -129,7 +154,7 @@ class ShotManager {
                 point = Point(cell.getI() + 1, cell.getJ())
             }
         }
-        return point ?: getRandomPoint()
+        return point
     }
 
     private fun getRandomPoint(): Point {
@@ -167,6 +192,7 @@ class ShotManager {
         ) {
             updateBattleField(shipHit, fourthCell)
             if (shipHit) {
+                shipsLength.remove(FOUR_DECK_SHIP_SIZE)
                 markNeighbours(fourthCell)
             }
         }

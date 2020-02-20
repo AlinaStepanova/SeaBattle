@@ -44,7 +44,7 @@ class BattleField : BaseBattleField() {
 
     fun handleShot(point: Point?): Boolean {
         var isShipHit = false
-        if (point != null) {
+        if (point != null && point.x in 0 until SQUARES_COUNT && point.y in 0 until SQUARES_COUNT) {
             if (battleField[point.x][point.y]?.getCellState() == CellState.EMPTY) {
                 battleField[point.x][point.y]?.setCellState(CellState.SHOT_FAILURE)
                 defineShipByPoint(point, CellState.SHOT_FAILURE)
