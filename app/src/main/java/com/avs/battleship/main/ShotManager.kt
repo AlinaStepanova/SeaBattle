@@ -1,7 +1,6 @@
 package com.avs.battleship.main
 
 import android.graphics.Point
-import android.util.Log
 import com.avs.battleship.*
 import com.avs.battleship.battle_field.BaseBattleField
 import com.avs.battleship.battle_field.Cell
@@ -67,6 +66,7 @@ class ShotManager {
             }
         } else if (firstCell.isState(SHOT_SUCCESS) && secondCell.isState(SHOT_SUCCESS)
             && thirdCell.isState(SHOT_SUCCESS)
+            && (fourthCell.isState(EMPTY) || fourthCell.isState(SHOT_FAILURE))
         ) {
             point = checkNeighbourCells(firstCell, thirdCell)
             if (point.x == -1) {
@@ -77,6 +77,7 @@ class ShotManager {
                 fourthCell = Cell(point.x, point.y)
             }
         } else {
+            shipsLength.remove(FOUR_DECK_SHIP_SIZE)
             resetValues()
             point = getRandomPoint()
         }
@@ -192,7 +193,6 @@ class ShotManager {
         ) {
             updateBattleField(shipHit, fourthCell)
             if (shipHit) {
-                shipsLength.remove(FOUR_DECK_SHIP_SIZE)
                 markNeighbours(fourthCell)
             }
         }
