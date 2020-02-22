@@ -29,7 +29,13 @@ class ShotManager {
         } else if (firstCell.isState(SHOT_SUCCESS)
             && (secondCell.isState(EMPTY) || secondCell.isState(SHOT_FAILURE))
         ) {
-            point = getNextPointToShot(firstCell)
+            point = if (shipsLength.contains(TWO_DECK_SHIP_SIZE)
+                || shipsLength.contains(THREE_DECK_SHIP_SIZE)
+                || shipsLength.contains(FOUR_DECK_SHIP_SIZE)) {
+                getNextPointToShot(firstCell)
+            } else {
+                Point(-1, -1)
+            }
             if (point.x == -1) {
                 shipsLength.remove(ONE_DECK_SHIP_SIZE)
                 point = getRandomPoint()
@@ -39,7 +45,12 @@ class ShotManager {
         } else if (firstCell.isState(SHOT_SUCCESS) && secondCell.isState(SHOT_SUCCESS)
             && (thirdCell.isState(EMPTY) || thirdCell.isState(SHOT_FAILURE))
         ) {
-            point = checkNeighbourCells(firstCell, secondCell)
+            point = if (shipsLength.contains(THREE_DECK_SHIP_SIZE)
+                || shipsLength.contains(FOUR_DECK_SHIP_SIZE)) {
+                checkNeighbourCells(firstCell, secondCell)
+            } else {
+                Point(-1, -1)
+            }
             if (point.x == -1) {
                 shipsLength.remove(TWO_DECK_SHIP_SIZE)
                 resetValues()
@@ -68,7 +79,11 @@ class ShotManager {
             && thirdCell.isState(SHOT_SUCCESS)
             && (fourthCell.isState(EMPTY) || fourthCell.isState(SHOT_FAILURE))
         ) {
-            point = checkNeighbourCells(firstCell, thirdCell)
+            point = if (shipsLength.contains(FOUR_DECK_SHIP_SIZE)) {
+                checkNeighbourCells(firstCell, thirdCell)
+            } else {
+                Point(-1, -1)
+            }
             if (point.x == -1) {
                 shipsLength.remove(THREE_DECK_SHIP_SIZE)
                 resetValues()
