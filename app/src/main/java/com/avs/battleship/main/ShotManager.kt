@@ -5,6 +5,7 @@ import com.avs.battleship.*
 import com.avs.battleship.battle_field.BaseBattleField
 import com.avs.battleship.battle_field.Cell
 import com.avs.battleship.battle_field.CellState.*
+import com.avs.battleship.ships.Orientation
 
 class ShotManager {
 
@@ -31,13 +32,15 @@ class ShotManager {
         ) {
             point = if (shipsLength.contains(TWO_DECK_SHIP_SIZE)
                 || shipsLength.contains(THREE_DECK_SHIP_SIZE)
-                || shipsLength.contains(FOUR_DECK_SHIP_SIZE)) {
+                || shipsLength.contains(FOUR_DECK_SHIP_SIZE)
+            ) {
                 getNextPointToShot(firstCell)
             } else {
                 Point(-1, -1)
             }
             if (point.x == -1) {
                 shipsLength.remove(ONE_DECK_SHIP_SIZE)
+                //todo mark edge cells for one deck ship
                 point = getRandomPoint()
             } else {
                 secondCell = Cell(point.x, point.y)
@@ -46,31 +49,16 @@ class ShotManager {
             && (thirdCell.isState(EMPTY) || thirdCell.isState(SHOT_FAILURE))
         ) {
             point = if (shipsLength.contains(THREE_DECK_SHIP_SIZE)
-                || shipsLength.contains(FOUR_DECK_SHIP_SIZE)) {
+                || shipsLength.contains(FOUR_DECK_SHIP_SIZE)
+            ) {
                 checkNeighbourCells(firstCell, secondCell)
             } else {
                 Point(-1, -1)
             }
             if (point.x == -1) {
                 shipsLength.remove(TWO_DECK_SHIP_SIZE)
+                markEdgeCells(mutableListOf(firstCell.getPoint(), secondCell.getPoint()))
                 resetValues()
-                /*if (firstCell.getI() == secondCell.getI()) {
-                    if (firstCell.getJ() < secondCell.getJ()) {
-                        battleField.setCellState(Point(firstCell.getI(), firstCell.getJ() - 1), SHOT_FAILURE)
-                        battleField.setCellState(Point(secondCell.getI(), secondCell.getJ() + 1), SHOT_FAILURE)
-                    } else {
-                        battleField.setCellState(Point(secondCell.getI(), secondCell.getJ() - 1), SHOT_FAILURE)
-                        battleField.setCellState(Point(firstCell.getI(), firstCell.getJ() + 1), SHOT_FAILURE)
-                    }
-                } else if (firstCell.getJ() == secondCell.getJ()) {
-                    if (firstCell.getI() < secondCell.getI()) {
-                        battleField.setCellState(Point(firstCell.getI() - 1, firstCell.getJ()), SHOT_FAILURE)
-                        battleField.setCellState(Point(secondCell.getI() + 1, secondCell.getJ()), SHOT_FAILURE)
-                    } else {
-                        battleField.setCellState(Point(secondCell.getI() - 1, secondCell.getJ()), SHOT_FAILURE)
-                        battleField.setCellState(Point(firstCell.getI() + 1, firstCell.getJ()), SHOT_FAILURE)
-                    }
-                }*/
                 point = getRandomPoint()
             } else {
                 thirdCell = Cell(point.x, point.y)
@@ -86,6 +74,13 @@ class ShotManager {
             }
             if (point.x == -1) {
                 shipsLength.remove(THREE_DECK_SHIP_SIZE)
+                markEdgeCells(
+                    mutableListOf(
+                        firstCell.getPoint(),
+                        secondCell.getPoint(),
+                        thirdCell.getPoint()
+                    )
+                )
                 resetValues()
                 point = getRandomPoint()
             } else {
@@ -93,10 +88,46 @@ class ShotManager {
             }
         } else {
             shipsLength.remove(FOUR_DECK_SHIP_SIZE)
+            markEdgeCells(
+                mutableListOf(
+                    firstCell.getPoint(), secondCell.getPoint(),
+                    thirdCell.getPoint(), fourthCell.getPoint()
+                )
+            )
             resetValues()
             point = getRandomPoint()
         }
         return point
+    }
+
+    private fun markEdgeCells(cells: MutableList<Point>) {
+        if (firstCell.getI() == secondCell.getI()) {
+            val maxPoint = getMaxPoint(cells, Orientation.HORIZONTAL)
+            val minPoint = getMinPoint(cells, Orientation.HORIZONTAL)
+            battleField.setCellState(Point(minPoint.x, minPoint.y - 1), SHOT_FAILURE)
+            battleField.setCellState(Point(maxPoint.x, maxPoint.y + 1), SHOT_FAILURE)
+        } else if (firstCell.getJ() == secondCell.getJ()) {
+            val maxPoint = getMaxPoint(cells, Orientation.VERTICAL)
+            val minPoint = getMinPoint(cells, Orientation.VERTICAL)
+            battleField.setCellState(Point(minPoint.x - 1, minPoint.y), SHOT_FAILURE)
+            battleField.setCellState(Point(maxPoint.x + 1, maxPoint.y), SHOT_FAILURE)
+        }
+    }
+
+    private fun getMaxPoint(list: MutableList<Point>, orientation: Orientation): Point {
+        return if (orientation == Orientation.VERTICAL) {
+            list.maxBy { it.x }!!
+        } else {
+            list.maxBy { it.y }!!
+        }
+    }
+
+    private fun getMinPoint(list: MutableList<Point>, orientation: Orientation): Point {
+        return if (orientation == Orientation.VERTICAL) {
+            list.minBy { it.x }!!
+        } else {
+            list.minBy { it.y }!!
+        }
     }
 
     private fun checkNeighbourCells(cell1: Cell, cell2: Cell): Point {
@@ -234,6 +265,7 @@ class ShotManager {
     private fun updateBattleField(shipHit: Boolean, currentCell: Cell) {
         currentCell.setCellState(if (shipHit) SHOT_SUCCESS else SHOT_FAILURE)
         battleField.setCellState(currentCell.getPoint(), currentCell.getCellState())
+        battleField.printBattleField()
     }
 
     private fun isLeftCellAvailable(point: Point): Boolean {
