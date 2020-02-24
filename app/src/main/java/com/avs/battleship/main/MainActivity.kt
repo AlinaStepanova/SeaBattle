@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.avs.battleship.R
 import com.avs.battleship.databinding.ActivityMainBinding
 
@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
             this,
             R.layout.activity_main
         )
-        viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         binding.mainViewModel = viewModel
 
         binding.viewPerson.provideViewModel(viewModel)
@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
             binding.viewFire.visibility = View.VISIBLE
         })
 
-        viewModel.selectedByComputerPoint.observe(this, Observer { point ->
+        viewModel.selectedByComputerPoint.observe(this, Observer {
             binding.progressBar.visibility = View.VISIBLE
         })
 

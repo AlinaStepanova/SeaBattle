@@ -98,7 +98,9 @@ class MainViewModel : ViewModel() {
 
     private fun playAsPerson() {
         activePlayer = Player.PERSON
-        _status.value = R.string.status_select_to_fire_text
+        if (_status.value != R.string.status_shot_ship_again_text) {
+            _status.value = R.string.status_select_to_fire_text
+        }
     }
 
     fun makeFireAsPerson() {
@@ -106,6 +108,7 @@ class MainViewModel : ViewModel() {
             val isShipHit = computerBattleField.handleShot(_selectedByPersonPoint.value)
             _selectedByPersonPoint.value = null
             if (isShipHit) {
+                _status.value = R.string.status_shot_ship_again_text
                 _personSuccessfulShots.value = computerBattleField.getCrossesCoordinates()
                 if (computerBattleField.isGameOver()) {
                     endGame(true)
@@ -114,6 +117,7 @@ class MainViewModel : ViewModel() {
                 }
             } else {
                 _personFailShots.value = computerBattleField.getDotsCoordinates()
+                _status.value = R.string.status_opponent_shot_text
                 activePlayer = Player.COMPUTER
                 playAsComputer()
             }
@@ -132,6 +136,7 @@ class MainViewModel : ViewModel() {
                 if (personBattleField.isGameOver()) {
                     endGame(false)
                 } else {
+                    _status.value = R.string.status_opponent_shot_again_text
                     checkCurrentPlayer()
                 }
             }
@@ -141,6 +146,7 @@ class MainViewModel : ViewModel() {
                 _computerFailShots.value = personBattleField.getDotsCoordinates()
                 activePlayer = Player.PERSON
                 checkCurrentPlayer()
+                _status.value = R.string.status_select_to_fire_text
             }
         }
     }
