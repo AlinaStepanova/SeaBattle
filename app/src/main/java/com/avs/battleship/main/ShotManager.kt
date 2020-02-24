@@ -23,6 +23,7 @@ class ShotManager {
     )
 
     fun getPointToShot(): Point {
+        //todo assign to (-1, -1) here
         var point: Point
         if (firstCell.isState(EMPTY) || firstCell.isState(SHOT_FAILURE)) {
             point = getRandomPoint()
@@ -36,6 +37,7 @@ class ShotManager {
             ) {
                 getNextPointToShot(firstCell)
             } else {
+                //todo remove
                 Point(-1, -1)
             }
             if (point.x == -1) {
@@ -101,12 +103,12 @@ class ShotManager {
     }
 
     private fun markEdgeCells(cells: MutableList<Point>) {
-        if (firstCell.getI() == secondCell.getI()) {
+        if (firstCell.getX() == secondCell.getX()) {
             val maxPoint = getMaxPoint(cells, Orientation.HORIZONTAL)
             val minPoint = getMinPoint(cells, Orientation.HORIZONTAL)
             battleField.setCellState(Point(minPoint.x, minPoint.y - 1), SHOT_FAILURE)
             battleField.setCellState(Point(maxPoint.x, maxPoint.y + 1), SHOT_FAILURE)
-        } else if (firstCell.getJ() == secondCell.getJ()) {
+        } else if (firstCell.getY() == secondCell.getY()) {
             val maxPoint = getMaxPoint(cells, Orientation.VERTICAL)
             val minPoint = getMinPoint(cells, Orientation.VERTICAL)
             battleField.setCellState(Point(minPoint.x - 1, minPoint.y), SHOT_FAILURE)
@@ -132,9 +134,9 @@ class ShotManager {
 
     private fun checkNeighbourCells(cell1: Cell, cell2: Cell): Point {
         var point = Point(-1, -1)
-        if (cell1.getI() == cell2.getI()) {
+        if (cell1.getX() == cell2.getX()) {
             point = checkVerticalPoints(cell2.getPoint(), cell1.getPoint())
-        } else if (cell1.getJ() == cell2.getJ()) {
+        } else if (cell1.getY() == cell2.getY()) {
             point = checkHorizontalPoints(cell2.getPoint(), cell1.getPoint())
         }
         return point
@@ -179,6 +181,7 @@ class ShotManager {
     }
 
     private fun resetValues() {
+        //todo assign to (-1, -1)
         firstCell.setCellState(EMPTY)
         secondCell.setCellState(EMPTY)
         thirdCell.setCellState(EMPTY)
@@ -189,16 +192,16 @@ class ShotManager {
         var point = Point(-1, -1)
         when {
             isLeftCellAvailable(cell.getPoint()) -> {
-                point = Point(cell.getI(), cell.getJ() - 1)
+                point = Point(cell.getX(), cell.getY() - 1)
             }
             isRightCellAvailable(cell.getPoint()) -> {
-                point = Point(cell.getI(), cell.getJ() + 1)
+                point = Point(cell.getX(), cell.getY() + 1)
             }
             isTopCellAvailable(cell.getPoint()) -> {
-                point = Point(cell.getI() - 1, cell.getJ())
+                point = Point(cell.getX() - 1, cell.getY())
             }
             isBottomCellAvailable(cell.getPoint()) -> {
-                point = Point(cell.getI() + 1, cell.getJ())
+                point = Point(cell.getX() + 1, cell.getY())
             }
         }
         return point
@@ -245,21 +248,21 @@ class ShotManager {
     }
 
     private fun markNeighbours(cell: Cell) {
-        if (firstCell.getI() == secondCell.getI()) {
+        if (firstCell.getX() == secondCell.getX()) {
             markVerticalNeighbours(cell)
-        } else if (firstCell.getJ() == secondCell.getJ()) {
+        } else if (firstCell.getY() == secondCell.getY()) {
             markHorizontalNeighbours(cell)
         }
     }
 
     private fun markHorizontalNeighbours(cell: Cell) {
-        battleField.setCellState(Point(cell.getI(), cell.getJ() - 1), SHOT_FAILURE)
-        battleField.setCellState(Point(cell.getI(), cell.getJ() + 1), SHOT_FAILURE)
+        battleField.setCellState(Point(cell.getX(), cell.getY() - 1), SHOT_FAILURE)
+        battleField.setCellState(Point(cell.getX(), cell.getY() + 1), SHOT_FAILURE)
     }
 
     private fun markVerticalNeighbours(cell: Cell) {
-        battleField.setCellState(Point(cell.getI() - 1, cell.getJ()), SHOT_FAILURE)
-        battleField.setCellState(Point(cell.getI() + 1, cell.getJ()), SHOT_FAILURE)
+        battleField.setCellState(Point(cell.getX() - 1, cell.getY()), SHOT_FAILURE)
+        battleField.setCellState(Point(cell.getX() + 1, cell.getY()), SHOT_FAILURE)
     }
 
     private fun updateBattleField(shipHit: Boolean, currentCell: Cell) {

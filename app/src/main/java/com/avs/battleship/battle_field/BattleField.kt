@@ -33,7 +33,7 @@ class BattleField : BaseBattleField() {
                     if (isAdded) {
                         ship.setCellsCoordinates(point.x, point.y)
                         for (cell in ship.getShipCells()) {
-                            battleField[cell.getI()][cell.getJ()]?.setCellState(cell.getCellState())
+                            battleField[cell.getX()][cell.getY()]?.setCellState(cell.getCellState())
                         }
                     }
                 }

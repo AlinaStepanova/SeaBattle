@@ -62,7 +62,7 @@ abstract class Ship {
 
     fun setCellState(point: Point, cellState: CellState) {
         for (cell in cells) {
-            if (cell.getI() == point.x && cell.getJ() == point.y) {
+            if (cell.getX() == point.x && cell.getY() == point.y) {
                 cell.setCellState(cellState)
                 break
             }

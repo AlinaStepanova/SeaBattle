@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="circle_radius">5.0</dimen>
+    <dimen name="circle_radius">4.0</dimen>
 </resources>

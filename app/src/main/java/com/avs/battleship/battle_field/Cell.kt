@@ -12,8 +12,8 @@ class Cell() {
         this.cellState = cellState
     }
 
-    constructor(i: Int, j: Int) : this() {
-        this.point.set(i, j)
+    constructor(x: Int, y: Int) : this() {
+        this.point.set(x, y)
     }
 
     fun setCellState(cellState: CellState) {
@@ -32,19 +32,19 @@ class Cell() {
         return point
     }
 
-    fun setCoordinates(i: Int, j: Int) {
-        point.set(i, j)
+    fun setCoordinates(x: Int, y: Int) {
+        point.set(x, y)
     }
 
-    fun getI(): Int {
+    fun getX(): Int {
         return point.x
     }
 
-    fun getJ(): Int {
+    fun getY(): Int {
         return point.y
     }
 
     override fun toString(): String {
-        return this.getCellState().toString() + " i = " + getI() + " j = " + getJ()
+        return this.getCellState().toString() + " x = " + getX() + " y = " + getY()
     }
 }
