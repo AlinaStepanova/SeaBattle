@@ -23,26 +23,23 @@ class ShotManager {
     )
 
     fun getPointToShot(): Point {
-        //todo assign to (-1, -1) here
-        var point: Point
+        var point = Point(-1, -1)
         if (firstCell.isState(EMPTY) || firstCell.isState(SHOT_FAILURE)) {
             point = getRandomPoint()
             firstCell = Cell(point.x, point.y)
         } else if (firstCell.isState(SHOT_SUCCESS)
             && (secondCell.isState(EMPTY) || secondCell.isState(SHOT_FAILURE))
         ) {
-            point = if (shipsLength.contains(TWO_DECK_SHIP_SIZE)
+            if (shipsLength.contains(TWO_DECK_SHIP_SIZE)
                 || shipsLength.contains(THREE_DECK_SHIP_SIZE)
                 || shipsLength.contains(FOUR_DECK_SHIP_SIZE)
             ) {
-                getNextPointToShot(firstCell)
-            } else {
-                //todo remove
-                Point(-1, -1)
+                point = getNextPointToShot(firstCell)
             }
             if (point.x == -1) {
                 shipsLength.remove(ONE_DECK_SHIP_SIZE)
-                //todo mark edge cells for one deck ship
+                markHorizontalNeighbours(firstCell)
+                markVerticalNeighbours(firstCell)
                 point = getRandomPoint()
             } else {
                 secondCell = Cell(point.x, point.y)
@@ -50,12 +47,10 @@ class ShotManager {
         } else if (firstCell.isState(SHOT_SUCCESS) && secondCell.isState(SHOT_SUCCESS)
             && (thirdCell.isState(EMPTY) || thirdCell.isState(SHOT_FAILURE))
         ) {
-            point = if (shipsLength.contains(THREE_DECK_SHIP_SIZE)
+            if (shipsLength.contains(THREE_DECK_SHIP_SIZE)
                 || shipsLength.contains(FOUR_DECK_SHIP_SIZE)
             ) {
-                checkNeighbourCells(firstCell, secondCell)
-            } else {
-                Point(-1, -1)
+                point = checkNeighbourCells(firstCell, secondCell)
             }
             if (point.x == -1) {
                 shipsLength.remove(TWO_DECK_SHIP_SIZE)
@@ -69,10 +64,8 @@ class ShotManager {
             && thirdCell.isState(SHOT_SUCCESS)
             && (fourthCell.isState(EMPTY) || fourthCell.isState(SHOT_FAILURE))
         ) {
-            point = if (shipsLength.contains(FOUR_DECK_SHIP_SIZE)) {
-                checkNeighbourCells(firstCell, thirdCell)
-            } else {
-                Point(-1, -1)
+            if (shipsLength.contains(FOUR_DECK_SHIP_SIZE)) {
+                point = checkNeighbourCells(firstCell, thirdCell)
             }
             if (point.x == -1) {
                 shipsLength.remove(THREE_DECK_SHIP_SIZE)
