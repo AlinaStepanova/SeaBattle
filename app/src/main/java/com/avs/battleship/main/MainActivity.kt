@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.selectedByPersonPoint.observe(this, Observer { point ->
             binding.viewComputer.getSelectedPoint(point)
-            binding.viewFire.visibility = View.VISIBLE
+            binding.viewFire.visibility = if (point == null) View.INVISIBLE else View.VISIBLE
         })
 
         viewModel.selectedByComputerPoint.observe(this, Observer {

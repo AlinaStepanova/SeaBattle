@@ -64,6 +64,8 @@ class MainViewModel : ViewModel() {
         computerBattleField = BattleField()
         _status.value = R.string.status_welcome_text
         _startGameEvent.value = false
+        _endGameEvent.value = false
+        _selectedByPersonPoint.value = null
         computerBattleField.randomizeShips()
     }
 
