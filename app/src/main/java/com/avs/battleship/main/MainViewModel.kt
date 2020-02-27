@@ -1,40 +1,40 @@
 package com.avs.battleship.main
 
-import android.graphics.Point
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.avs.battleship.R
 import com.avs.battleship.SECOND_IN_MILLIS
 import com.avs.battleship.battle_field.BattleField
+import com.avs.battleship.battle_field.Coordinate
 import kotlinx.coroutines.*
 
 class MainViewModel : ViewModel() {
 
     private lateinit var activePlayer: Player
-    private var _selectedByPersonPoint = MutableLiveData<Point>()
-    val selectedByPersonPoint: LiveData<Point>
+    private var _selectedByPersonPoint = MutableLiveData<Coordinate>()
+    val selectedByPersonPoint: LiveData<Coordinate>
         get() = _selectedByPersonPoint
-    private var _selectedByComputerPoint = MutableLiveData<Point>()
-    val selectedByComputerPoint: LiveData<Point>
+    private var _selectedByComputerPoint = MutableLiveData<Coordinate>()
+    val selectedByComputerPoint: LiveData<Coordinate>
         get() = _selectedByComputerPoint
     private var _status = MutableLiveData<Int>()
     val status: LiveData<Int>
         get() = _status
-    private var _personShips = MutableLiveData<ArrayList<Point>>()
-    val personShips: LiveData<ArrayList<Point>>
+    private var _personShips = MutableLiveData<ArrayList<Coordinate>>()
+    val personShips: LiveData<ArrayList<Coordinate>>
         get() = _personShips
-    private var _personFailShots = MutableLiveData<ArrayList<Point>>()
-    val personFailedShots: LiveData<ArrayList<Point>>
+    private var _personFailShots = MutableLiveData<ArrayList<Coordinate>>()
+    val personFailedShots: LiveData<ArrayList<Coordinate>>
         get() = _personFailShots
-    private var _personSuccessfulShots = MutableLiveData<ArrayList<Point>>()
-    val personSuccessfulShots: LiveData<ArrayList<Point>>
+    private var _personSuccessfulShots = MutableLiveData<ArrayList<Coordinate>>()
+    val personSuccessfulShots: LiveData<ArrayList<Coordinate>>
         get() = _personSuccessfulShots
-    private var _computerFailShots = MutableLiveData<ArrayList<Point>>()
-    val computerFailedShots: LiveData<ArrayList<Point>>
+    private var _computerFailShots = MutableLiveData<ArrayList<Coordinate>>()
+    val computerFailedShots: LiveData<ArrayList<Coordinate>>
         get() = _computerFailShots
-    private var _computerSuccessfulShots = MutableLiveData<ArrayList<Point>>()
-    val computerSuccessfulShots: LiveData<ArrayList<Point>>
+    private var _computerSuccessfulShots = MutableLiveData<ArrayList<Coordinate>>()
+    val computerSuccessfulShots: LiveData<ArrayList<Coordinate>>
         get() = _computerSuccessfulShots
     private var _startGameEvent = MutableLiveData<Boolean>()
     val startGameEvent: LiveData<Boolean>
@@ -90,10 +90,10 @@ class MainViewModel : ViewModel() {
         _computerSuccessfulShots.value = ArrayList()
     }
 
-    fun handlePCAreaClick(point: Point) {
+    fun handlePCAreaClick(coordinate: Coordinate) {
         if (activePlayer == Player.PERSON) {
-            if (computerBattleField.isCellFreeToBeSelected(point)) {
-                _selectedByPersonPoint.value = point
+            if (computerBattleField.isCellFreeToBeSelected(coordinate)) {
+                _selectedByPersonPoint.value = coordinate
             }
         }
     }
@@ -127,9 +127,9 @@ class MainViewModel : ViewModel() {
     }
 
     private fun playAsComputer() {
-        val point: Point = shotManager.getPointToShot()
-        _selectedByComputerPoint.value = point
-        val isShipHit = personBattleField.handleShot(point)
+        val coordinate: Coordinate = shotManager.getPointToShot()
+        _selectedByComputerPoint.value = coordinate
+        val isShipHit = personBattleField.handleShot(coordinate)
         shotManager.handleShot(isShipHit)
         if (isShipHit) {
             uiScope.launch {

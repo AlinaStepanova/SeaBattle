@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 import com.avs.battleship.main.MainViewModel
 import com.avs.battleship.R
 import com.avs.battleship.SQUARES_COUNT
+import com.avs.battleship.battle_field.Coordinate
 
 abstract class SquareView : View {
 
@@ -83,7 +84,7 @@ abstract class SquareView : View {
         }
     }
 
-    fun Canvas.drawDot(point: Point) {
+    fun Canvas.drawDot(point: Coordinate) {
         val pointF: PointF = getCirclePoint(point.x, point.y)
         this.drawCircle(pointF.y, pointF.x, circleRadius, paint)
     }

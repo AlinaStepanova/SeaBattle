@@ -10,11 +10,12 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import com.avs.battleship.R
 import com.avs.battleship.SQUARES_COUNT
+import com.avs.battleship.battle_field.Coordinate
 
 class ComputerSquareView : SquareView {
 
-    private lateinit var dotsCoordinates: ArrayList<Point>
-    private lateinit var crossesCoordinates: ArrayList<Point>
+    private lateinit var dotsCoordinates: ArrayList<Coordinate>
+    private lateinit var crossesCoordinates: ArrayList<Coordinate>
     private lateinit var paintSelected: Paint
     private var selectedSquare: Point? = null
 
@@ -67,15 +68,15 @@ class ComputerSquareView : SquareView {
         }
     }
 
-    private fun convertUICoordinates(x: Float, y: Float): Point {
+    private fun convertUICoordinates(x: Float, y: Float): Coordinate {
         var i = y.toInt() / squareWidth.toInt()
         var j = x.toInt() / squareWidth.toInt()
         if (i == SQUARES_COUNT) i--
         if (j == SQUARES_COUNT) j--
-        return Point(i, j)
+        return Coordinate(i, j)
     }
 
-    fun getSelectedPoint(selectedSquare: Point?) {
+    fun getSelectedPoint(selectedSquare: Coordinate?) {
         if (selectedSquare == null) {
             this.selectedSquare = null
         } else {
@@ -84,12 +85,12 @@ class ComputerSquareView : SquareView {
         invalidate()
     }
 
-    fun getDotsCoordinates(coordinates: ArrayList<Point>) {
+    fun getDotsCoordinates(coordinates: ArrayList<Coordinate>) {
         this.dotsCoordinates = coordinates
         invalidate()
     }
 
-    fun getCrossesCoordinates(coordinates: ArrayList<Point>) {
+    fun getCrossesCoordinates(coordinates: ArrayList<Coordinate>) {
         this.crossesCoordinates = coordinates
         invalidate()
     }

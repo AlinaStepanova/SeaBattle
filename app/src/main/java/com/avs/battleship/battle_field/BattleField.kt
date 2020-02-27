@@ -42,7 +42,7 @@ class BattleField : BaseBattleField() {
         printBattleField()
     }
 
-    fun handleShot(point: Point?): Boolean {
+    fun handleShot(point: Coordinate?): Boolean {
         var isShipHit = false
         if (point != null && point.x in 0 until SQUARES_COUNT && point.y in 0 until SQUARES_COUNT) {
             if (battleField[point.x][point.y]?.getCellState() == CellState.EMPTY) {
@@ -57,7 +57,7 @@ class BattleField : BaseBattleField() {
         return isShipHit
     }
 
-    private fun defineShipByPoint(point: Point, cellState: CellState) {
+    private fun defineShipByPoint(point: Coordinate, cellState: CellState) {
         for (ship in ships) {
             if (point.x in ship.getRowCoordinates() && point.y in ship.getColumnCoordinates()) {
                 ship.setCellState(point, cellState)
@@ -77,36 +77,36 @@ class BattleField : BaseBattleField() {
         return result
     }
 
-    fun getShipsCoordinates(): ArrayList<Point> {
-        val shipsCoordinates = arrayListOf<Point>()
+    fun getShipsCoordinates(): ArrayList<Coordinate> {
+        val shipsCoordinates = arrayListOf<Coordinate>()
         for (i in battleField.indices) {
             for (j in battleField[i].indices) {
                 if (battleField[i][j]?.getCellState() == CellState.SHIP) {
-                    shipsCoordinates.add(Point(i, j))
+                    shipsCoordinates.add(Coordinate(i, j))
                 }
             }
         }
         return shipsCoordinates
     }
 
-    fun getDotsCoordinates(): ArrayList<Point> {
-        val dotsCoordinates = arrayListOf<Point>()
+    fun getDotsCoordinates(): ArrayList<Coordinate> {
+        val dotsCoordinates = arrayListOf<Coordinate>()
         for (i in battleField.indices) {
             for (j in battleField[i].indices) {
                 if (battleField[i][j]?.getCellState() == CellState.SHOT_FAILURE) {
-                    dotsCoordinates.add(Point(i, j))
+                    dotsCoordinates.add(Coordinate(i, j))
                 }
             }
         }
         return dotsCoordinates
     }
 
-    fun getCrossesCoordinates(): ArrayList<Point> {
-        val crossesCoordinates = arrayListOf<Point>()
+    fun getCrossesCoordinates(): ArrayList<Coordinate> {
+        val crossesCoordinates = arrayListOf<Coordinate>()
         for (i in battleField.indices) {
             for (j in battleField[i].indices) {
                 if (battleField[i][j]?.getCellState() == CellState.SHOT_SUCCESS) {
-                    crossesCoordinates.add(Point(i, j))
+                    crossesCoordinates.add(Coordinate(i, j))
                 }
             }
         }

@@ -1,10 +1,8 @@
 package com.avs.battleship.battle_field
 
-import android.graphics.Point
-
 class Cell() {
 
-    private var point: Point = Point()
+    private var coordinate = Coordinate()
 
     private var cellState: CellState = CellState.EMPTY
 
@@ -13,7 +11,8 @@ class Cell() {
     }
 
     constructor(x: Int, y: Int) : this() {
-        this.point.set(x, y)
+        this.coordinate.x = x
+        this.coordinate.y = y
     }
 
     fun setCellState(cellState: CellState) {
@@ -28,20 +27,21 @@ class Cell() {
         return cellState
     }
 
-    fun getPoint(): Point {
-        return point
+    fun getCoordinate(): Coordinate {
+        return coordinate
     }
 
     fun setCoordinates(x: Int, y: Int) {
-        point.set(x, y)
+        this.coordinate.x = x
+        this.coordinate.y = y
     }
 
     fun getX(): Int {
-        return point.x
+        return coordinate.x
     }
 
     fun getY(): Int {
-        return point.y
+        return coordinate.y
     }
 
     override fun toString(): String {

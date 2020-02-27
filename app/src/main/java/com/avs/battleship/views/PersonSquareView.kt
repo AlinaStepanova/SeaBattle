@@ -4,12 +4,13 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Point
 import android.util.AttributeSet
+import com.avs.battleship.battle_field.Coordinate
 
 class PersonSquareView : SquareView {
 
-    private lateinit var shipsCoordinates: ArrayList<Point>
-    private lateinit var crossesCoordinates: ArrayList<Point>
-    private lateinit var dotsCoordinates: ArrayList<Point>
+    private lateinit var shipsCoordinates: ArrayList<Coordinate>
+    private lateinit var crossesCoordinates: ArrayList<Coordinate>
+    private lateinit var dotsCoordinates: ArrayList<Coordinate>
 
     constructor(context: Context) : super(context) {
         init()
@@ -49,17 +50,17 @@ class PersonSquareView : SquareView {
         }
     }
 
-    fun getShipsCoordinates(coordinates: ArrayList<Point>) {
+    fun getShipsCoordinates(coordinates: ArrayList<Coordinate>) {
         this.shipsCoordinates = coordinates
         invalidate()
     }
 
-    fun getCrossesCoordinates(coordinates: java.util.ArrayList<Point>) {
+    fun getCrossesCoordinates(coordinates: ArrayList<Coordinate>) {
         this.crossesCoordinates = coordinates
         invalidate()
     }
 
-    fun getDotsCoordinates(coordinates: java.util.ArrayList<Point>) {
+    fun getDotsCoordinates(coordinates: ArrayList<Coordinate>) {
         this.dotsCoordinates = coordinates
         invalidate()
     }
