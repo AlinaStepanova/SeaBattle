@@ -3,7 +3,6 @@ package com.avs.battleship.views
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.graphics.Point
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
@@ -17,7 +16,7 @@ class ComputerSquareView : SquareView {
     private lateinit var dotsCoordinates: ArrayList<Coordinate>
     private lateinit var crossesCoordinates: ArrayList<Coordinate>
     private lateinit var paintSelected: Paint
-    private var selectedSquare: Point? = null
+    private var selectedSquare: Coordinate? = null
 
     constructor(context: Context) : super(context) {
         init()
@@ -43,8 +42,8 @@ class ComputerSquareView : SquareView {
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
         if (dotsCoordinates.isNotEmpty()) {
-            for (point in dotsCoordinates) {
-                canvas?.drawDot(point)
+            for (coordinate in dotsCoordinates) {
+                canvas?.drawDot(coordinate)
             }
         }
         if (crossesCoordinates.isNotEmpty()) {
@@ -76,11 +75,11 @@ class ComputerSquareView : SquareView {
         return Coordinate(i, j)
     }
 
-    fun getSelectedPoint(selectedSquare: Coordinate?) {
+    fun getSelectedCoordinate(selectedSquare: Coordinate?) {
         if (selectedSquare == null) {
             this.selectedSquare = null
         } else {
-            this.selectedSquare = Point(selectedSquare.y, selectedSquare.x)
+            this.selectedSquare = Coordinate(selectedSquare.y, selectedSquare.x)
         }
         invalidate()
     }

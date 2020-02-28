@@ -2,7 +2,6 @@ package com.avs.battleship.views
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Point
 import android.util.AttributeSet
 import com.avs.battleship.battle_field.Coordinate
 
@@ -39,8 +38,8 @@ class PersonSquareView : SquareView {
             }
         }
         if (dotsCoordinates.isNotEmpty()) {
-            for (point in dotsCoordinates) {
-                canvas?.drawDot(point)
+            for (coordinate in dotsCoordinates) {
+                canvas?.drawDot(coordinate)
             }
         }
         if (crossesCoordinates.isNotEmpty()) {

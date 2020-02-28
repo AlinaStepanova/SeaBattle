@@ -9,6 +9,7 @@ import com.avs.battleship.main.MainViewModel
 import com.avs.battleship.R
 import com.avs.battleship.SQUARES_COUNT
 import com.avs.battleship.battle_field.Coordinate
+import com.avs.battleship.battle_field.CoordinateF
 
 abstract class SquareView : View {
 
@@ -85,7 +86,7 @@ abstract class SquareView : View {
     }
 
     fun Canvas.drawDot(point: Coordinate) {
-        val pointF: PointF = getCirclePoint(point.x, point.y)
+        val pointF: CoordinateF = getCircleCoordinate(point.x, point.y)
         this.drawCircle(pointF.y, pointF.x, circleRadius, paint)
     }
 
@@ -112,11 +113,11 @@ abstract class SquareView : View {
         return path
     }
 
-    private fun getCirclePoint(
+    private fun getCircleCoordinate(
         i: Int,
         j: Int
-    ): PointF {
-        return PointF(
+    ): CoordinateF {
+        return CoordinateF(
             (i * squareWidth + squareWidth / 2),
             (j * squareWidth + squareWidth / 2)
         )

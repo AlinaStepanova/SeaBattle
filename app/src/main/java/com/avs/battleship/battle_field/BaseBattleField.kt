@@ -20,17 +20,17 @@ open class BaseBattleField {
         }
     }
 
-    fun setCellState(point: Coordinate, cellState: CellState) {
-        if (point.x in 0 until SQUARES_COUNT && point.y in 0 until SQUARES_COUNT) {
-            battleField[point.x][point.y]?.setCellState(cellState)
+    fun setCellState(coordinate: Coordinate, cellState: CellState) {
+        if (coordinate.x in 0 until SQUARES_COUNT && coordinate.y in 0 until SQUARES_COUNT) {
+            battleField[coordinate.x][coordinate.y]?.setCellState(cellState)
         }
     }
 
-    fun isCellFreeToBeSelected(point: Coordinate): Boolean {
-        return (point.x in 0 until SQUARES_COUNT
-                && point.y in 0 until SQUARES_COUNT
-                && (battleField[point.x][point.y]?.getCellState() == CellState.EMPTY
-                || battleField[point.x][point.y]?.getCellState() == CellState.SHIP))
+    fun isCellFreeToBeSelected(coordinate: Coordinate): Boolean {
+        return (coordinate.x in 0 until SQUARES_COUNT
+                && coordinate.y in 0 until SQUARES_COUNT
+                && (battleField[coordinate.x][coordinate.y]?.getCellState() == CellState.EMPTY
+                || battleField[coordinate.x][coordinate.y]?.getCellState() == CellState.SHIP))
     }
 
     fun printBattleField() {

@@ -1,6 +1,5 @@
 package com.avs.battleship.ships
 
-import android.graphics.Point
 import com.avs.battleship.FOUR_DECK_SHIP_SIZE
 import com.avs.battleship.battle_field.Cell
 import com.avs.battleship.battle_field.CellState
@@ -61,9 +60,9 @@ abstract class Ship {
         }
     }
 
-    fun setCellState(point: Coordinate, cellState: CellState) {
+    fun setCellState(coordinate: Coordinate, cellState: CellState) {
         for (cell in cells) {
-            if (cell.getX() == point.x && cell.getY() == point.y) {
+            if (cell.getX() == coordinate.x && cell.getY() == coordinate.y) {
                 cell.setCellState(cellState)
                 break
             }
