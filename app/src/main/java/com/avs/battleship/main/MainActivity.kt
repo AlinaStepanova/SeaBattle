@@ -36,12 +36,12 @@ class MainActivity : AppCompatActivity() {
             binding.tvStatus.text = resources.getText(newStatusId)
         })
 
-        viewModel.selectedByPersonPoint.observe(this, Observer { point ->
+        viewModel.selectedByPersonCoordinate.observe(this, Observer { point ->
             binding.viewComputer.getSelectedPoint(point)
             binding.viewFire.visibility = if (point == null) View.INVISIBLE else View.VISIBLE
         })
 
-        viewModel.selectedByComputerPoint.observe(this, Observer {
+        viewModel.selectedByComputerCoordinate.observe(this, Observer {
             binding.progressBar.visibility = View.VISIBLE
         })
 

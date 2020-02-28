@@ -12,12 +12,12 @@ import kotlinx.coroutines.*
 class MainViewModel : ViewModel() {
 
     private lateinit var activePlayer: Player
-    private var _selectedByPersonPoint = MutableLiveData<Coordinate>()
-    val selectedByPersonPoint: LiveData<Coordinate>
-        get() = _selectedByPersonPoint
-    private var _selectedByComputerPoint = MutableLiveData<Coordinate>()
-    val selectedByComputerPoint: LiveData<Coordinate>
-        get() = _selectedByComputerPoint
+    private var _selectedByPersonCoordinate = MutableLiveData<Coordinate>()
+    val selectedByPersonCoordinate: LiveData<Coordinate>
+        get() = _selectedByPersonCoordinate
+    private var _selectedByComputerCoordinate = MutableLiveData<Coordinate>()
+    val selectedByComputerCoordinate: LiveData<Coordinate>
+        get() = _selectedByComputerCoordinate
     private var _status = MutableLiveData<Int>()
     val status: LiveData<Int>
         get() = _status
@@ -65,7 +65,7 @@ class MainViewModel : ViewModel() {
         _status.value = R.string.status_welcome_text
         _startGameEvent.value = false
         _endGameEvent.value = false
-        _selectedByPersonPoint.value = null
+        _selectedByPersonCoordinate.value = null
         computerBattleField.randomizeShips()
     }
 
@@ -93,7 +93,7 @@ class MainViewModel : ViewModel() {
     fun handlePCAreaClick(coordinate: Coordinate) {
         if (activePlayer == Player.PERSON) {
             if (computerBattleField.isCellFreeToBeSelected(coordinate)) {
-                _selectedByPersonPoint.value = coordinate
+                _selectedByPersonCoordinate.value = coordinate
             }
         }
     }
@@ -107,8 +107,8 @@ class MainViewModel : ViewModel() {
 
     fun makeFireAsPerson() {
         if (activePlayer == Player.PERSON) {
-            val isShipHit = computerBattleField.handleShot(_selectedByPersonPoint.value)
-            _selectedByPersonPoint.value = null
+            val isShipHit = computerBattleField.handleShot(_selectedByPersonCoordinate.value)
+            _selectedByPersonCoordinate.value = null
             if (isShipHit) {
                 _status.value = R.string.status_shot_ship_again_text
                 _personSuccessfulShots.value = computerBattleField.getCrossesCoordinates()
@@ -127,8 +127,8 @@ class MainViewModel : ViewModel() {
     }
 
     private fun playAsComputer() {
-        val coordinate: Coordinate = shotManager.getPointToShot()
-        _selectedByComputerPoint.value = coordinate
+        val coordinate: Coordinate = shotManager.getCoordinateToShot()
+        _selectedByComputerCoordinate.value = coordinate
         val isShipHit = personBattleField.handleShot(coordinate)
         shotManager.handleShot(isShipHit)
         if (isShipHit) {

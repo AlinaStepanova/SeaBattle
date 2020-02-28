@@ -22,10 +22,10 @@ class ShotManager {
         ONE_DECK_SHIP_SIZE, ONE_DECK_SHIP_SIZE, ONE_DECK_SHIP_SIZE, ONE_DECK_SHIP_SIZE
     )
 
-    fun getPointToShot(): Coordinate {
-        var coordinate = Coordinate(-1, -1)
+    fun getCoordinateToShot(): Coordinate {
+        var coordinate = Coordinate()
         if (firstCell.isState(EMPTY) || firstCell.isState(SHOT_FAILURE)) {
-            coordinate = getRandomPoint()
+            coordinate = getRandomCoordinate()
             firstCell = Cell(coordinate.x, coordinate.y)
         } else if (firstCell.isState(SHOT_SUCCESS)
             && (secondCell.isState(EMPTY) || secondCell.isState(SHOT_FAILURE))
@@ -34,13 +34,13 @@ class ShotManager {
                 || shipsLength.contains(THREE_DECK_SHIP_SIZE)
                 || shipsLength.contains(FOUR_DECK_SHIP_SIZE)
             ) {
-                coordinate = getNextPointToShot(firstCell)
+                coordinate = getNextCoordinateToShot(firstCell)
             }
             if (coordinate.x == -1) {
                 shipsLength.remove(ONE_DECK_SHIP_SIZE)
                 markHorizontalNeighbours(firstCell)
                 markVerticalNeighbours(firstCell)
-                coordinate = getRandomPoint()
+                coordinate = getRandomCoordinate()
             } else {
                 secondCell = Cell(coordinate.x, coordinate.y)
             }
@@ -56,7 +56,7 @@ class ShotManager {
                 shipsLength.remove(TWO_DECK_SHIP_SIZE)
                 markEdgeCells(mutableListOf(firstCell.getCoordinate(), secondCell.getCoordinate()))
                 resetValues()
-                coordinate = getRandomPoint()
+                coordinate = getRandomCoordinate()
             } else {
                 thirdCell = Cell(coordinate.x, coordinate.y)
             }
@@ -77,7 +77,7 @@ class ShotManager {
                     )
                 )
                 resetValues()
-                coordinate = getRandomPoint()
+                coordinate = getRandomCoordinate()
             } else {
                 fourthCell = Cell(coordinate.x, coordinate.y)
             }
@@ -90,26 +90,26 @@ class ShotManager {
                 )
             )
             resetValues()
-            coordinate = getRandomPoint()
+            coordinate = getRandomCoordinate()
         }
         return coordinate
     }
 
     private fun markEdgeCells(cells: MutableList<Coordinate>) {
         if (firstCell.getX() == secondCell.getX()) {
-            val maxPoint = getMaxPoint(cells, Orientation.HORIZONTAL)
-            val minPoint = getMinPoint(cells, Orientation.HORIZONTAL)
-            battleField.setCellState(Coordinate(minPoint.x, minPoint.y - 1), SHOT_FAILURE)
-            battleField.setCellState(Coordinate(maxPoint.x, maxPoint.y + 1), SHOT_FAILURE)
+            val maxCoordinate = getMaxCoordinate(cells, Orientation.HORIZONTAL)
+            val minCoordinate = getMinCoordinate(cells, Orientation.HORIZONTAL)
+            battleField.setCellState(Coordinate(minCoordinate.x, minCoordinate.y - 1), SHOT_FAILURE)
+            battleField.setCellState(Coordinate(maxCoordinate.x, maxCoordinate.y + 1), SHOT_FAILURE)
         } else if (firstCell.getY() == secondCell.getY()) {
-            val maxPoint = getMaxPoint(cells, Orientation.VERTICAL)
-            val minPoint = getMinPoint(cells, Orientation.VERTICAL)
-            battleField.setCellState(Coordinate(minPoint.x - 1, minPoint.y), SHOT_FAILURE)
-            battleField.setCellState(Coordinate(maxPoint.x + 1, maxPoint.y), SHOT_FAILURE)
+            val maxCoordinate = getMaxCoordinate(cells, Orientation.VERTICAL)
+            val minCoordinate = getMinCoordinate(cells, Orientation.VERTICAL)
+            battleField.setCellState(Coordinate(minCoordinate.x - 1, minCoordinate.y), SHOT_FAILURE)
+            battleField.setCellState(Coordinate(maxCoordinate.x + 1, maxCoordinate.y), SHOT_FAILURE)
         }
     }
 
-    fun getMaxPoint(list: MutableList<Coordinate>, orientation: Orientation): Coordinate {
+    fun getMaxCoordinate(list: MutableList<Coordinate>, orientation: Orientation): Coordinate {
         return if (orientation == Orientation.VERTICAL) {
             list.maxBy { it.x }!!
         } else {
@@ -117,7 +117,7 @@ class ShotManager {
         }
     }
 
-    fun getMinPoint(list: MutableList<Coordinate>, orientation: Orientation): Coordinate {
+    fun getMinCoordinate(list: MutableList<Coordinate>, orientation: Orientation): Coordinate {
         return if (orientation == Orientation.VERTICAL) {
             list.minBy { it.x }!!
         } else {
@@ -126,20 +126,20 @@ class ShotManager {
     }
 
     private fun checkNeighbourCells(cell1: Cell, cell2: Cell): Coordinate {
-        var coordinate = Coordinate(-1, -1)
+        var coordinate = Coordinate()
         if (cell1.getX() == cell2.getX()) {
-            coordinate = checkVerticalPoints(cell2.getCoordinate(), cell1.getCoordinate())
+            coordinate = checkVerticalCoordinates(cell2.getCoordinate(), cell1.getCoordinate())
         } else if (cell1.getY() == cell2.getY()) {
-            coordinate = checkHorizontalPoints(cell2.getCoordinate(), cell1.getCoordinate())
+            coordinate = checkHorizontalCoordinates(cell2.getCoordinate(), cell1.getCoordinate())
         }
         return coordinate
     }
 
-    private fun checkHorizontalPoints(
+    private fun checkHorizontalCoordinates(
         coordinateFirst: Coordinate,
         coordinateSecond: Coordinate
     ): Coordinate {
-        var coordinate = Coordinate(-1, -1)
+        var coordinate = Coordinate()
         when {
             isTopCellAvailable(coordinateFirst) -> {
                 coordinate = Coordinate(coordinateFirst.x - 1, coordinateFirst.y)
@@ -157,11 +157,11 @@ class ShotManager {
         return coordinate
     }
 
-    private fun checkVerticalPoints(
+    private fun checkVerticalCoordinates(
         coordinateFirst: Coordinate,
         coordinateSecond: Coordinate
     ): Coordinate {
-        var coordinate = Coordinate(-1, -1)
+        var coordinate = Coordinate()
         when {
             isLeftCellAvailable(coordinateFirst) -> {
                 coordinate = Coordinate(coordinateFirst.x, coordinateFirst.y - 1)
@@ -180,15 +180,14 @@ class ShotManager {
     }
 
     private fun resetValues() {
-        //todo assign to (-1, -1)
         firstCell.setCellState(EMPTY)
         secondCell.setCellState(EMPTY)
         thirdCell.setCellState(EMPTY)
         fourthCell.setCellState(EMPTY)
     }
 
-    private fun getNextPointToShot(cell: Cell): Coordinate {
-        var coordinate = Coordinate(-1, -1)
+    private fun getNextCoordinateToShot(cell: Cell): Coordinate {
+        var coordinate = Coordinate()
         when {
             isLeftCellAvailable(cell.getCoordinate()) -> {
                 coordinate = Coordinate(cell.getX(), cell.getY() - 1)
@@ -206,7 +205,7 @@ class ShotManager {
         return coordinate
     }
 
-    private fun getRandomPoint(): Coordinate {
+    private fun getRandomCoordinate(): Coordinate {
         firstCell = Cell()
         do {
             firstCell.setCoordinates(

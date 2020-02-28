@@ -18,11 +18,11 @@ class ShotManagerTest {
 
     @Test
     fun getMaxPoint() {
-        assertEquals(shotManager.getMaxPoint(mutableListOf(
+        assertEquals(shotManager.getMaxCoordinate(mutableListOf(
             Coordinate(5, 4),
             Coordinate(3, 4),
             Coordinate(4, 4)), Orientation.VERTICAL), Coordinate(5, 4))
-        assertEquals(shotManager.getMaxPoint(mutableListOf(
+        assertEquals(shotManager.getMaxCoordinate(mutableListOf(
             Coordinate(5, 4),
             Coordinate(5, 3),
             Coordinate(5, 5),
@@ -31,11 +31,11 @@ class ShotManagerTest {
 
     @Test
     fun getMinPoint() {
-        assertEquals(shotManager.getMinPoint(mutableListOf(
+        assertEquals(shotManager.getMinCoordinate(mutableListOf(
             Coordinate(5, 4),
             Coordinate(3, 4),
             Coordinate(4, 4)), Orientation.VERTICAL), Coordinate(3, 4))
-        assertEquals(shotManager.getMinPoint(mutableListOf(
+        assertEquals(shotManager.getMinCoordinate(mutableListOf(
             Coordinate(5, 4),
             Coordinate(5, 3),
             Coordinate(5, 5),
