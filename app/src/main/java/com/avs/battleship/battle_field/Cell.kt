@@ -1,5 +1,7 @@
 package com.avs.battleship.battle_field
 
+import com.avs.battleship.SQUARES_COUNT
+
 class Cell() {
 
     private var coordinate = Coordinate()
@@ -32,8 +34,10 @@ class Cell() {
     }
 
     fun setCoordinates(x: Int, y: Int) {
-        this.coordinate.x = x
-        this.coordinate.y = y
+        if (x in 0 until SQUARES_COUNT && y in 0 until SQUARES_COUNT) {
+            this.coordinate.x = x
+            this.coordinate.y = y
+        }
     }
 
     fun getX(): Int {
