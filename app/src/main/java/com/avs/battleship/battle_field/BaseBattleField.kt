@@ -1,7 +1,9 @@
 package com.avs.battleship.battle_field
 
 import android.util.Log
+import androidx.annotation.VisibleForTesting
 import com.avs.battleship.SQUARES_COUNT
+import com.avs.battleship.battle_field.CellState.*
 
 open class BaseBattleField {
 
@@ -20,6 +22,11 @@ open class BaseBattleField {
         }
     }
 
+    @VisibleForTesting
+    fun getCellsArray(): Array<Array<Cell?>> {
+        return battleField
+    }
+
     fun setCellState(coordinate: Coordinate, cellState: CellState) {
         if (coordinate.x in 0 until SQUARES_COUNT && coordinate.y in 0 until SQUARES_COUNT) {
             battleField[coordinate.x][coordinate.y]?.setCellState(cellState)
@@ -29,8 +36,8 @@ open class BaseBattleField {
     fun isCellFreeToBeSelected(coordinate: Coordinate): Boolean {
         return (coordinate.x in 0 until SQUARES_COUNT
                 && coordinate.y in 0 until SQUARES_COUNT
-                && (battleField[coordinate.x][coordinate.y]?.getCellState() == CellState.EMPTY
-                || battleField[coordinate.x][coordinate.y]?.getCellState() == CellState.SHIP))
+                && (battleField[coordinate.x][coordinate.y]?.getCellState() == EMPTY
+                || battleField[coordinate.x][coordinate.y]?.getCellState() == SHIP))
     }
 
     fun printBattleField() {

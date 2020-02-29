@@ -47,4 +47,22 @@ class Cell() {
     override fun toString(): String {
         return this.getCellState().toString() + " x = " + getX() + " y = " + getY()
     }
+
+    override fun hashCode(): Int {
+        var result = coordinate.hashCode()
+        result = 31 * result + cellState.hashCode()
+        return result
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Cell
+
+        if (coordinate != other.coordinate) return false
+        if (cellState != other.cellState) return false
+
+        return true
+    }
 }
