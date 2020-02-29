@@ -55,4 +55,12 @@ class CellTest {
     fun getY() {
         assertEquals(cell.getY(), 6)
     }
+
+    @Test
+    fun isEquals() {
+        assertNotEquals(Cell(), Cell(1, -1))
+        assertEquals(cell, Cell(5, 6))
+        cell.setCellState(SHOT_SUCCESS)
+        assertNotEquals(cell, Cell(5, 6))
+    }
 }
