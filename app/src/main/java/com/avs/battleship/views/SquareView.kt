@@ -1,15 +1,19 @@
 package com.avs.battleship.views
 
 import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Path
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.View
 import androidx.core.content.ContextCompat
-import com.avs.battleship.main.MainViewModel
 import com.avs.battleship.R
 import com.avs.battleship.SQUARES_COUNT
 import com.avs.battleship.battle_field.Coordinate
 import com.avs.battleship.battle_field.CoordinateF
+import com.avs.battleship.main.MainViewModel
 
 abstract class SquareView : View {
 
@@ -36,12 +40,18 @@ abstract class SquareView : View {
     }
 
     private fun init(context: Context) {
-        circleRadius = context.resources.getFloat(R.dimen.circle_radius)
+        circleRadius = getFloatValue(context)
         paint = Paint()
         paint.color = Color.BLACK
         paint.strokeWidth = lineWidth
         paintShipSquare = Paint()
         paintShipSquare.color = ContextCompat.getColor(context, R.color.greyTransparent)
+    }
+
+    private fun getFloatValue(context: Context): Float {
+        val out = TypedValue()
+        context.resources.getValue(R.dimen.circle_radius, out, true)
+        return out.float
     }
 
     fun provideViewModel(mainViewModel: MainViewModel) {
