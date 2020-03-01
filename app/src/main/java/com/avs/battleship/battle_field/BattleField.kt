@@ -46,20 +46,19 @@ class BattleField : BaseBattleField() {
         if (coordinate != null && coordinate.x in 0 until SQUARES_COUNT && coordinate.y in 0 until SQUARES_COUNT) {
             if (battleField[coordinate.x][coordinate.y]?.getCellState() == CellState.EMPTY) {
                 battleField[coordinate.x][coordinate.y]?.setCellState(CellState.SHOT_FAILURE)
-                defineShipByCoordinate(coordinate, CellState.SHOT_FAILURE)
             } else {
                 battleField[coordinate.x][coordinate.y]?.setCellState(CellState.SHOT_SUCCESS)
-                defineShipByCoordinate(coordinate, CellState.SHOT_SUCCESS)
+                defineShipByCoordinate(coordinate)
                 isShipHit = true
             }
         }
         return isShipHit
     }
 
-    private fun defineShipByCoordinate(coordinate: Coordinate, cellState: CellState) {
+    private fun defineShipByCoordinate(coordinate: Coordinate) {
         for (ship in ships) {
             if (coordinate.x in ship.getRowCoordinates() && coordinate.y in ship.getColumnCoordinates()) {
-                ship.setCellState(coordinate, cellState)
+                ship.setShotSuccessState(coordinate)
                 break
             }
         }

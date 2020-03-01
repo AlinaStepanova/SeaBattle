@@ -2,10 +2,10 @@ package com.avs.battleship.ships
 
 import com.avs.battleship.FOUR_DECK_SHIP_SIZE
 import com.avs.battleship.battle_field.Cell
-import com.avs.battleship.battle_field.CellState
 import com.avs.battleship.battle_field.Coordinate
 import java.util.*
 import kotlin.collections.ArrayList
+import com.avs.battleship.battle_field.CellState.*
 
 abstract class Ship {
 
@@ -19,7 +19,7 @@ abstract class Ship {
 
     protected fun initCells() {
         for (index in 0 until getLength()) {
-            cells.add(Cell(CellState.SHIP))
+            cells.add(Cell(SHIP))
         }
         cells.trimToSize()
     }
@@ -60,10 +60,10 @@ abstract class Ship {
         }
     }
 
-    fun setCellState(coordinate: Coordinate, cellState: CellState) {
+    fun setShotSuccessState(coordinate: Coordinate) {
         for (cell in cells) {
             if (cell.getX() == coordinate.x && cell.getY() == coordinate.y) {
-                cell.setCellState(cellState)
+                cell.setCellState(SHOT_SUCCESS)
                 break
             }
         }
@@ -72,7 +72,7 @@ abstract class Ship {
     fun isDead(): Boolean {
         var isDead = true
         for (cell in cells) {
-            if (cell.getCellState() == CellState.SHIP) {
+            if (cell.getCellState() == SHIP) {
                 isDead = false
                 break
             }
