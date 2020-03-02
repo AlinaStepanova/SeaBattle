@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Battleship</string>
+    <string name="app_name">Sea Battle</string>
     <string name="letter_a">A</string>
     <string name="letter_b">B</string>
     <string name="letter_c">C</string>
