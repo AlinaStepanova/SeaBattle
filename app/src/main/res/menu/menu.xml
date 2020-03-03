@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/share"
+        android:icon="@drawable/ic_share"
+        android:title="Share"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/rate"
+        android:icon="@drawable/ic_star_black"
+        android:title="Rate on Play Market"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/write_to_author"
+        android:icon="@drawable/ic_rate_review"
+        android:title="Write to Author"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/more_apps"
+        android:icon="@drawable/ic_shop_black"
+        android:title="More Apps"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/privacy_policy"
+        android:icon="@drawable/ic_warning"
+        android:title="Privacy Policy"
+        app:showAsAction="never" />
+
+</menu>

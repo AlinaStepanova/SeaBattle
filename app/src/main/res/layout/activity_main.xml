@@ -23,7 +23,6 @@
             android:paddingTop="@dimen/dimen_8dp"
             android:paddingEnd="@dimen/dimen_8dp"
             android:src="@drawable/ic_more"
-            android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
