@@ -33,4 +33,9 @@
     <string name="status_shot_ship_again_text">Select a cell and make a fire again</string>
     <string name="status_opponent_shot_text">The opponent is making a fire</string>
     <string name="status_opponent_shot_again_text">The opponent is making a fire again</string>
+    <string name="menu_share_text">Share</string>
+    <string name="menu_rate_on_play_market_text">Rate on Play Market</string>
+    <string name="menu_write_to_author_text">Write to Author</string>
+    <string name="menu_more_apps_text">More Apps</string>
+    <string name="menu_privacy_policy_text">Privacy Policy</string>
 </resources>

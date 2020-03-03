@@ -8,6 +8,10 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="PopupStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:fontFamily">casual</item>
+    </style>
+
     <style name="SingleDigitStyle">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">0dp</item>

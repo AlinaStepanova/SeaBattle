@@ -1,6 +1,7 @@
 package com.avs.sea_battle.main
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.MotionEvent
@@ -8,6 +9,7 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -115,8 +117,9 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
     }
 
     private fun showPopup(v: View?) {
+        val wrapper: Context = ContextThemeWrapper(this, R.style.PopupStyle)
         if (v != null) {
-            PopupMenu(this, v).apply {
+            PopupMenu(wrapper, v).apply {
                 setOnMenuItemClickListener(this@MainActivity)
                 inflate(R.menu.menu)
                 show()

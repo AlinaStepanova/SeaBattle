@@ -4,27 +4,27 @@
     <item
         android:id="@+id/share"
         android:icon="@drawable/ic_share"
-        android:title="Share"
+        android:title="@string/menu_share_text"
         app:showAsAction="never" />
     <item
         android:id="@+id/rate"
         android:icon="@drawable/ic_star_black"
-        android:title="Rate on Play Market"
+        android:title="@string/menu_rate_on_play_market_text"
         app:showAsAction="never" />
     <item
         android:id="@+id/write_to_author"
         android:icon="@drawable/ic_rate_review"
-        android:title="Write to Author"
+        android:title="@string/menu_write_to_author_text"
         app:showAsAction="never" />
     <item
         android:id="@+id/more_apps"
         android:icon="@drawable/ic_shop_black"
-        android:title="More Apps"
+        android:title="@string/menu_more_apps_text"
         app:showAsAction="never" />
     <item
         android:id="@+id/privacy_policy"
         android:icon="@drawable/ic_warning"
-        android:title="Privacy Policy"
+        android:title="@string/menu_privacy_policy_text"
         app:showAsAction="never" />
 
 </menu>
