@@ -1,7 +1,9 @@
 package com.avs.sea_battle.main
 
 import android.annotation.SuppressLint
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.MotionEvent
@@ -15,7 +17,7 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.avs.sea_battle.R
+import com.avs.sea_battle.*
 import com.avs.sea_battle.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
@@ -130,26 +132,49 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
     override fun onMenuItemClick(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.share -> {
-                Toast.makeText(this, item.title, Toast.LENGTH_SHORT).show()
+                startActivity(
+                    Intent.createChooser(
+                        getShareIntent(this), resources.getString(R.string.share_text)
+                    )
+                )
                 true
             }
             R.id.rate -> {
-                Toast.makeText(this, item.title, Toast.LENGTH_SHORT).show()
+                val call = { startActivity(openMarket(this, false)) }
+                openActivity(call, R.string.cannot_open_market_error_text)
                 true
             }
             R.id.write_to_author -> {
-                Toast.makeText(this, item.title, Toast.LENGTH_SHORT).show()
+                val call = {
+                    startActivity(
+                        openGmail(this, RECIPIENTS, resources.getString(R.string.app_name))
+                    )
+                }
+                openActivity(call, R.string.cannot_send_email_error_text)
                 true
             }
             R.id.more_apps -> {
-                Toast.makeText(this, item.title, Toast.LENGTH_SHORT).show()
+                val call = { startActivity(openMarket(this, true)) }
+                openActivity(call, R.string.cannot_open_market_error_text)
                 true
             }
             R.id.privacy_policy -> {
-                Toast.makeText(this, item.title, Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, item.title, Toast.LENGTH_LONG).show()
                 true
             }
             else -> false
         }
+    }
+
+    private fun openActivity(call: () -> Unit, messageId: Int) {
+        try {
+            call()
+        } catch (e: ActivityNotFoundException) {
+            showToast(messageId)
+        }
+    }
+
+    private fun showToast(messageId: Int) {
+        Toast.makeText(this, resources.getString(messageId), Toast.LENGTH_LONG).show()
     }
 }

@@ -38,4 +38,8 @@
     <string name="menu_write_to_author_text">Write to Author</string>
     <string name="menu_more_apps_text">More Apps</string>
     <string name="menu_privacy_policy_text">Privacy Policy</string>
+    <string name="cannot_send_email_error_text">Cannot send email</string>
+    <string name="share_body_text">I recommend you a Sea Battle game!</string>
+    <string name="share_text">Share via</string>
+    <string name="cannot_open_market_error_text">Unable to open Play Market app</string>
 </resources>
