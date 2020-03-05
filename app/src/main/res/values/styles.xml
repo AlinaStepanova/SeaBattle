@@ -10,6 +10,7 @@
 
     <style name="PopupStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="android:fontFamily">casual</item>
+        <item name="android:textSize">@dimen/text_size_15sp</item>
     </style>
 
     <style name="SingleDigitStyle">

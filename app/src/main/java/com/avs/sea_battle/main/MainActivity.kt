@@ -29,10 +29,7 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(
-            this,
-            R.layout.activity_main
-        )
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         binding.mainViewModel = viewModel
 
@@ -132,11 +129,7 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
     override fun onMenuItemClick(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.share -> {
-                startActivity(
-                    Intent.createChooser(
-                        getShareIntent(this), resources.getString(R.string.share_text)
-                    )
-                )
+                startActivity(Intent.createChooser(getShareIntent(this), resources.getString(R.string.share_text)))
                 true
             }
             R.id.rate -> {
@@ -145,11 +138,7 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
                 true
             }
             R.id.write_to_author -> {
-                val call = {
-                    startActivity(
-                        openGmail(this, RECIPIENTS, resources.getString(R.string.app_name))
-                    )
-                }
+                val call = { startActivity(openGmail(this, RECIPIENTS, resources.getString(R.string.app_name))) }
                 openActivity(call, R.string.cannot_send_email_error_text)
                 true
             }
@@ -170,11 +159,7 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
         try {
             call()
         } catch (e: ActivityNotFoundException) {
-            showToast(messageId)
+            Toast.makeText(this, resources.getString(messageId), Toast.LENGTH_LONG).show()
         }
-    }
-
-    private fun showToast(messageId: Int) {
-        Toast.makeText(this, resources.getString(messageId), Toast.LENGTH_LONG).show()
     }
 }
