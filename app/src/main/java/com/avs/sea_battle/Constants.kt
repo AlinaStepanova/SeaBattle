@@ -8,4 +8,5 @@ const val ONE_DECK_SHIP_SIZE = 1
 const val SECOND_IN_MILLIS = 1000L
 const val SHARE_INTENT_TYPE = "text/plain"
 const val DEV_NAME = "Alina Stepanova"
+const val PRIVACY_POLICY_URL = "https://alinastepanova.github.io/SeaBattle/"
 val RECIPIENTS = arrayOf("alina.stepanova.work@gmail.com")

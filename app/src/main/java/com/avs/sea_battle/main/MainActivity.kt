@@ -19,6 +19,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.avs.sea_battle.*
 import com.avs.sea_battle.databinding.ActivityMainBinding
+import com.avs.sea_battle.privacy_policy.PrivacyPolicyActivity
 
 class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
 
@@ -148,7 +149,7 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
                 true
             }
             R.id.privacy_policy -> {
-                Toast.makeText(this, item.title, Toast.LENGTH_LONG).show()
+                startActivity(Intent(this, PrivacyPolicyActivity::class.java))
                 true
             }
             else -> false
