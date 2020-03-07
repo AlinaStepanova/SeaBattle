@@ -13,10 +13,10 @@ import org.junit.Assert.*
 
 class ShipTest {
 
-    lateinit var fourDeckShip: Ship
-    lateinit var threeDeckShip: Ship
-    lateinit var twoDeckShip: Ship
-    lateinit var oneDeckShip: Ship
+    private lateinit var fourDeckShip: Ship
+    private lateinit var threeDeckShip: Ship
+    private lateinit var twoDeckShip: Ship
+    private lateinit var oneDeckShip: Ship
 
     @Before
     fun setUp() {

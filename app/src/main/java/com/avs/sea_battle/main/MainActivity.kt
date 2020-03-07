@@ -97,12 +97,12 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
         return { v: View, event: MotionEvent ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    v.setBackgroundColor(ContextCompat.getColor(this, R.color.black))
-                    setTextColor(v, R.color.white)
+                    v.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccent))
+                    setTextColor(v, R.color.colorPrimary)
                 }
                 MotionEvent.ACTION_UP -> {
                     v.background = ContextCompat.getDrawable(this, R.drawable.square_background)
-                    setTextColor(v, R.color.greyDefault)
+                    setTextColor(v, R.color.colorPrimaryDark)
                     v.performClick()
                 }
             }

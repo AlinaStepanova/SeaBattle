@@ -1,7 +1,6 @@
 package com.avs.sea_battle.privacy_policy
 
 import android.os.Bundle
-import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil

@@ -9,7 +9,7 @@ import com.avs.sea_battle.battle_field.CellState.*
 
 class BaseBattleFieldTest {
 
-    lateinit var baseBattleField: BaseBattleField
+    private lateinit var baseBattleField: BaseBattleField
 
     @Before
     fun setUp() {

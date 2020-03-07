@@ -8,7 +8,7 @@ import org.junit.Assert.*
 
 class CellTest {
 
-    lateinit var cell: Cell
+    private lateinit var cell: Cell
 
     @Before
     fun setUp() {

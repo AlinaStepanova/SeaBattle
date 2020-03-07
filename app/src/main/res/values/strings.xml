@@ -29,7 +29,6 @@
     <string name="status_select_to_fire_text">Select a cell to make a fire</string>
     <string name="status_game_over_you_win_text">Game over you win!</string>
     <string name="status_game_over_you_lose_text">Game over you lose</string>
-    <string name="status_is_selected_text">is selected</string>
     <string name="status_shot_ship_again_text">Select a cell and make a fire again</string>
     <string name="status_opponent_shot_text">The opponent is making a fire</string>
     <string name="status_opponent_shot_again_text">The opponent is making a fire again</string>

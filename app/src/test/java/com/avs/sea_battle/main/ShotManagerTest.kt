@@ -9,7 +9,7 @@ import org.junit.Assert.*
 
 class ShotManagerTest {
 
-    lateinit var shotManager: ShotManager
+    private lateinit var shotManager: ShotManager
 
     @Before
     fun setUp() {
