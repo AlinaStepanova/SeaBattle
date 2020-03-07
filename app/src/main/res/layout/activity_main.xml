@@ -145,6 +145,7 @@
             android:layout_height="wrap_content"
             android:indeterminateTint="@color/colorAccent"
             android:visibility="invisible"
+            android:indeterminateTintMode="src_in"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/viewPerson"
             app:layout_constraintStart_toStartOf="@+id/viewPerson"
