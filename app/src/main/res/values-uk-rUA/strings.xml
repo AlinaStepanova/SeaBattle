@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Sea Battle</string>
+    <string name="generate_ships_text">Згенерувати Кораблі</string>
+    <string name="fire_text">Вогонь!</string>
+    <string name="start_text">Старт</string>
+    <string name="new_game_text">Нова Гра</string>
+    <string name="status_welcome_text">Ласкаво просимо!</string>
+    <string name="status_generate_or_start_text">Згенерувати кораблі знову або почати гру</string>
+    <string name="status_select_to_fire_text">Оберіть клітинку для пострілу</string>
+    <string name="status_game_over_you_win_text">Кінець гри - ви виграли!</string>
+    <string name="status_game_over_you_lose_text">Кінець гри - ви програли</string>
+    <string name="status_shot_ship_again_text">Оберіть клітинку та зробіть постріл знову</string>
+    <string name="status_opponent_shot_text">Опонент стріляє</string>
+    <string name="status_opponent_shot_again_text">Опоненр стріляє знову</string>
+    <string name="menu_share_text">Поділитися</string>
+    <string name="menu_rate_on_play_market_text">Оцінити на Play Market</string>
+    <string name="menu_write_to_author_text">Лист автору</string>
+    <string name="menu_more_apps_text">Більше додатків</string>
+    <string name="menu_privacy_policy_text">Політика конфіденційності</string>
+    <string name="cannot_send_email_error_text">Неможливо надіслати повідомлення</string>
+    <string name="share_body_text">Рекомендую вам гру Sea Battle</string>
+    <string name="share_text">Завершити дію за допомогою</string>
+    <string name="cannot_open_market_error_text">Неможливо відкрити додаток Play Market</string>
+</resources>

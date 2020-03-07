@@ -1,25 +1,25 @@
 <resources>
     <string name="app_name">Sea Battle</string>
-    <string name="letter_a">A</string>
-    <string name="letter_b">B</string>
-    <string name="letter_c">C</string>
-    <string name="letter_d">D</string>
-    <string name="letter_e">E</string>
-    <string name="letter_f">F</string>
-    <string name="letter_g">G</string>
-    <string name="letter_h">H</string>
-    <string name="letter_i">I</string>
-    <string name="letter_j">J</string>
-    <string name="number_1">1</string>
-    <string name="number_2">2</string>
-    <string name="number_3">3</string>
-    <string name="number_4">4</string>
-    <string name="number_5">5</string>
-    <string name="number_6">6</string>
-    <string name="number_7">7</string>
-    <string name="number_8">8</string>
-    <string name="number_9">9</string>
-    <string name="number_10">10</string>
+    <string name="letter_a" translatable="false">A</string>
+    <string name="letter_b" translatable="false">B</string>
+    <string name="letter_c" translatable="false">C</string>
+    <string name="letter_d" translatable="false">D</string>
+    <string name="letter_e" translatable="false">E</string>
+    <string name="letter_f" translatable="false">F</string>
+    <string name="letter_g" translatable="false">G</string>
+    <string name="letter_h" translatable="false">H</string>
+    <string name="letter_i" translatable="false">I</string>
+    <string name="letter_j" translatable="false">J</string>
+    <string name="number_1" translatable="false">1</string>
+    <string name="number_2" translatable="false">2</string>
+    <string name="number_3" translatable="false">3</string>
+    <string name="number_4" translatable="false">4</string>
+    <string name="number_5" translatable="false">5</string>
+    <string name="number_6" translatable="false">6</string>
+    <string name="number_7" translatable="false">7</string>
+    <string name="number_8" translatable="false">8</string>
+    <string name="number_9" translatable="false">9</string>
+    <string name="number_10" translatable="false">10</string>
     <string name="generate_ships_text">Generate Ships</string>
     <string name="fire_text">Fire!</string>
     <string name="start_text">Start</string>
@@ -29,7 +29,6 @@
     <string name="status_select_to_fire_text">Select a cell to make a fire</string>
     <string name="status_game_over_you_win_text">Game over you win!</string>
     <string name="status_game_over_you_lose_text">Game over you lose</string>
-    <string name="status_is_selected_text">is selected</string>
     <string name="status_shot_ship_again_text">Select a cell and make a fire again</string>
     <string name="status_opponent_shot_text">The opponent is making a fire</string>
     <string name="status_opponent_shot_again_text">The opponent is making a fire again</string>
