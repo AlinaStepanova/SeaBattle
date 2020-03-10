@@ -22,6 +22,26 @@ class ShotManager {
         ONE_DECK_SHIP_SIZE, ONE_DECK_SHIP_SIZE, ONE_DECK_SHIP_SIZE, ONE_DECK_SHIP_SIZE
     )
 
+    fun getBattleField(): BaseBattleField {
+        return battleField
+    }
+
+    fun getFirstCell(): Cell {
+        return firstCell
+    }
+
+    fun getSecondCell(): Cell {
+        return secondCell
+    }
+
+    fun getThirdCell(): Cell {
+        return thirdCell
+    }
+
+    fun getFourthCell(): Cell {
+        return fourthCell
+    }
+
     fun getCoordinateToShot(): Coordinate {
         var coordinate = Coordinate()
         if (firstCell.isState(EMPTY) || firstCell.isState(SHOT_FAILURE)) {
@@ -179,7 +199,7 @@ class ShotManager {
         return coordinate
     }
 
-    private fun resetValues() {
+    fun resetValues() {
         firstCell.setCellState(EMPTY)
         secondCell.setCellState(EMPTY)
         thirdCell.setCellState(EMPTY)
@@ -205,7 +225,7 @@ class ShotManager {
         return coordinate
     }
 
-    private fun getRandomCoordinate(): Coordinate {
+    fun getRandomCoordinate(): Coordinate {
         firstCell = Cell()
         do {
             firstCell.setCoordinates(
@@ -253,38 +273,37 @@ class ShotManager {
         }
     }
 
-    private fun markHorizontalNeighbours(cell: Cell) {
+    fun markHorizontalNeighbours(cell: Cell) {
         battleField.setCellState(Coordinate(cell.getX(), cell.getY() - 1), SHOT_FAILURE)
         battleField.setCellState(Coordinate(cell.getX(), cell.getY() + 1), SHOT_FAILURE)
     }
 
-    private fun markVerticalNeighbours(cell: Cell) {
+    fun markVerticalNeighbours(cell: Cell) {
         battleField.setCellState(Coordinate(cell.getX() - 1, cell.getY()), SHOT_FAILURE)
         battleField.setCellState(Coordinate(cell.getX() + 1, cell.getY()), SHOT_FAILURE)
     }
 
-    private fun updateBattleField(shipHit: Boolean, currentCell: Cell) {
+    fun updateBattleField(shipHit: Boolean, currentCell: Cell) {
         currentCell.setCellState(if (shipHit) SHOT_SUCCESS else SHOT_FAILURE)
         battleField.setCellState(currentCell.getCoordinate(), currentCell.getCellState())
-        battleField.printBattleField()
     }
 
-    private fun isLeftCellAvailable(coordinate: Coordinate): Boolean {
+    fun isLeftCellAvailable(coordinate: Coordinate): Boolean {
         val leftCell = Cell(coordinate.x, coordinate.y - 1)
         return battleField.isCellFreeToBeSelected(leftCell.getCoordinate())
     }
 
-    private fun isRightCellAvailable(coordinate: Coordinate): Boolean {
+    fun isRightCellAvailable(coordinate: Coordinate): Boolean {
         val rightCell = Cell(coordinate.x, coordinate.y + 1)
         return battleField.isCellFreeToBeSelected(rightCell.getCoordinate())
     }
 
-    private fun isTopCellAvailable(coordinate: Coordinate): Boolean {
+    fun isTopCellAvailable(coordinate: Coordinate): Boolean {
         val topCell = Cell(coordinate.x - 1, coordinate.y)
         return battleField.isCellFreeToBeSelected(topCell.getCoordinate())
     }
 
-    private fun isBottomCellAvailable(coordinate: Coordinate): Boolean {
+    fun isBottomCellAvailable(coordinate: Coordinate): Boolean {
         val bottomCell = Cell(coordinate.x + 1, coordinate.y)
         return battleField.isCellFreeToBeSelected(bottomCell.getCoordinate())
     }

@@ -1,5 +1,7 @@
 package com.avs.sea_battle.main
 
+import com.avs.sea_battle.battle_field.Cell
+import com.avs.sea_battle.battle_field.CellState
 import com.avs.sea_battle.battle_field.Coordinate
 import com.avs.sea_battle.ships.Orientation
 import org.junit.Before
@@ -18,27 +20,117 @@ class ShotManagerTest {
 
     @Test
     fun getMaxPoint() {
-        assertEquals(shotManager.getMaxCoordinate(mutableListOf(
-            Coordinate(5, 4),
-            Coordinate(3, 4),
-            Coordinate(4, 4)), Orientation.VERTICAL), Coordinate(5, 4))
-        assertEquals(shotManager.getMaxCoordinate(mutableListOf(
-            Coordinate(5, 4),
-            Coordinate(5, 3),
-            Coordinate(5, 5),
-            Coordinate(5, 6)), Orientation.HORIZONTAL), Coordinate(5, 6))
+        assertEquals(
+            shotManager.getMaxCoordinate(
+                mutableListOf(
+                    Coordinate(5, 4),
+                    Coordinate(3, 4),
+                    Coordinate(4, 4)
+                ), Orientation.VERTICAL
+            ), Coordinate(5, 4)
+        )
+        assertEquals(
+            shotManager.getMaxCoordinate(
+                mutableListOf(
+                    Coordinate(5, 4),
+                    Coordinate(5, 3),
+                    Coordinate(5, 5),
+                    Coordinate(5, 6)
+                ), Orientation.HORIZONTAL
+            ), Coordinate(5, 6)
+        )
     }
 
     @Test
     fun getMinPoint() {
-        assertEquals(shotManager.getMinCoordinate(mutableListOf(
-            Coordinate(5, 4),
-            Coordinate(3, 4),
-            Coordinate(4, 4)), Orientation.VERTICAL), Coordinate(3, 4))
-        assertEquals(shotManager.getMinCoordinate(mutableListOf(
-            Coordinate(5, 4),
-            Coordinate(5, 3),
-            Coordinate(5, 5),
-            Coordinate(5, 6)), Orientation.HORIZONTAL), Coordinate(5, 3))
+        assertEquals(
+            shotManager.getMinCoordinate(
+                mutableListOf(
+                    Coordinate(5, 4),
+                    Coordinate(3, 4),
+                    Coordinate(4, 4)
+                ), Orientation.VERTICAL
+            ), Coordinate(3, 4)
+        )
+        assertEquals(
+            shotManager.getMinCoordinate(
+                mutableListOf(
+                    Coordinate(5, 4),
+                    Coordinate(5, 3),
+                    Coordinate(5, 5),
+                    Coordinate(5, 6)
+                ), Orientation.HORIZONTAL
+            ), Coordinate(5, 3)
+        )
+    }
+
+    @Test
+    fun resetValues() {
+        shotManager.resetValues()
+        assertEquals(shotManager.getFirstCell().getCellState(), CellState.EMPTY)
+        assertEquals(shotManager.getSecondCell().getCellState(), CellState.EMPTY)
+        assertEquals(shotManager.getThirdCell().getCellState(), CellState.EMPTY)
+        assertEquals(shotManager.getFourthCell().getCellState(), CellState.EMPTY)
+    }
+
+    @Test
+    fun updateBattleField() {
+        shotManager.updateBattleField(true, Cell(1, 1))
+        assertFalse(shotManager.getBattleField().isCellFreeToBeSelected(Coordinate(1, 1)))
+        shotManager.updateBattleField(false, Cell(2, 2))
+        assertFalse(shotManager.getBattleField().isCellFreeToBeSelected(Coordinate(2, 2)))
+    }
+
+    @Test
+    fun getRandomCoordinate() {
+        val coordinate = shotManager.getRandomCoordinate()
+        assertTrue(coordinate.x in 0..9)
+        assertTrue(coordinate.y in 0..9)
+    }
+
+    @Test
+    fun isLeftCellAvailable() {
+        shotManager.updateBattleField(false, Cell(2, 2))
+        assertFalse(shotManager.isLeftCellAvailable(Coordinate(2, 3)))
+        assertTrue(shotManager.isLeftCellAvailable(Coordinate(5, 5)))
+    }
+
+    @Test
+    fun isRightCellAvailable() {
+        shotManager.updateBattleField(false, Cell(2, 2))
+        assertFalse(shotManager.isRightCellAvailable(Coordinate(2, 1)))
+        assertTrue(shotManager.isRightCellAvailable(Coordinate(5, 5)))
+    }
+
+    @Test
+    fun isTopCellAvailable() {
+        shotManager.updateBattleField(false, Cell(2, 2))
+        assertFalse(shotManager.isTopCellAvailable(Coordinate(3, 2)))
+        assertTrue(shotManager.isTopCellAvailable(Coordinate(5, 5)))
+    }
+
+    @Test
+    fun isBottomCellAvailable() {
+        shotManager.updateBattleField(false, Cell(2, 2))
+        assertFalse(shotManager.isBottomCellAvailable(Coordinate(1, 2)))
+        assertTrue(shotManager.isBottomCellAvailable(Coordinate(5, 5)))
+    }
+
+    @Test
+    fun markHorizontalNeighbours() {
+        shotManager.markHorizontalNeighbours(Cell(2, 2))
+        assertFalse(shotManager.getBattleField().isCellFreeToBeSelected(Coordinate(2, 1)))
+        assertFalse(shotManager.getBattleField().isCellFreeToBeSelected(Coordinate(2, 3)))
+        assertTrue(shotManager.getBattleField().isCellFreeToBeSelected(Coordinate(2, 4)))
+
+    }
+
+    @Test
+    fun markVerticalNeighbours() {
+        shotManager.markVerticalNeighbours(Cell(2, 2))
+        assertFalse(shotManager.getBattleField().isCellFreeToBeSelected(Coordinate(1, 2)))
+        assertFalse(shotManager.getBattleField().isCellFreeToBeSelected(Coordinate(3, 2)))
+        assertTrue(shotManager.getBattleField().isCellFreeToBeSelected(Coordinate(4, 2)))
+        assertTrue(shotManager.getBattleField().isCellFreeToBeSelected(Coordinate(0, 2)))
     }
 }
