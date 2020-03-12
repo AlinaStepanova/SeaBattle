@@ -206,7 +206,7 @@ class ShotManager {
         fourthCell.setCellState(EMPTY)
     }
 
-    private fun getNextCoordinateToShot(cell: Cell): Coordinate {
+    fun getNextCoordinateToShot(cell: Cell): Coordinate {
         var coordinate = Coordinate()
         when {
             isLeftCellAvailable(cell.getCoordinate()) -> {

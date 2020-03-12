@@ -133,4 +133,27 @@ class ShotManagerTest {
         assertTrue(shotManager.getBattleField().isCellFreeToBeSelected(Coordinate(4, 2)))
         assertTrue(shotManager.getBattleField().isCellFreeToBeSelected(Coordinate(0, 2)))
     }
+
+    @Test
+    fun getNextCoordinateToShot() {
+        var coordinate = shotManager.getNextCoordinateToShot(Cell(5, 5))
+        assertTrue(coordinate.x == 5)
+        assertTrue(coordinate.y == 4)
+        shotManager.updateBattleField(false, Cell(5, 4))
+        coordinate = shotManager.getNextCoordinateToShot(Cell(5, 5))
+        assertTrue(coordinate.x == 5)
+        assertTrue(coordinate.y == 6)
+        shotManager.updateBattleField(false, Cell(5, 6))
+        coordinate = shotManager.getNextCoordinateToShot(Cell(5, 5))
+        assertTrue(coordinate.x == 4)
+        assertTrue(coordinate.y == 5)
+        shotManager.updateBattleField(false, Cell(4, 5))
+        coordinate = shotManager.getNextCoordinateToShot(Cell(5, 5))
+        assertTrue(coordinate.x == 6)
+        assertTrue(coordinate.y == 5)
+        shotManager.updateBattleField(false, Cell(6, 5))
+        coordinate = shotManager.getNextCoordinateToShot(Cell(5, 5))
+        assertTrue(coordinate.x == -1)
+        assertTrue(coordinate.y == -1)
+    }
 }
