@@ -156,4 +156,27 @@ class ShotManagerTest {
         assertTrue(coordinate.x == -1)
         assertTrue(coordinate.y == -1)
     }
+
+    @Test
+    fun checkHorizontalCoordinates() {
+        var coordinate = shotManager.checkHorizontalCoordinates(Coordinate(5, 7), Coordinate(5, 8))
+        assertTrue(coordinate.x == 4)
+        assertTrue(coordinate.y == 7)
+        shotManager.updateBattleField(false, Cell(4, 7))
+        coordinate = shotManager.checkHorizontalCoordinates(Coordinate(5, 7), Coordinate(5, 8))
+        assertTrue(coordinate.x == 6)
+        assertTrue(coordinate.y == 7)
+        shotManager.updateBattleField(false, Cell(6, 7))
+        coordinate = shotManager.checkHorizontalCoordinates(Coordinate(5, 7), Coordinate(5, 8))
+        assertTrue(coordinate.x == 4)
+        assertTrue(coordinate.y == 8)
+        shotManager.updateBattleField(false, Cell(4, 8))
+        coordinate = shotManager.checkHorizontalCoordinates(Coordinate(5, 7), Coordinate(5, 8))
+        assertTrue(coordinate.x == 6)
+        assertTrue(coordinate.y == 8)
+        shotManager.updateBattleField(false, Cell(6, 8))
+        coordinate = shotManager.checkHorizontalCoordinates(Coordinate(5, 7), Coordinate(5, 8))
+        assertTrue(coordinate.x == -1)
+        assertTrue(coordinate.y == -1)
+    }
 }
