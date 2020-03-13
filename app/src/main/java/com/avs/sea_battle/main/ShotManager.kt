@@ -177,7 +177,7 @@ class ShotManager {
         return coordinate
     }
 
-    private fun checkVerticalCoordinates(
+    fun checkVerticalCoordinates(
         coordinateFirst: Coordinate,
         coordinateSecond: Coordinate
     ): Coordinate {
