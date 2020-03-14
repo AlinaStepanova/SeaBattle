@@ -57,10 +57,10 @@ class ShotManager {
                 coordinate = getNextCoordinateToShot(firstCell)
             }
             if (coordinate.x == -1) {
-                shipsLength.remove(ONE_DECK_SHIP_SIZE)
-                markHorizontalNeighbours(firstCell)
-                markVerticalNeighbours(firstCell)
-                coordinate = getRandomCoordinate()
+                coordinate = resetValuesAfterShipIsDead(
+                    ONE_DECK_SHIP_SIZE,
+                    mutableListOf(firstCell.getCoordinate())
+                )
             } else {
                 secondCell = Cell(coordinate.x, coordinate.y)
             }
@@ -73,10 +73,10 @@ class ShotManager {
                 coordinate = checkNeighbourCells(firstCell, secondCell)
             }
             if (coordinate.x == -1) {
-                shipsLength.remove(TWO_DECK_SHIP_SIZE)
-                markEdgeCells(mutableListOf(firstCell.getCoordinate(), secondCell.getCoordinate()))
-                resetValues()
-                coordinate = getRandomCoordinate()
+                coordinate = resetValuesAfterShipIsDead(
+                    TWO_DECK_SHIP_SIZE,
+                    mutableListOf(firstCell.getCoordinate(), secondCell.getCoordinate())
+                )
             } else {
                 thirdCell = Cell(coordinate.x, coordinate.y)
             }
@@ -88,44 +88,54 @@ class ShotManager {
                 coordinate = checkNeighbourCells(firstCell, thirdCell)
             }
             if (coordinate.x == -1) {
-                shipsLength.remove(THREE_DECK_SHIP_SIZE)
-                markEdgeCells(
-                    mutableListOf(
+                coordinate = resetValuesAfterShipIsDead(
+                    THREE_DECK_SHIP_SIZE, mutableListOf(
                         firstCell.getCoordinate(),
-                        secondCell.getCoordinate(),
-                        thirdCell.getCoordinate()
+                        secondCell.getCoordinate(), thirdCell.getCoordinate()
                     )
                 )
-                resetValues()
-                coordinate = getRandomCoordinate()
             } else {
                 fourthCell = Cell(coordinate.x, coordinate.y)
             }
         } else {
-            shipsLength.remove(FOUR_DECK_SHIP_SIZE)
-            markEdgeCells(
-                mutableListOf(
+            coordinate = resetValuesAfterShipIsDead(
+                FOUR_DECK_SHIP_SIZE, mutableListOf(
                     firstCell.getCoordinate(), secondCell.getCoordinate(),
                     thirdCell.getCoordinate(), fourthCell.getCoordinate()
                 )
             )
-            resetValues()
-            coordinate = getRandomCoordinate()
         }
         return coordinate
     }
 
+    private fun resetValuesAfterShipIsDead(
+        deadShip: Int,
+        cells: MutableList<Coordinate>
+    ): Coordinate {
+        shipsLength.remove(deadShip)
+        markEdgeCells(cells)
+        resetValues()
+        return getRandomCoordinate()
+    }
+
     fun markEdgeCells(cells: MutableList<Coordinate>) {
-        if (cells[0].x == cells[1].x) {
-            val maxCoordinate = getMaxCoordinate(cells, Orientation.HORIZONTAL)
-            val minCoordinate = getMinCoordinate(cells, Orientation.HORIZONTAL)
-            battleField.setCellState(Coordinate(minCoordinate.x, minCoordinate.y - 1), SHOT_FAILURE)
-            battleField.setCellState(Coordinate(maxCoordinate.x, maxCoordinate.y + 1), SHOT_FAILURE)
-        } else if (cells[0].y == cells[1].y) {
-            val maxCoordinate = getMaxCoordinate(cells, Orientation.VERTICAL)
-            val minCoordinate = getMinCoordinate(cells, Orientation.VERTICAL)
-            battleField.setCellState(Coordinate(minCoordinate.x - 1, minCoordinate.y), SHOT_FAILURE)
-            battleField.setCellState(Coordinate(maxCoordinate.x + 1, maxCoordinate.y), SHOT_FAILURE)
+        when {
+            cells.size == 1 -> {
+                markHorizontalNeighbours(firstCell)
+                markVerticalNeighbours(firstCell)
+            }
+            cells[0].x == cells[1].x -> {
+                val max = getMaxCoordinate(cells, Orientation.HORIZONTAL)
+                val min = getMinCoordinate(cells, Orientation.HORIZONTAL)
+                battleField.setCellState(Coordinate(min.x, min.y - 1), SHOT_FAILURE)
+                battleField.setCellState(Coordinate(max.x, max.y + 1), SHOT_FAILURE)
+            }
+            cells[0].y == cells[1].y -> {
+                val max = getMaxCoordinate(cells, Orientation.VERTICAL)
+                val min = getMinCoordinate(cells, Orientation.VERTICAL)
+                battleField.setCellState(Coordinate(min.x - 1, min.y), SHOT_FAILURE)
+                battleField.setCellState(Coordinate(max.x + 1, max.y), SHOT_FAILURE)
+            }
         }
     }
 
