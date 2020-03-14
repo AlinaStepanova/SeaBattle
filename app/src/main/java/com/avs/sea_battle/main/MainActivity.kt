@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
@@ -122,7 +123,18 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
             PopupMenu(wrapper, v).apply {
                 setOnMenuItemClickListener(this@MainActivity)
                 inflate(R.menu.menu)
-                show()
+                try {
+                    val fieldMPopup = PopupMenu::class.java.getDeclaredField("mPopup")
+                    fieldMPopup.isAccessible = true
+                    val mPopup = fieldMPopup.get(this)
+                    mPopup.javaClass
+                        .getDeclaredMethod("setForceShowIcon", Boolean::class.java)
+                        .invoke(mPopup, true)
+                } catch (e: Exception){
+                    if (BuildConfig.DEBUG) Log.d(this::class.java.simpleName, e.toString())
+                } finally {
+                    show()
+                }
             }
         }
     }
