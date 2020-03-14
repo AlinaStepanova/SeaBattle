@@ -1,5 +1,6 @@
 package com.avs.sea_battle.main
 
+import com.avs.sea_battle.TWO_DECK_SHIP_SIZE
 import com.avs.sea_battle.battle_field.Cell
 import com.avs.sea_battle.battle_field.CellState
 import com.avs.sea_battle.battle_field.Coordinate
@@ -66,7 +67,7 @@ class ShotManagerTest {
 
     @Test
     fun resetValues() {
-        shotManager.resetValues()
+        shotManager.resetCells()
         assertEquals(shotManager.getFirstCell().getCellState(), CellState.EMPTY)
         assertEquals(shotManager.getSecondCell().getCellState(), CellState.EMPTY)
         assertEquals(shotManager.getThirdCell().getCellState(), CellState.EMPTY)
@@ -149,8 +150,9 @@ class ShotManagerTest {
         shotManager.markEdgeCells(mutableListOf(Coordinate(2, 2), Coordinate(2, 3)))
         assertFalse(shotManager.getBattleField().isCellFreeToBeSelected(Coordinate(2, 1)))
         assertFalse(shotManager.getBattleField().isCellFreeToBeSelected(Coordinate(2, 4)))
-        shotManager.markEdgeCells(mutableListOf(Coordinate(5, 5), Coordinate(3, 5),
-            Coordinate(4, 5)))
+        shotManager.markEdgeCells(
+            mutableListOf(Coordinate(5, 5), Coordinate(3, 5), Coordinate(4, 5))
+        )
         assertFalse(shotManager.getBattleField().isCellFreeToBeSelected(Coordinate(6, 5)))
         assertFalse(shotManager.getBattleField().isCellFreeToBeSelected(Coordinate(2, 5)))
         shotManager.markEdgeCells(mutableListOf(Coordinate(8, 8)))
@@ -227,5 +229,17 @@ class ShotManagerTest {
         coordinate = shotManager.checkVerticalCoordinates(Coordinate(2, 4), Coordinate(3, 4))
         assertTrue(coordinate.x == -1)
         assertTrue(coordinate.y == -1)
+    }
+
+    @Test
+    fun resetValuesAfterShipIsDead() {
+        assertEquals(shotManager.getShipsSize(), 10)
+        shotManager.resetValuesAfterShipIsDead(
+            TWO_DECK_SHIP_SIZE, mutableListOf(Coordinate(1, 1), Coordinate(1, 2))
+        )
+        assertFalse(shotManager.getBattleField().isCellFreeToBeSelected(Coordinate(1, 0)))
+        assertFalse(shotManager.getBattleField().isCellFreeToBeSelected(Coordinate(1, 3)))
+        resetValues()
+        assertEquals(shotManager.getShipsSize(), 9)
     }
 }

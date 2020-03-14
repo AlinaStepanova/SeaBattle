@@ -16,11 +16,15 @@ class ShotManager {
     private var thirdCell = Cell()
     private var fourthCell = Cell()
 
-    private var shipsLength = mutableListOf(
+    private var ships = mutableListOf(
         FOUR_DECK_SHIP_SIZE, THREE_DECK_SHIP_SIZE, THREE_DECK_SHIP_SIZE,
         TWO_DECK_SHIP_SIZE, TWO_DECK_SHIP_SIZE, TWO_DECK_SHIP_SIZE,
         ONE_DECK_SHIP_SIZE, ONE_DECK_SHIP_SIZE, ONE_DECK_SHIP_SIZE, ONE_DECK_SHIP_SIZE
     )
+
+    fun getShipsSize(): Int {
+        return ships.size
+    }
 
     fun getBattleField(): BaseBattleField {
         return battleField
@@ -50,9 +54,9 @@ class ShotManager {
         } else if (firstCell.isState(SHOT_SUCCESS)
             && (secondCell.isState(EMPTY) || secondCell.isState(SHOT_FAILURE))
         ) {
-            if (shipsLength.contains(TWO_DECK_SHIP_SIZE)
-                || shipsLength.contains(THREE_DECK_SHIP_SIZE)
-                || shipsLength.contains(FOUR_DECK_SHIP_SIZE)
+            if (ships.contains(TWO_DECK_SHIP_SIZE)
+                || ships.contains(THREE_DECK_SHIP_SIZE)
+                || ships.contains(FOUR_DECK_SHIP_SIZE)
             ) {
                 coordinate = getNextCoordinateToShot(firstCell)
             }
@@ -67,8 +71,8 @@ class ShotManager {
         } else if (firstCell.isState(SHOT_SUCCESS) && secondCell.isState(SHOT_SUCCESS)
             && (thirdCell.isState(EMPTY) || thirdCell.isState(SHOT_FAILURE))
         ) {
-            if (shipsLength.contains(THREE_DECK_SHIP_SIZE)
-                || shipsLength.contains(FOUR_DECK_SHIP_SIZE)
+            if (ships.contains(THREE_DECK_SHIP_SIZE)
+                || ships.contains(FOUR_DECK_SHIP_SIZE)
             ) {
                 coordinate = checkNeighbourCells(firstCell, secondCell)
             }
@@ -84,7 +88,7 @@ class ShotManager {
             && thirdCell.isState(SHOT_SUCCESS)
             && (fourthCell.isState(EMPTY) || fourthCell.isState(SHOT_FAILURE))
         ) {
-            if (shipsLength.contains(FOUR_DECK_SHIP_SIZE)) {
+            if (ships.contains(FOUR_DECK_SHIP_SIZE)) {
                 coordinate = checkNeighbourCells(firstCell, thirdCell)
             }
             if (coordinate.x == -1) {
@@ -108,13 +112,13 @@ class ShotManager {
         return coordinate
     }
 
-    private fun resetValuesAfterShipIsDead(
+    fun resetValuesAfterShipIsDead(
         deadShip: Int,
         cells: MutableList<Coordinate>
     ): Coordinate {
-        shipsLength.remove(deadShip)
+        ships.remove(deadShip)
         markEdgeCells(cells)
-        resetValues()
+        resetCells()
         return getRandomCoordinate()
     }
 
@@ -210,7 +214,7 @@ class ShotManager {
         return coordinate
     }
 
-    fun resetValues() {
+    fun resetCells() {
         firstCell.setCellState(EMPTY)
         secondCell.setCellState(EMPTY)
         thirdCell.setCellState(EMPTY)
