@@ -153,6 +153,11 @@ class ShotManagerTest {
             Coordinate(4, 5)))
         assertFalse(shotManager.getBattleField().isCellFreeToBeSelected(Coordinate(6, 5)))
         assertFalse(shotManager.getBattleField().isCellFreeToBeSelected(Coordinate(2, 5)))
+        shotManager.markEdgeCells(mutableListOf(Coordinate(8, 8)))
+        assertFalse(shotManager.getBattleField().isCellFreeToBeSelected(Coordinate(8, 7)))
+        assertFalse(shotManager.getBattleField().isCellFreeToBeSelected(Coordinate(8, 9)))
+        assertFalse(shotManager.getBattleField().isCellFreeToBeSelected(Coordinate(7, 8)))
+        assertFalse(shotManager.getBattleField().isCellFreeToBeSelected(Coordinate(9, 8)))
     }
 
     @Test

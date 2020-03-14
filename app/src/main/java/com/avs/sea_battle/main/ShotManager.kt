@@ -121,8 +121,9 @@ class ShotManager {
     fun markEdgeCells(cells: MutableList<Coordinate>) {
         when {
             cells.size == 1 -> {
-                markHorizontalNeighbours(firstCell)
-                markVerticalNeighbours(firstCell)
+                val coordinate = Cell(cells[0].x, cells[0].y)
+                markHorizontalNeighbours(coordinate)
+                markVerticalNeighbours(coordinate)
             }
             cells[0].x == cells[1].x -> {
                 val max = getMaxCoordinate(cells, Orientation.HORIZONTAL)
