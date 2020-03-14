@@ -115,13 +115,13 @@ class ShotManager {
         return coordinate
     }
 
-    private fun markEdgeCells(cells: MutableList<Coordinate>) {
-        if (firstCell.getX() == secondCell.getX()) {
+    fun markEdgeCells(cells: MutableList<Coordinate>) {
+        if (cells[0].x == cells[1].x) {
             val maxCoordinate = getMaxCoordinate(cells, Orientation.HORIZONTAL)
             val minCoordinate = getMinCoordinate(cells, Orientation.HORIZONTAL)
             battleField.setCellState(Coordinate(minCoordinate.x, minCoordinate.y - 1), SHOT_FAILURE)
             battleField.setCellState(Coordinate(maxCoordinate.x, maxCoordinate.y + 1), SHOT_FAILURE)
-        } else if (firstCell.getY() == secondCell.getY()) {
+        } else if (cells[0].y == cells[1].y) {
             val maxCoordinate = getMaxCoordinate(cells, Orientation.VERTICAL)
             val minCoordinate = getMinCoordinate(cells, Orientation.VERTICAL)
             battleField.setCellState(Coordinate(minCoordinate.x - 1, minCoordinate.y), SHOT_FAILURE)
@@ -145,7 +145,7 @@ class ShotManager {
         }
     }
 
-    private fun checkNeighbourCells(cell1: Cell, cell2: Cell): Coordinate {
+    fun checkNeighbourCells(cell1: Cell, cell2: Cell): Coordinate {
         var coordinate = Coordinate()
         if (cell1.getX() == cell2.getX()) {
             coordinate = checkVerticalCoordinates(cell2.getCoordinate(), cell1.getCoordinate())

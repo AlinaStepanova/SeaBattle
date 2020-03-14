@@ -135,6 +135,27 @@ class ShotManagerTest {
     }
 
     @Test
+    fun checkNeighbourCells() {
+        var coordinate = shotManager.checkNeighbourCells(Cell(2, 5), Cell(2, 6))
+        assertTrue(coordinate.x == 2)
+        assertTrue(coordinate.y == 5)
+        coordinate = shotManager.checkNeighbourCells(Cell(4, 6), Cell(3, 6))
+        assertTrue(coordinate.x == 2)
+        assertTrue(coordinate.y == 6)
+    }
+
+    @Test
+    fun markEdgeCells() {
+        shotManager.markEdgeCells(mutableListOf(Coordinate(2, 2), Coordinate(2, 3)))
+        assertFalse(shotManager.getBattleField().isCellFreeToBeSelected(Coordinate(2, 1)))
+        assertFalse(shotManager.getBattleField().isCellFreeToBeSelected(Coordinate(2, 4)))
+        shotManager.markEdgeCells(mutableListOf(Coordinate(5, 5), Coordinate(3, 5),
+            Coordinate(4, 5)))
+        assertFalse(shotManager.getBattleField().isCellFreeToBeSelected(Coordinate(6, 5)))
+        assertFalse(shotManager.getBattleField().isCellFreeToBeSelected(Coordinate(2, 5)))
+    }
+
+    @Test
     fun getNextCoordinateToShot() {
         var coordinate = shotManager.getNextCoordinateToShot(Cell(5, 5))
         assertTrue(coordinate.x == 5)
