@@ -126,10 +126,10 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
                 try {
                     val fieldMPopup = PopupMenu::class.java.getDeclaredField("mPopup")
                     fieldMPopup.isAccessible = true
-                    val mPopup = fieldMPopup.get(this)
-                    mPopup.javaClass
+                    val popup = fieldMPopup.get(this)
+                    popup.javaClass
                         .getDeclaredMethod("setForceShowIcon", Boolean::class.java)
-                        .invoke(mPopup, true)
+                        .invoke(popup, true)
                 } catch (e: Exception){
                     if (BuildConfig.DEBUG) Log.d(this::class.java.simpleName, e.toString())
                 } finally {
