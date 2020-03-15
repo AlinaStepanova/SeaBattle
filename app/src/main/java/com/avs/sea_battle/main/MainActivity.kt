@@ -142,11 +142,12 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
     override fun onMenuItemClick(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.share -> {
-                startActivity(Intent.createChooser(getShareIntent(this), resources.getString(R.string.share_text)))
+                startActivity(Intent.createChooser(getShareIntent(this),
+                    resources.getString(R.string.share_text)))
                 true
             }
             R.id.rate -> {
-                val call = { startActivity(openMarket(this, false)) }
+                val call = { startActivity(openMarket(false)) }
                 openActivity(call, R.string.cannot_open_market_error_text)
                 true
             }
@@ -156,7 +157,7 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
                 true
             }
             R.id.more_apps -> {
-                val call = { startActivity(openMarket(this, true)) }
+                val call = { startActivity(openMarket(true)) }
                 openActivity(call, R.string.cannot_open_market_error_text)
                 true
             }
