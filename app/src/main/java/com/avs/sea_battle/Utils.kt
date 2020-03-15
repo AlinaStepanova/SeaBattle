@@ -30,17 +30,18 @@ fun openGmail(activity: Activity, email: Array<String>, subject: String?): Inten
 fun getShareIntent(context: Context): Intent {
     val sharingIntent = Intent(Intent.ACTION_SEND)
     sharingIntent.type = SHARE_INTENT_TYPE
-    val shareBody: String = (context.resources.getString(R.string.share_body_text))
+    val shareBody: String = (context.resources.getString(R.string.share_body_text)
+            + "\n\n" + PLAY_MARKET_URL)
     sharingIntent.putExtra(Intent.EXTRA_SUBJECT, context.resources.getString(R.string.app_name))
     sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody)
     return sharingIntent
 }
 
-fun openMarket(activity: Activity, showAppsList: Boolean): Intent? {
+fun openMarket(showAppsList: Boolean): Intent? {
     val uri = if (showAppsList) {
         Uri.parse("market://search?q=pub:$DEV_NAME")
     } else {
-        Uri.parse("market://details?id=" + activity.packageName)
+        Uri.parse("market://details?id=$NAMESPACE")
     }
     return Intent(Intent.ACTION_VIEW, uri)
 }
