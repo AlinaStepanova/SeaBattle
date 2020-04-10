@@ -20,14 +20,14 @@
             android:id="@+id/ivMore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/dimen_8dp"
-            android:paddingEnd="@dimen/dimen_8dp"
-            android:paddingStart="@dimen/dimen_4dp"
-            android:paddingBottom="@dimen/dimen_4dp"
             android:src="@drawable/ic_more"
+            android:padding="@dimen/dimen_8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@string/more_settings">
         </ImageView>
 
         <TextView
