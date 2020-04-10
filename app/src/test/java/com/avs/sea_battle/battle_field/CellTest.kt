@@ -63,4 +63,14 @@ class CellTest {
         cell.setCellState(SHOT_SUCCESS)
         assertNotEquals(cell, Cell(5, 6))
     }
+
+    @Test
+    fun testHashCode() {
+        assertFalse(cell.hashCode() == Cell().hashCode())
+    }
+
+    @Test
+    fun testEquals() {
+        assertFalse(cell == Cell())
+    }
 }

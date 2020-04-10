@@ -20,14 +20,14 @@
             android:id="@+id/ivMore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/dimen_8dp"
-            android:paddingEnd="@dimen/dimen_8dp"
-            android:paddingStart="@dimen/dimen_4dp"
-            android:paddingBottom="@dimen/dimen_4dp"
             android:src="@drawable/ic_more"
+            android:padding="@dimen/dimen_8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@string/more_settings">
         </ImageView>
 
         <TextView
@@ -44,7 +44,7 @@
             android:text="@string/status_welcome_text"
             android:textColor="@color/colorAccent"
             android:textSize="@dimen/text_size_14sp"
-            app:layout_constraintEnd_toEndOf="@+id/view_computer"
+            app:layout_constraintEnd_toEndOf="@+id/viewComputer"
             app:layout_constraintStart_toStartOf="@+id/viewPerson"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -65,7 +65,7 @@
             app:layout_constraintBottom_toBottomOf="@id/guideline"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@+id/view_computer"
+            app:layout_constraintRight_toLeftOf="@+id/viewComputer"
             app:layout_constraintTop_toBottomOf="@+id/tvStatus" />
 
         <TextView
@@ -85,7 +85,7 @@
         <include layout="@layout/layout_numbers_pc" />
 
         <com.avs.sea_battle.views.ComputerSquareView
-            android:id="@+id/view_computer"
+            android:id="@+id/viewComputer"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="@dimen/dimen_16dp"
@@ -105,8 +105,8 @@
             android:text="@string/fire_text"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/view_computer"
-            app:layout_constraintStart_toStartOf="@+id/view_computer"
+            app:layout_constraintEnd_toEndOf="@+id/viewComputer"
+            app:layout_constraintStart_toStartOf="@+id/viewComputer"
             app:layout_constraintTop_toTopOf="@+id/guideline" />
 
         <androidx.constraintlayout.widget.Guideline
@@ -123,7 +123,7 @@
             android:text="@string/start_text"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/view_computer"
+            app:layout_constraintEnd_toStartOf="@+id/viewComputer"
             app:layout_constraintStart_toEndOf="@+id/viewPerson"
             app:layout_constraintTop_toTopOf="@+id/guideline" />
 
@@ -134,7 +134,7 @@
             android:text="@string/new_game_text"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/view_computer"
+            app:layout_constraintEnd_toStartOf="@+id/viewComputer"
             app:layout_constraintStart_toEndOf="@+id/viewPerson"
             app:layout_constraintTop_toTopOf="@+id/guideline" />
 

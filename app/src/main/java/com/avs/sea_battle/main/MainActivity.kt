@@ -130,7 +130,7 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
                     popup.javaClass
                         .getDeclaredMethod("setForceShowIcon", Boolean::class.java)
                         .invoke(popup, true)
-                } catch (e: Exception){
+                } catch (e: Exception) {
                     if (BuildConfig.DEBUG) Log.d(this::class.java.simpleName, e.toString())
                 } finally {
                     show()
@@ -152,7 +152,8 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
                 true
             }
             R.id.write_to_author -> {
-                val call = { startActivity(openGmail(this, RECIPIENTS, resources.getString(R.string.app_name))) }
+                val call = { startActivity(openGmail(this, RECIPIENTS,
+                    resources.getString(R.string.app_name))) }
                 openActivity(call, R.string.cannot_send_email_error_text)
                 true
             }

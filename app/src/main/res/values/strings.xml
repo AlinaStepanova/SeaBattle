@@ -41,4 +41,5 @@
     <string name="share_body_text">I recommend you a Sea Battle game!</string>
     <string name="share_text">Share via</string>
     <string name="cannot_open_market_error_text">Unable to open Play Market app</string>
+    <string name="more_settings">More</string>
 </resources>
