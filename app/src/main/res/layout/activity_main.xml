@@ -6,7 +6,7 @@
     <data>
         <variable
             name="mainViewModel"
-            type="com.avs.sea_battle.main.MainViewModel" />
+            type="com.avs.sea.battle.main.MainViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -54,7 +54,7 @@
 
         <include layout="@layout/layout_numbers_person" />
 
-        <com.avs.sea_battle.views.PersonSquareView
+        <com.avs.sea.battle.views.PersonSquareView
             android:id="@+id/viewPerson"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -84,7 +84,7 @@
 
         <include layout="@layout/layout_numbers_pc" />
 
-        <com.avs.sea_battle.views.ComputerSquareView
+        <com.avs.sea.battle.views.ComputerSquareView
             android:id="@+id/viewComputer"
             android:layout_width="0dp"
             android:layout_height="0dp"
