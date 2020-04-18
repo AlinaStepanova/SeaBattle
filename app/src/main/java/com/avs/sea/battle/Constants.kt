@@ -1,6 +1,6 @@
 package com.avs.sea.battle
 
-const val NAMESPACE = "com.avs.sea_battle"
+const val NAMESPACE = "com.avs.sea.battle"
 const val SQUARES_COUNT = 10
 const val FOUR_DECK_SHIP_SIZE = 4
 const val THREE_DECK_SHIP_SIZE = 3
