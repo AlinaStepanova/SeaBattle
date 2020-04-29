@@ -20,7 +20,7 @@ android {
         versionCode 2
         versionName "1.0"
         vectorDrawables.useSupportLibrary = true
-        resConfigs "en", "uk"
+        resConfigs "en", "uk", "ru"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
