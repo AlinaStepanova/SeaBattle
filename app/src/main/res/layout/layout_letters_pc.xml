@@ -11,7 +11,7 @@
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintLeft_toLeftOf="@id/viewComputer"
         app:layout_constraintRight_toLeftOf="@+id/tvLetterPCB"
-        style="@style/SingleDigitStyle" />
+        style="@style/SingleCharacterStyle" />
 
 
     <TextView
@@ -21,7 +21,7 @@
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintLeft_toRightOf="@+id/tvLetterPCA"
         app:layout_constraintRight_toLeftOf="@+id/tvLetterPCC"
-        style="@style/SingleDigitStyle" />
+        style="@style/SingleCharacterStyle" />
 
     <TextView
         android:id="@+id/tvLetterPCC"
@@ -30,7 +30,7 @@
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintLeft_toRightOf="@+id/tvLetterPCB"
         app:layout_constraintRight_toLeftOf="@+id/tvLetterPCD"
-        style="@style/SingleDigitStyle" />
+        style="@style/SingleCharacterStyle" />
 
     <TextView
         android:id="@+id/tvLetterPCD"
@@ -39,7 +39,7 @@
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintLeft_toRightOf="@+id/tvLetterPCC"
         app:layout_constraintRight_toLeftOf="@+id/tvLetterPCE"
-        style="@style/SingleDigitStyle" />
+        style="@style/SingleCharacterStyle" />
 
     <TextView
         android:id="@+id/tvLetterPCE"
@@ -48,7 +48,7 @@
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintLeft_toRightOf="@+id/tvLetterPCD"
         app:layout_constraintRight_toLeftOf="@+id/tvLetterPCF"
-        style="@style/SingleDigitStyle" />
+        style="@style/SingleCharacterStyle" />
 
     <TextView
         android:id="@+id/tvLetterPCF"
@@ -57,7 +57,7 @@
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintLeft_toRightOf="@+id/tvLetterPCE"
         app:layout_constraintRight_toLeftOf="@+id/tvLetterPCG"
-        style="@style/SingleDigitStyle" />
+        style="@style/SingleCharacterStyle" />
 
     <TextView
         android:id="@+id/tvLetterPCG"
@@ -66,7 +66,7 @@
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintLeft_toRightOf="@+id/tvLetterPCF"
         app:layout_constraintRight_toLeftOf="@+id/tvLetterPCH"
-        style="@style/SingleDigitStyle" />
+        style="@style/SingleCharacterStyle" />
 
     <TextView
         android:id="@+id/tvLetterPCH"
@@ -75,7 +75,7 @@
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintLeft_toRightOf="@+id/tvLetterPCG"
         app:layout_constraintRight_toLeftOf="@+id/tvLetterPCI"
-        style="@style/SingleDigitStyle" />
+        style="@style/SingleCharacterStyle" />
 
     <TextView
         android:id="@+id/tvLetterPCI"
@@ -84,7 +84,7 @@
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintLeft_toRightOf="@+id/tvLetterPCH"
         app:layout_constraintRight_toLeftOf="@+id/tvLetterPCJ"
-        style="@style/SingleDigitStyle" />
+        style="@style/SingleCharacterStyle" />
 
     <TextView
         android:id="@+id/tvLetterPCJ"
@@ -93,5 +93,5 @@
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintLeft_toRightOf="@+id/tvLetterPCI"
         app:layout_constraintRight_toRightOf="@id/viewComputer"
-        style="@style/SingleDigitStyle" />
+        style="@style/SingleCharacterStyle" />
 </merge>

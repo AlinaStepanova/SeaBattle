@@ -4,6 +4,7 @@
     <dimen name="dimen_10dp">10dp</dimen>
     <dimen name="dimen_16dp">16dp</dimen>
     <dimen name="dimen_24dp">24dp</dimen>
+    <dimen name="text_size_13sp">13sp</dimen>
     <dimen name="text_size_14sp">14sp</dimen>
     <dimen name="text_size_16sp">16sp</dimen>
     <dimen name="circle_radius" format="float">4.0</dimen>
