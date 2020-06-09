@@ -5,13 +5,14 @@ import com.avs.sea.battle.ships.*
 
 class BattleField : BaseBattleField() {
 
-    private val ships: List<Ship> = listOf(
-        FourDeckShip(), ThreeDeckShip(), ThreeDeckShip(),
-        TwoDeckShip(), TwoDeckShip(), TwoDeckShip(),
-        OneDeckShip(), OneDeckShip(), OneDeckShip(), OneDeckShip()
-    )
+    private lateinit var ships: List<Ship>
 
     fun randomizeShips() {
+        ships = listOf(
+            FourDeckShip(), ThreeDeckShip(), ThreeDeckShip(),
+            TwoDeckShip(), TwoDeckShip(), TwoDeckShip(),
+            OneDeckShip(), OneDeckShip(), OneDeckShip(), OneDeckShip()
+        )
         var isAdded: Boolean
         for (ship in ships) {
             isAdded = false
