@@ -133,7 +133,7 @@ class MainViewModel : ViewModel() {
         shotManager.handleShot(isShipHit)
         if (isShipHit) {
             uiScope.launch {
-                delay(SECOND_IN_MILLIS * 2)
+                delay(SECOND_IN_MILLIS + SECOND_IN_MILLIS / 2)
                 _computerSuccessfulShots.value = personBattleField.getCrossesCoordinates()
                 if (personBattleField.isGameOver()) {
                     endGame(false)
@@ -144,7 +144,7 @@ class MainViewModel : ViewModel() {
             }
         } else {
             uiScope.launch {
-                delay(SECOND_IN_MILLIS * 2)
+                delay(SECOND_IN_MILLIS + SECOND_IN_MILLIS / 2)
                 _computerFailShots.value = personBattleField.getDotsCoordinates()
                 activePlayer = Player.PERSON
                 checkCurrentPlayer()
