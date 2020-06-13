@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
         })
 
         viewModel.startGameEvent.observe(this, Observer { isStarted ->
-            if (isStarted) binding.viewStart.visibility = View.INVISIBLE
+            if (isStarted) binding.viewStart.visibility = View.GONE
             if (!isStarted) binding.viewNewGame.visibility = View.INVISIBLE
             binding.viewGenerate.visibility = if (isStarted) View.INVISIBLE else View.VISIBLE
         })
