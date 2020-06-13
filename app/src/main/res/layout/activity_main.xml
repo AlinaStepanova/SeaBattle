@@ -52,7 +52,9 @@
             android:id="@+id/lettersPerson"
             layout="@layout/layout_letters_person" />
 
-        <include layout="@layout/layout_numbers_person" />
+        <include
+            android:id="@+id/numbersPerson"
+            layout="@layout/layout_numbers_person" />
 
         <com.avs.sea.battle.views.PersonSquareView
             android:id="@+id/viewPerson"
@@ -61,22 +63,21 @@
             android:background="@drawable/square_background"
             app:layout_constraintBottom_toTopOf="@+id/guideline2"
             app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintEnd_toStartOf="@+id/guideline4"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="@+id/guideline3"
+            app:layout_constraintEnd_toStartOf="@+id/guideline5"
+            app:layout_constraintStart_toStartOf="@+id/guideline4"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.65" />
 
         <TextView
             android:id="@+id/viewGenerate"
             style="@style/MainButtonStyle"
+            android:gravity="center"
+            android:maxWidth="72dp"
             android:onClick="@{() -> mainViewModel.generateShips()}"
             android:text="@string/generate_ships_text"
-            android:maxWidth="72dp"
-            android:gravity="center"
             app:layout_constraintBottom_toBottomOf="@+id/viewPerson"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/viewPerson"
+            app:layout_constraintEnd_toStartOf="@+id/viewPerson"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/viewPerson" />
 
         <include
@@ -93,7 +94,7 @@
             app:layout_constraintBottom_toBottomOf="@id/guideline"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintLeft_toRightOf="@+id/viewPerson"
             app:layout_constraintStart_toStartOf="@+id/guideline3"
             app:layout_constraintTop_toTopOf="@+id/guideline2"
@@ -148,8 +149,8 @@
             android:indeterminateTintMode="src_in"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@+id/viewPerson"
-            app:layout_constraintEnd_toEndOf="@+id/viewComputer"
-            app:layout_constraintStart_toStartOf="@+id/guideline4"
+            app:layout_constraintEnd_toStartOf="@+id/viewPerson"
+            app:layout_constraintStart_toStartOf="@+id/viewGenerate"
             app:layout_constraintTop_toTopOf="@+id/viewPerson" />
 
         <androidx.constraintlayout.widget.Guideline
@@ -171,7 +172,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.65" />
+            app:layout_constraintGuide_percent="0.35" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline5"
