@@ -5,7 +5,6 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
@@ -35,7 +34,6 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         binding.mainViewModel = viewModel
 
-        binding.viewPerson.provideViewModel(viewModel)
         binding.viewComputer.provideViewModel(viewModel)
 
         viewModel.status.observe(this, Observer { newStatusId ->

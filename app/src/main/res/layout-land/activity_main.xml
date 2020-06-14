@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="mainViewModel"
             type="com.avs.sea.battle.main.MainViewModel" />
@@ -20,15 +21,14 @@
             android:id="@+id/ivMore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_more"
-            android:padding="@dimen/dimen_8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
+            android:contentDescription="@string/more_settings"
             android:focusable="true"
+            android:padding="@dimen/dimen_8dp"
+            android:src="@drawable/ic_more"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:contentDescription="@string/more_settings">
-        </ImageView>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tvStatus"
@@ -144,8 +144,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:indeterminateTint="@color/colorAccent"
-            android:visibility="invisible"
             android:indeterminateTintMode="src_in"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/viewPerson"
             app:layout_constraintStart_toStartOf="@+id/viewPerson"
