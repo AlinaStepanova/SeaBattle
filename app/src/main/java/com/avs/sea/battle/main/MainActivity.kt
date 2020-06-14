@@ -60,12 +60,10 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
 
         viewModel.personSuccessfulShots.observe(this, Observer { coordinates ->
             binding.viewComputer.getCrossesCoordinates(coordinates)
-            binding.viewFire.visibility = View.INVISIBLE
         })
 
         viewModel.personFailedShots.observe(this, Observer { coordinates ->
             binding.viewComputer.getDotsCoordinates(coordinates)
-            binding.viewFire.visibility = View.INVISIBLE
         })
 
         viewModel.computerSuccessfulShots.observe(this, Observer { coordinates ->
