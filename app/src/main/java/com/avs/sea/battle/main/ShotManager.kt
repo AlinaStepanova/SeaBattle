@@ -291,11 +291,19 @@ class ShotManager {
     fun markHorizontalNeighbours(cell: Cell) {
         battleField.setCellState(Coordinate(cell.getX(), cell.getY() - 1), SHOT_FAILURE)
         battleField.setCellState(Coordinate(cell.getX(), cell.getY() + 1), SHOT_FAILURE)
+        battleField.setCellState(Coordinate(cell.getX() - 1, cell.getY() - 1), SHOT_FAILURE)
+        battleField.setCellState(Coordinate(cell.getX() - 1, cell.getY() + 1), SHOT_FAILURE)
+        battleField.setCellState(Coordinate(cell.getX() + 1, cell.getY() - 1), SHOT_FAILURE)
+        battleField.setCellState(Coordinate(cell.getX() + 1, cell.getY() + 1), SHOT_FAILURE)
     }
 
     fun markVerticalNeighbours(cell: Cell) {
         battleField.setCellState(Coordinate(cell.getX() - 1, cell.getY()), SHOT_FAILURE)
         battleField.setCellState(Coordinate(cell.getX() + 1, cell.getY()), SHOT_FAILURE)
+        battleField.setCellState(Coordinate(cell.getX() - 1, cell.getY() - 1), SHOT_FAILURE)
+        battleField.setCellState(Coordinate(cell.getX() + 1, cell.getY() - 1), SHOT_FAILURE)
+        battleField.setCellState(Coordinate(cell.getX() - 1, cell.getY() + 1), SHOT_FAILURE)
+        battleField.setCellState(Coordinate(cell.getX() + 1, cell.getY() + 1), SHOT_FAILURE)
     }
 
     fun updateBattleField(shipHit: Boolean, currentCell: Cell) {
