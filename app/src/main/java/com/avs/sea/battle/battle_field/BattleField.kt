@@ -31,8 +31,8 @@ class BattleField : BaseBattleField() {
                                 && isRightSideEmpty(coordinate, length))
                     } else {
                         (isStartCellEmpty(coordinate) && isEndCellEmpty(coordinate, length)
-//                                && isStartCornerCellEmpty(coordinate, length)
-//                                && isEndCornerCellEmpty(coordinate)
+                                && isStartCornerCellEmpty(coordinate)
+                                && isEndCornerCellEmpty(coordinate, length)
                                 && isHorizontalCellsEmpty(coordinate, length)
                                 && isTopSideEmpty(coordinate, length)
                                 && isBottomSideEmpty(coordinate, length))
@@ -132,19 +132,20 @@ class BattleField : BaseBattleField() {
                 battleField[coordinate.x][coordinate.y + length]?.getCellState() == CellState.EMPTY))
     }
 
-    private fun isStartCornerCellEmpty(coordinate: Coordinate, length: Int): Boolean {
+    private fun isEndCornerCellEmpty(coordinate: Coordinate, length: Int): Boolean {
         return (coordinate.y + length == SQUARES_COUNT - 1)
-                || ((coordinate.y < SQUARES_COUNT - 1 && coordinate.x > 0 &&
-                battleField[coordinate.x - 1][coordinate.y + length]?.getCellState() == CellState.EMPTY)
-                && (coordinate.y < SQUARES_COUNT - 1 && coordinate.x < SQUARES_COUNT - 1 &&
-                battleField[coordinate.x + 1][coordinate.y + length]?.getCellState() == CellState.EMPTY))
+                || (((coordinate.x == 0) || (coordinate.y < SQUARES_COUNT - 1 && coordinate.x > 0 &&
+                battleField[coordinate.x - 1][coordinate.y + length]?.getCellState() == CellState.EMPTY))
+                && ((coordinate.x == SQUARES_COUNT - 1)
+                || (coordinate.y < SQUARES_COUNT - 1 && coordinate.x < SQUARES_COUNT - 1 &&
+                battleField[coordinate.x + 1][coordinate.y + length]?.getCellState() == CellState.EMPTY)))
     }
 
-    private fun isEndCornerCellEmpty(coordinate: Coordinate): Boolean {
-        return ((coordinate.y == 0) || (coordinate.y > 0 && coordinate.x > 0 &&
-                battleField[coordinate.x - 1][coordinate.y - 1]?.getCellState() == CellState.EMPTY)
-                && (coordinate.y > 0 && coordinate.x < SQUARES_COUNT - 1 &&
-                battleField[coordinate.x + 1][coordinate.y - 1]?.getCellState() == CellState.EMPTY))
+    private fun isStartCornerCellEmpty(coordinate: Coordinate): Boolean {
+        return (coordinate.y == 0) || (((coordinate.x == 0) || (coordinate.y > 0 && coordinate.x > 0 &&
+                battleField[coordinate.x - 1][coordinate.y - 1]?.getCellState() == CellState.EMPTY))
+                && ((coordinate.x == SQUARES_COUNT - 1) || (coordinate.y > 0 && coordinate.x < SQUARES_COUNT - 1 &&
+                battleField[coordinate.x + 1][coordinate.y - 1]?.getCellState() == CellState.EMPTY)))
     }
 
     private fun isUpCellEmpty(coordinate: Coordinate): Boolean {
@@ -169,12 +170,12 @@ class BattleField : BaseBattleField() {
     }
 
     private fun isBottomCornerCellEmpty(coordinate: Coordinate, length: Int): Boolean {
-        return ((coordinate.x + length == SQUARES_COUNT) ||
+        return (coordinate.x + length == SQUARES_COUNT) ||
                 (((coordinate.y == 0) || (coordinate.x + length < SQUARES_COUNT - 1 && coordinate.y > 0 &&
                         battleField[coordinate.x + length][coordinate.y - 1]?.getCellState() == CellState.EMPTY))
                         && ((coordinate.y == SQUARES_COUNT - 1) ||
                         (coordinate.x + length < SQUARES_COUNT - 1 && coordinate.y < SQUARES_COUNT - 1 &&
-                                battleField[coordinate.x + length][coordinate.y + 1]?.getCellState() == CellState.EMPTY))))
+                                battleField[coordinate.x + length][coordinate.y + 1]?.getCellState() == CellState.EMPTY)))
     }
 
     private fun isLeftSideEmpty(coordinate: Coordinate, length: Int): Boolean {
