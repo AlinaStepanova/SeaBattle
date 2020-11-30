@@ -26,7 +26,7 @@
             android:contentDescription="@string/more_settings"
             android:focusable="true"
             android:padding="@dimen/dimen_8dp"
-            android:src="@drawable/ic_more"
+            app:srcCompat="@drawable/ic_more"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

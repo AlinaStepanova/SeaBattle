@@ -15,7 +15,6 @@ import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.avs.sea.battle.*
 import com.avs.sea.battle.databinding.ActivityMainBinding
@@ -36,51 +35,51 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
 
         binding.viewComputer.provideViewModel(viewModel)
 
-        viewModel.status.observe(this, Observer { newStatusId ->
+        viewModel.status.observe(this, { newStatusId ->
             binding.tvStatus.text = resources.getText(newStatusId)
         })
 
-        viewModel.selectedByPersonCoordinate.observe(this, Observer { point ->
+        viewModel.selectedByPersonCoordinate.observe(this, { point ->
             binding.viewComputer.getSelectedCoordinate(point)
             binding.viewFire.visibility = if (point == null) View.INVISIBLE else View.VISIBLE
         })
 
-        viewModel.selectedByComputerCoordinate.observe(this, Observer {
+        viewModel.selectedByComputerCoordinate.observe(this, {
             binding.progressBar.visibility = View.VISIBLE
         })
 
-        viewModel.personShips.observe(this, Observer { coordinates ->
+        viewModel.personShips.observe(this, { coordinates ->
             binding.viewPerson.getShipsCoordinates(coordinates)
             if (coordinates.isNotEmpty()) {
                 binding.viewStart.visibility = View.VISIBLE
             }
         })
 
-        viewModel.personSuccessfulShots.observe(this, Observer { coordinates ->
+        viewModel.personSuccessfulShots.observe(this, { coordinates ->
             binding.viewComputer.getCrossesCoordinates(coordinates)
         })
 
-        viewModel.personFailedShots.observe(this, Observer { coordinates ->
+        viewModel.personFailedShots.observe(this, { coordinates ->
             binding.viewComputer.getDotsCoordinates(coordinates)
         })
 
-        viewModel.computerSuccessfulShots.observe(this, Observer { coordinates ->
+        viewModel.computerSuccessfulShots.observe(this, { coordinates ->
             binding.viewPerson.getCrossesCoordinates(coordinates)
             binding.progressBar.visibility = View.INVISIBLE
         })
 
-        viewModel.computerFailedShots.observe(this, Observer { coordinates ->
+        viewModel.computerFailedShots.observe(this, { coordinates ->
             binding.viewPerson.getDotsCoordinates(coordinates)
             binding.progressBar.visibility = View.INVISIBLE
         })
 
-        viewModel.startGameEvent.observe(this, Observer { isStarted ->
+        viewModel.startGameEvent.observe(this, { isStarted ->
             if (isStarted) binding.viewStart.visibility = View.GONE
             if (!isStarted) binding.viewNewGame.visibility = View.INVISIBLE
             binding.viewGenerate.visibility = if (isStarted) View.INVISIBLE else View.VISIBLE
         })
 
-        viewModel.endGameEvent.observe(this, Observer { isEnded ->
+        viewModel.endGameEvent.observe(this, { isEnded ->
             binding.viewNewGame.visibility = if (isEnded) View.VISIBLE else View.INVISIBLE
         })
         binding.ivMore.setOnClickListener { view -> showPopup(view) }
