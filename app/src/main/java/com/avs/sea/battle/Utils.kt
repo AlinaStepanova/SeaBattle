@@ -7,7 +7,7 @@ import android.content.pm.ResolveInfo
 import android.net.Uri
 import java.util.*
 
-fun openGmail(activity: Activity, email: Array<String>, subject: String?): Intent? {
+fun openGmail(activity: Activity, email: Array<String>, subject: String?): Intent {
     val emailIntent = Intent(Intent.ACTION_SEND)
     emailIntent.putExtra(Intent.EXTRA_EMAIL, email)
     emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject)
@@ -37,7 +37,7 @@ fun getShareIntent(context: Context): Intent {
     return sharingIntent
 }
 
-fun openMarket(showAppsList: Boolean): Intent? {
+fun openMarket(showAppsList: Boolean): Intent {
     val uri = if (showAppsList) {
         Uri.parse("market://search?q=pub:$DEV_NAME")
     } else {

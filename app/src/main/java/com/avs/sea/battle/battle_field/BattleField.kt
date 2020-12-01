@@ -1,6 +1,5 @@
 package com.avs.sea.battle.battle_field
 
-import android.util.Log
 import com.avs.sea.battle.SQUARES_COUNT
 import com.avs.sea.battle.ships.*
 

@@ -146,17 +146,17 @@ class ShotManager {
 
     fun getMaxCoordinate(list: MutableList<Coordinate>, orientation: Orientation): Coordinate {
         return if (orientation == Orientation.VERTICAL) {
-            list.maxBy { it.x }!!
+            list.maxByOrNull { it.x }!!
         } else {
-            list.maxBy { it.y }!!
+            list.maxByOrNull { it.y }!!
         }
     }
 
     fun getMinCoordinate(list: MutableList<Coordinate>, orientation: Orientation): Coordinate {
         return if (orientation == Orientation.VERTICAL) {
-            list.minBy { it.x }!!
+            list.minByOrNull { it.x }!!
         } else {
-            list.minBy { it.y }!!
+            list.minByOrNull { it.y }!!
         }
     }
 
