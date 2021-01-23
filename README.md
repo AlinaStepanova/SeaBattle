@@ -1,6 +1,8 @@
 # SeaBattle
 Sea Battle - a classic puzzle 2D-game created using Canvas, Custom Views and Kotlin
 
+![push](https://github.com/AlinaStepanova/SeaBattle/workflows/Android%20Build/badge.svg?branch=dev&event=push)
+
 Play Market: https://play.google.com/store/apps/details?id=com.avs.sea.battle
 
 How to play: https://youtu.be/ZrbtILJjqpU
