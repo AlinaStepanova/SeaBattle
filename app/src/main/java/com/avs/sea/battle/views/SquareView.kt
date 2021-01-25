@@ -17,7 +17,7 @@ import com.avs.sea.battle.main.MainViewModel
 
 abstract class SquareView : View {
 
-    private val lineWidth = 1f
+    private val lineWidth = 1.2f
     private var circleRadius = 1f
     private var screenHeight = 0f
     private var screenWidth = 0f
@@ -68,8 +68,10 @@ abstract class SquareView : View {
     override fun onDraw(canvas: Canvas?) {
         paint.color = Color.BLACK
         paint.strokeWidth = lineWidth
-        drawHorizontalLines(canvas!!)
-        drawVerticalLines(canvas)
+        canvas?.let {
+            drawHorizontalLines(it)
+            drawVerticalLines(it)
+        }
     }
 
     private fun drawHorizontalLines(canvas: Canvas) {
