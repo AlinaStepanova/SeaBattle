@@ -17,7 +17,7 @@ import com.avs.sea.battle.main.MainViewModel
 
 abstract class SquareView : View {
 
-    private val lineWidth = 1.2f
+    private val lineWidth = 1f
     private var circleRadius = 1f
     private var screenHeight = 0f
     private var screenWidth = 0f
@@ -103,7 +103,7 @@ abstract class SquareView : View {
     }
 
     fun Canvas.drawCross(i: Int, j: Int) {
-        paint.strokeWidth = lineWidth * 2
+        paint.strokeWidth = lineWidth * 2.5F
         this.drawLines(getCrossCoordinates(i, j), paint)
     }
 
