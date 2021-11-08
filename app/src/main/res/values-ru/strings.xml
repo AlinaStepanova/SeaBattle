@@ -7,10 +7,10 @@
     <string name="letter_d">Г</string>
     <string name="letter_e">Д</string>
     <string name="letter_f">Е</string>
-    <string name="letter_g">Ё</string>
-    <string name="letter_h">Ж</string>
-    <string name="letter_i">З</string>
-    <string name="letter_j">И</string>
+    <string name="letter_g">Ж</string>
+    <string name="letter_h">З</string>
+    <string name="letter_i">И</string>
+    <string name="letter_j">К</string>
     <string name="generate_ships_text">Сгенерировать корабли</string>
     <string name="fire_text">Огонь!</string>
     <string name="start_text">Старт</string>

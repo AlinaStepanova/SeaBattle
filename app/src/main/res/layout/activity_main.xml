@@ -102,7 +102,7 @@
 
         <TextView
             android:id="@+id/viewFire"
-            style="@style/MainButtonStyle"
+            style="@style/FireButtonStyle"
             android:onClick="@{() -> mainViewModel.makeFireAsPerson()}"
             android:text="@string/fire_text"
             android:visibility="invisible"
