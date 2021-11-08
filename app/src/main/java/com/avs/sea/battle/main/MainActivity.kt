@@ -55,6 +55,10 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
             }
         })
 
+        viewModel.computerShips.observe(this, { coordinates ->
+            binding.viewComputer.setShipsCoordinates(coordinates)
+        })
+
         viewModel.personSuccessfulShots.observe(this, { coordinates ->
             binding.viewComputer.getCrossesCoordinates(coordinates)
         })

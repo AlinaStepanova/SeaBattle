@@ -94,6 +94,18 @@ class BattleField : BaseBattleField() {
         return shipsCoordinates
     }
 
+    fun getFullShipsCoordinates(): ArrayList<Coordinate> {
+        val shipsCoordinates = arrayListOf<Coordinate>()
+        for (i in battleField.indices) {
+            for (j in battleField[i].indices) {
+                if (battleField[i][j]?.getCellState() == CellState.SHIP || battleField[i][j]?.getCellState() == CellState.SHOT_SUCCESS) {
+                    shipsCoordinates.add(Coordinate(i, j))
+                }
+            }
+        }
+        return shipsCoordinates
+    }
+
     fun getDotsCoordinates(): ArrayList<Coordinate> {
         val dotsCoordinates = arrayListOf<Coordinate>()
         for (i in battleField.indices) {

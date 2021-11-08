@@ -17,7 +17,7 @@ fun openGmail(activity: Activity, email: Array<String>, subject: String?): Inten
     var best: ResolveInfo? = null
     for (info in matches) {
         if (info.activityInfo.packageName.endsWith(".gm")
-            || info.activityInfo.name.toLowerCase(Locale.getDefault()).contains("gmail")
+            || info.activityInfo.name.lowercase(Locale.getDefault()).contains("gmail")
         ) best = info
     }
     if (best != null) emailIntent.setClassName(

@@ -24,6 +24,9 @@ class MainViewModel : ViewModel() {
     private var _personShips = MutableLiveData<ArrayList<Coordinate>>()
     val personShips: LiveData<ArrayList<Coordinate>>
         get() = _personShips
+    private var _computerShips = MutableLiveData<ArrayList<Coordinate>>()
+    val computerShips: LiveData<ArrayList<Coordinate>>
+        get() = _computerShips
     private var _personFailShots = MutableLiveData<ArrayList<Coordinate>>()
     val personFailedShots: LiveData<ArrayList<Coordinate>>
         get() = _personFailShots
@@ -84,6 +87,7 @@ class MainViewModel : ViewModel() {
     fun startNewGame() {
         initValues()
         _personShips.value = ArrayList()
+        _computerShips.value = ArrayList()
         _personFailShots.value = ArrayList()
         _personSuccessfulShots.value = ArrayList()
         _computerFailShots.value = ArrayList()
@@ -164,6 +168,7 @@ class MainViewModel : ViewModel() {
     private fun endGame(isPersonWon: Boolean) {
         activePlayer = Player.NONE
         _endGameEvent.value = true
+        _computerShips.value = computerBattleField.getFullShipsCoordinates()
         if (isPersonWon) {
             _status.value = R.string.status_game_over_you_win_text
         } else {

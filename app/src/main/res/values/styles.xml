@@ -19,11 +19,11 @@
         <item name="android:fontFamily">@font/neucha</item>
         <item name="android:gravity">center_horizontal|bottom</item>
         <item name="android:textAlignment">center</item>
-        <item name="android:textSize">@dimen/text_size_14sp</item>
+        <item name="android:textSize">@dimen/text_size_15sp</item>
     </style>
 
     <style name="SingleCharacterStyle" parent="SingleDigitStyle">
-        <item name="android:textSize">@dimen/text_size_13sp</item>
+        <item name="android:textSize">@dimen/text_size_14sp</item>
     </style>
 
     <style name="MainButtonStyle">

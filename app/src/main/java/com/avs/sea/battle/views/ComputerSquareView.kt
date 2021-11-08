@@ -13,6 +13,7 @@ import com.avs.sea.battle.battle_field.Coordinate
 
 class ComputerSquareView : SquareView {
 
+    private var shipsCoordinates: ArrayList<Coordinate> = arrayListOf()
     private lateinit var dotsCoordinates: ArrayList<Coordinate>
     private lateinit var crossesCoordinates: ArrayList<Coordinate>
     private lateinit var paintSelected: Paint
@@ -41,6 +42,11 @@ class ComputerSquareView : SquareView {
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
+        if (shipsCoordinates.isNotEmpty()) {
+            for (ship in shipsCoordinates) {
+                canvas?.drawSquare(ship.y, ship.x, paintShipSquare)
+            }
+        }
         if (dotsCoordinates.isNotEmpty()) {
             for (coordinate in dotsCoordinates) {
                 canvas?.drawDot(coordinate)
@@ -54,6 +60,11 @@ class ComputerSquareView : SquareView {
         if (selectedSquare != null) {
             canvas?.drawSquare(selectedSquare!!.x, selectedSquare!!.y, paintSelected)
         }
+    }
+
+    fun setShipsCoordinates(coordinates: ArrayList<Coordinate>) {
+        this.shipsCoordinates = coordinates
+        invalidate()
     }
 
     private fun getCustomOnTouchListener(): (View, MotionEvent) -> Boolean {
