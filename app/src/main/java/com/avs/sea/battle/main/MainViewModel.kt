@@ -3,6 +3,7 @@ package com.avs.sea.battle.main
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.avs.sea.battle.R
 import com.avs.sea.battle.SECOND_IN_MILLIS
 import com.avs.sea.battle.battle_field.BattleField
@@ -45,19 +46,12 @@ class MainViewModel : ViewModel() {
     private var _endGameEvent = MutableLiveData<Boolean>()
     val endGameEvent: LiveData<Boolean>
         get() = _endGameEvent
-    private var viewModelJob = Job()
-    private var uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
     private lateinit var personBattleField: BattleField
     private lateinit var computerBattleField: BattleField
     private lateinit var shotManager: ShotManager
 
     init {
         initValues()
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        viewModelJob.cancel()
     }
 
     private fun initValues() {
@@ -136,7 +130,7 @@ class MainViewModel : ViewModel() {
         val isShipHit = personBattleField.handleShot(coordinate)
         shotManager.handleShot(isShipHit)
         if (isShipHit) {
-            uiScope.launch {
+            viewModelScope.launch {
                 delay(SECOND_IN_MILLIS + SECOND_IN_MILLIS / 2)
                 _computerSuccessfulShots.value = personBattleField.getCrossesCoordinates()
                 if (personBattleField.isGameOver()) {
@@ -147,7 +141,7 @@ class MainViewModel : ViewModel() {
                 }
             }
         } else {
-            uiScope.launch {
+            viewModelScope.launch {
                 delay(SECOND_IN_MILLIS + SECOND_IN_MILLIS / 2)
                 _computerFailShots.value = personBattleField.getDotsCoordinates()
                 activePlayer = Player.PERSON
