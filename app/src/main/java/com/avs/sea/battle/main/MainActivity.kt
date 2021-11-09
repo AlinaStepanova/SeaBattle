@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         binding.mainViewModel = viewModel
 
         binding.viewComputer.provideViewModel(viewModel)
