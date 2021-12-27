@@ -43,8 +43,8 @@ class MainViewModel : ViewModel() {
     private var _startGameEvent = MutableLiveData<Boolean>()
     val startGameEvent: LiveData<Boolean>
         get() = _startGameEvent
-    private var _endGameEvent = MutableLiveData<Boolean>()
-    val endGameEvent: LiveData<Boolean>
+    private var _endGameEvent = MutableLiveData<Pair<Boolean, Player?>>()
+    val endGameEvent: LiveData<Pair<Boolean, Player?>>
         get() = _endGameEvent
     private lateinit var personBattleField: BattleField
     private lateinit var computerBattleField: BattleField
@@ -61,7 +61,7 @@ class MainViewModel : ViewModel() {
         computerBattleField = BattleField()
         _status.value = R.string.status_welcome_text
         _startGameEvent.value = false
-        _endGameEvent.value = false
+        _endGameEvent.value = false to null
         _selectedByPersonCoordinate.value = null
         computerBattleField.randomizeShips()
     }
@@ -161,11 +161,12 @@ class MainViewModel : ViewModel() {
 
     private fun endGame(isPersonWon: Boolean) {
         activePlayer = Player.NONE
-        _endGameEvent.value = true
         _computerShips.value = computerBattleField.getAllShipsCoordinates()
         if (isPersonWon) {
+            _endGameEvent.value = true to Player.PERSON
             _status.value = R.string.status_game_over_you_win_text
         } else {
+            _endGameEvent.value = true to Player.COMPUTER
             _status.value = R.string.status_game_over_you_lose_text
         }
     }

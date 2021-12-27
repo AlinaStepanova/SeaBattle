@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
@@ -19,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.avs.sea.battle.*
 import com.avs.sea.battle.databinding.ActivityMainBinding
 import com.avs.sea.battle.privacy_policy.PrivacyPolicyActivity
+import com.google.android.play.core.review.ReviewManagerFactory
 
 class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
 
@@ -83,8 +85,15 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
             binding.viewGenerate.visibility = if (isStarted) View.INVISIBLE else View.VISIBLE
         })
 
-        viewModel.endGameEvent.observe(this, { isEnded ->
-            binding.viewNewGame.visibility = if (isEnded) View.VISIBLE else View.INVISIBLE
+        viewModel.endGameEvent.observe(this, { eventPair ->
+            if (eventPair.first) {
+                binding.viewNewGame.visibility = View.VISIBLE
+                if (eventPair.second == Player.PERSON) {
+                    launchReviewFlow()
+                }
+            } else {
+                binding.viewNewGame.visibility = View.INVISIBLE
+            }
         })
         binding.ivMore.setOnClickListener { view -> showPopup(view) }
         binding.viewGenerate.setOnTouchListener(customOnTouchListener)
@@ -163,6 +172,19 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
             call()
         } catch (e: ActivityNotFoundException) {
             Toast.makeText(this, resources.getString(messageId), Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun launchReviewFlow() {
+        baseContext?.let { context ->
+            val manager = ReviewManagerFactory.create(context)
+            val request = manager.requestReviewFlow()
+            request.addOnCompleteListener {
+                val flow = manager.launchReviewFlow(this, it.result)
+                flow.addOnCompleteListener {
+                    Log.d("Review", "Review flow completed")
+                }
+            }
         }
     }
 }
