@@ -11,7 +11,7 @@
     <string name="letter_h">З</string>
     <string name="letter_i">И</string>
     <string name="letter_j">К</string>
-    <string name="generate_ships_text">Сгенерировать корабли</string>
+    <string name="generate_ships_text">Расставить корабли случайно</string>
     <string name="fire_text">Огонь!</string>
     <string name="start_text">Старт</string>
     <string name="new_game_text">Новая игра</string>
