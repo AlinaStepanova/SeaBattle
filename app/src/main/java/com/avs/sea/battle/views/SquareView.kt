@@ -68,8 +68,10 @@ abstract class SquareView : View {
     override fun onDraw(canvas: Canvas?) {
         paint.color = Color.BLACK
         paint.strokeWidth = lineWidth
-        drawHorizontalLines(canvas!!)
-        drawVerticalLines(canvas)
+        canvas?.let {
+            drawHorizontalLines(it)
+            drawVerticalLines(it)
+        }
     }
 
     private fun drawHorizontalLines(canvas: Canvas) {
@@ -101,7 +103,7 @@ abstract class SquareView : View {
     }
 
     fun Canvas.drawCross(i: Int, j: Int) {
-        paint.strokeWidth = lineWidth * 2
+        paint.strokeWidth = lineWidth * 2.5F
         this.drawLines(getCrossCoordinates(i, j), paint)
     }
 

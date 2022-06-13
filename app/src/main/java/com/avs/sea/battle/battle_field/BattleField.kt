@@ -5,29 +5,36 @@ import com.avs.sea.battle.ships.*
 
 class BattleField : BaseBattleField() {
 
-    private val ships: List<Ship> = listOf(
-        FourDeckShip(), ThreeDeckShip(), ThreeDeckShip(),
-        TwoDeckShip(), TwoDeckShip(), TwoDeckShip(),
-        OneDeckShip(), OneDeckShip(), OneDeckShip(), OneDeckShip()
-    )
+    private lateinit var ships: List<Ship>
 
     fun randomizeShips() {
+        ships = listOf(
+            FourDeckShip(), ThreeDeckShip(), ThreeDeckShip(),
+            TwoDeckShip(), TwoDeckShip(), TwoDeckShip(),
+            OneDeckShip(), OneDeckShip(), OneDeckShip(), OneDeckShip()
+        )
         var isAdded: Boolean
         for (ship in ships) {
             isAdded = false
             while (!isAdded) {
                 val coordinate = getRandomCoordinate(ship)
                 if (battleField[coordinate.x][coordinate.y]?.getCellState() == CellState.EMPTY) {
+                    val length = ship.getLength()
                     isAdded = if (ship.getShipOrientation() == Orientation.VERTICAL) {
-                        (isUpCellEmpty(coordinate) && isBottomCellEmpty(coordinate, ship.getLength())
-                                && isVerticalCellsEmpty(coordinate, ship.getLength())
-                                && isLeftSideEmpty(coordinate, ship.getLength())
-                                && isRightSideEmpty(coordinate, ship.getLength()))
+                        (isUpCellEmpty(coordinate)
+                                && isUpCornerCellEmpty(coordinate)
+                                && isBottomCornerCellEmpty(coordinate, length)
+                                && isBottomCellEmpty(coordinate, length)
+                                && isVerticalCellsEmpty(coordinate, length)
+                                && isLeftSideEmpty(coordinate, length)
+                                && isRightSideEmpty(coordinate, length))
                     } else {
-                        (isStartCellEmpty(coordinate) && isEndCellEmpty(coordinate, ship.getLength())
-                                && isHorizontalCellsEmpty(coordinate, ship.getLength())
-                                && isTopSideEmpty(coordinate, ship.getLength())
-                                && isBottomSideEmpty(coordinate, ship.getLength()))
+                        (isStartCellEmpty(coordinate) && isEndCellEmpty(coordinate, length)
+                                && isStartCornerCellEmpty(coordinate)
+                                && isEndCornerCellEmpty(coordinate, length)
+                                && isHorizontalCellsEmpty(coordinate, length)
+                                && isTopSideEmpty(coordinate, length)
+                                && isBottomSideEmpty(coordinate, length))
                     }
                     if (isAdded) {
                         ship.setCellsCoordinates(coordinate.x, coordinate.y)
@@ -87,6 +94,16 @@ class BattleField : BaseBattleField() {
         return shipsCoordinates
     }
 
+    fun getAllShipsCoordinates(): ArrayList<Coordinate> {
+        val shipsCoordinates = arrayListOf<Coordinate>()
+        ships.forEach { ship ->
+            ship.getShipCells().forEach { cell ->
+                shipsCoordinates.add(cell.getCoordinate())
+            }
+        }
+        return shipsCoordinates
+    }
+
     fun getDotsCoordinates(): ArrayList<Coordinate> {
         val dotsCoordinates = arrayListOf<Coordinate>()
         for (i in battleField.indices) {
@@ -124,6 +141,22 @@ class BattleField : BaseBattleField() {
                 battleField[coordinate.x][coordinate.y + length]?.getCellState() == CellState.EMPTY))
     }
 
+    private fun isEndCornerCellEmpty(coordinate: Coordinate, length: Int): Boolean {
+        return (coordinate.y + length == SQUARES_COUNT - 1)
+                || (((coordinate.x == 0) || (coordinate.y < SQUARES_COUNT - 1 && coordinate.x > 0 &&
+                battleField[coordinate.x - 1][coordinate.y + length]?.getCellState() == CellState.EMPTY))
+                && ((coordinate.x == SQUARES_COUNT - 1)
+                || (coordinate.y < SQUARES_COUNT - 1 && coordinate.x < SQUARES_COUNT - 1 &&
+                battleField[coordinate.x + 1][coordinate.y + length]?.getCellState() == CellState.EMPTY)))
+    }
+
+    private fun isStartCornerCellEmpty(coordinate: Coordinate): Boolean {
+        return (coordinate.y == 0) || (((coordinate.x == 0) || (coordinate.y > 0 && coordinate.x > 0 &&
+                battleField[coordinate.x - 1][coordinate.y - 1]?.getCellState() == CellState.EMPTY))
+                && ((coordinate.x == SQUARES_COUNT - 1) || (coordinate.y > 0 && coordinate.x < SQUARES_COUNT - 1 &&
+                battleField[coordinate.x + 1][coordinate.y - 1]?.getCellState() == CellState.EMPTY)))
+    }
+
     private fun isUpCellEmpty(coordinate: Coordinate): Boolean {
         return ((coordinate.x == 0) || (coordinate.x > 0 &&
                 battleField[coordinate.x - 1][coordinate.y]?.getCellState() == CellState.EMPTY))
@@ -135,6 +168,23 @@ class BattleField : BaseBattleField() {
     ): Boolean {
         return ((coordinate.x + length == SQUARES_COUNT - 1) || (coordinate.x < SQUARES_COUNT - 1 &&
                 battleField[coordinate.x + length][coordinate.y]?.getCellState() == CellState.EMPTY))
+    }
+
+    private fun isUpCornerCellEmpty(coordinate: Coordinate): Boolean {
+        return ((coordinate.x == 0) ||
+                (((coordinate.y == 0) || (coordinate.x > 0 && coordinate.y > 0 &&
+                        battleField[coordinate.x - 1][coordinate.y - 1]?.getCellState() == CellState.EMPTY))
+                        && ((coordinate.y == SQUARES_COUNT - 1) || (coordinate.x > 0 && coordinate.y < SQUARES_COUNT - 1 &&
+                        battleField[coordinate.x - 1][coordinate.y + 1]?.getCellState() == CellState.EMPTY))))
+    }
+
+    private fun isBottomCornerCellEmpty(coordinate: Coordinate, length: Int): Boolean {
+        return (coordinate.x + length == SQUARES_COUNT) ||
+                (((coordinate.y == 0) || (coordinate.x + length < SQUARES_COUNT - 1 && coordinate.y > 0 &&
+                        battleField[coordinate.x + length][coordinate.y - 1]?.getCellState() == CellState.EMPTY))
+                        && ((coordinate.y == SQUARES_COUNT - 1) ||
+                        (coordinate.x + length < SQUARES_COUNT - 1 && coordinate.y < SQUARES_COUNT - 1 &&
+                                battleField[coordinate.x + length][coordinate.y + 1]?.getCellState() == CellState.EMPTY)))
     }
 
     private fun isLeftSideEmpty(coordinate: Coordinate, length: Int): Boolean {

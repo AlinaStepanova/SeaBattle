@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:tools="http://schemas.android.com/tools"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="@layout/activity_main">
 
     <TextView
         android:id="@+id/tvNumber1"
-        android:text="@string/number_1"
         style="@style/SingleDigitStyle"
         android:gravity="center_vertical"
+        android:text="@string/number_1"
         app:layout_constraintBottom_toTopOf="@+id/tvNumber2"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@+id/viewPerson"
@@ -17,8 +17,8 @@
     <TextView
         android:id="@+id/tvNumber2"
         style="@style/SingleDigitStyle"
-        android:text="@string/number_2"
         android:gravity="center_vertical"
+        android:text="@string/number_2"
         app:layout_constraintBottom_toTopOf="@+id/tvNumber3"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@+id/viewPerson"
@@ -27,8 +27,8 @@
     <TextView
         android:id="@+id/tvNumber3"
         style="@style/SingleDigitStyle"
-        android:text="@string/number_3"
         android:gravity="center_vertical"
+        android:text="@string/number_3"
         app:layout_constraintBottom_toTopOf="@+id/tvNumber4"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@+id/viewPerson"
@@ -37,8 +37,8 @@
     <TextView
         android:id="@+id/tvNumber4"
         style="@style/SingleDigitStyle"
-        android:text="@string/number_4"
         android:gravity="center_vertical"
+        android:text="@string/number_4"
         app:layout_constraintBottom_toTopOf="@+id/tvNumber5"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@+id/viewPerson"
@@ -47,8 +47,8 @@
     <TextView
         android:id="@+id/tvNumber5"
         style="@style/SingleDigitStyle"
-        android:text="@string/number_5"
         android:gravity="center_vertical"
+        android:text="@string/number_5"
         app:layout_constraintBottom_toTopOf="@+id/tvNumber6"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@+id/viewPerson"
@@ -57,8 +57,8 @@
     <TextView
         android:id="@+id/tvNumber6"
         style="@style/SingleDigitStyle"
-        android:text="@string/number_6"
         android:gravity="center_vertical"
+        android:text="@string/number_6"
         app:layout_constraintBottom_toTopOf="@+id/tvNumber7"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@+id/viewPerson"
@@ -67,8 +67,8 @@
     <TextView
         android:id="@+id/tvNumber7"
         style="@style/SingleDigitStyle"
-        android:text="@string/number_7"
         android:gravity="center_vertical"
+        android:text="@string/number_7"
         app:layout_constraintBottom_toTopOf="@+id/tvNumber8"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@+id/viewPerson"
@@ -77,8 +77,8 @@
     <TextView
         android:id="@+id/tvNumber8"
         style="@style/SingleDigitStyle"
-        android:text="@string/number_8"
         android:gravity="center_vertical"
+        android:text="@string/number_8"
         app:layout_constraintBottom_toTopOf="@+id/tvNumber9"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@+id/viewPerson"
@@ -87,8 +87,8 @@
     <TextView
         android:id="@+id/tvNumber9"
         style="@style/SingleDigitStyle"
-        android:text="@string/number_9"
         android:gravity="center_vertical"
+        android:text="@string/number_9"
         app:layout_constraintBottom_toTopOf="@+id/tvNumber10"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@+id/viewPerson"
@@ -97,8 +97,8 @@
     <TextView
         android:id="@+id/tvNumber10"
         style="@style/SingleDigitStyle"
-        android:text="@string/number_10"
         android:gravity="center_vertical"
+        android:text="@string/number_10"
         app:layout_constraintBottom_toBottomOf="@+id/viewPerson"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@+id/viewPerson"

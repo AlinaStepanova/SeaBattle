@@ -3,6 +3,7 @@ package com.avs.sea.battle.main
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.avs.sea.battle.R
 import com.avs.sea.battle.SECOND_IN_MILLIS
 import com.avs.sea.battle.battle_field.BattleField
@@ -24,6 +25,9 @@ class MainViewModel : ViewModel() {
     private var _personShips = MutableLiveData<ArrayList<Coordinate>>()
     val personShips: LiveData<ArrayList<Coordinate>>
         get() = _personShips
+    private var _computerShips = MutableLiveData<ArrayList<Coordinate>>()
+    val computerShips: LiveData<ArrayList<Coordinate>>
+        get() = _computerShips
     private var _personFailShots = MutableLiveData<ArrayList<Coordinate>>()
     val personFailedShots: LiveData<ArrayList<Coordinate>>
         get() = _personFailShots
@@ -39,22 +43,15 @@ class MainViewModel : ViewModel() {
     private var _startGameEvent = MutableLiveData<Boolean>()
     val startGameEvent: LiveData<Boolean>
         get() = _startGameEvent
-    private var _endGameEvent = MutableLiveData<Boolean>()
-    val endGameEvent: LiveData<Boolean>
+    private var _endGameEvent = MutableLiveData<Pair<Boolean, Player?>>()
+    val endGameEvent: LiveData<Pair<Boolean, Player?>>
         get() = _endGameEvent
-    private var viewModelJob = Job()
-    private var uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
     private lateinit var personBattleField: BattleField
     private lateinit var computerBattleField: BattleField
     private lateinit var shotManager: ShotManager
 
     init {
         initValues()
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        viewModelJob.cancel()
     }
 
     private fun initValues() {
@@ -64,7 +61,7 @@ class MainViewModel : ViewModel() {
         computerBattleField = BattleField()
         _status.value = R.string.status_welcome_text
         _startGameEvent.value = false
-        _endGameEvent.value = false
+        _endGameEvent.value = false to null
         _selectedByPersonCoordinate.value = null
         computerBattleField.randomizeShips()
     }
@@ -84,6 +81,7 @@ class MainViewModel : ViewModel() {
     fun startNewGame() {
         initValues()
         _personShips.value = ArrayList()
+        _computerShips.value = ArrayList()
         _personFailShots.value = ArrayList()
         _personSuccessfulShots.value = ArrayList()
         _computerFailShots.value = ArrayList()
@@ -132,8 +130,8 @@ class MainViewModel : ViewModel() {
         val isShipHit = personBattleField.handleShot(coordinate)
         shotManager.handleShot(isShipHit)
         if (isShipHit) {
-            uiScope.launch {
-                delay(SECOND_IN_MILLIS * 2)
+            viewModelScope.launch {
+                delay(SECOND_IN_MILLIS + SECOND_IN_MILLIS / 2)
                 _computerSuccessfulShots.value = personBattleField.getCrossesCoordinates()
                 if (personBattleField.isGameOver()) {
                     endGame(false)
@@ -143,8 +141,8 @@ class MainViewModel : ViewModel() {
                 }
             }
         } else {
-            uiScope.launch {
-                delay(SECOND_IN_MILLIS * 2)
+            viewModelScope.launch {
+                delay(SECOND_IN_MILLIS + SECOND_IN_MILLIS / 2)
                 _computerFailShots.value = personBattleField.getDotsCoordinates()
                 activePlayer = Player.PERSON
                 checkCurrentPlayer()
@@ -163,10 +161,12 @@ class MainViewModel : ViewModel() {
 
     private fun endGame(isPersonWon: Boolean) {
         activePlayer = Player.NONE
-        _endGameEvent.value = true
+        _computerShips.value = computerBattleField.getAllShipsCoordinates()
         if (isPersonWon) {
+            _endGameEvent.value = true to Player.PERSON
             _status.value = R.string.status_game_over_you_win_text
         } else {
+            _endGameEvent.value = true to Player.COMPUTER
             _status.value = R.string.status_game_over_you_lose_text
         }
     }

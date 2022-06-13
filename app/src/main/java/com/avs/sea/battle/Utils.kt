@@ -7,7 +7,7 @@ import android.content.pm.ResolveInfo
 import android.net.Uri
 import java.util.*
 
-fun openGmail(activity: Activity, email: Array<String>, subject: String?): Intent? {
+fun openGmail(activity: Activity, email: Array<String>, subject: String?): Intent {
     val emailIntent = Intent(Intent.ACTION_SEND)
     emailIntent.putExtra(Intent.EXTRA_EMAIL, email)
     emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject)
@@ -17,7 +17,7 @@ fun openGmail(activity: Activity, email: Array<String>, subject: String?): Inten
     var best: ResolveInfo? = null
     for (info in matches) {
         if (info.activityInfo.packageName.endsWith(".gm")
-            || info.activityInfo.name.toLowerCase(Locale.getDefault()).contains("gmail")
+            || info.activityInfo.name.lowercase(Locale.getDefault()).contains("gmail")
         ) best = info
     }
     if (best != null) emailIntent.setClassName(
@@ -37,7 +37,7 @@ fun getShareIntent(context: Context): Intent {
     return sharingIntent
 }
 
-fun openMarket(showAppsList: Boolean): Intent? {
+fun openMarket(showAppsList: Boolean): Intent {
     val uri = if (showAppsList) {
         Uri.parse("market://search?q=pub:$DEV_NAME")
     } else {

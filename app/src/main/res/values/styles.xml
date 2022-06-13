@@ -9,28 +9,40 @@
     </style>
 
     <style name="PopupStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="android:fontFamily">casual</item>
-        <item name="android:textSize">@dimen/text_size_15sp</item>
+        <item name="android:fontFamily">@font/neucha</item>
+        <item name="android:textSize">@dimen/text_size_16sp</item>
     </style>
 
     <style name="SingleDigitStyle">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">0dp</item>
-        <item name="android:fontFamily">casual</item>
+        <item name="android:fontFamily">@font/neucha</item>
         <item name="android:gravity">center_horizontal|bottom</item>
         <item name="android:textAlignment">center</item>
-        <item name="android:textSize">@dimen/text_size_12sp</item>
+        <item name="android:textSize">@dimen/text_size_15sp</item>
+    </style>
+
+    <style name="SingleCharacterStyle" parent="SingleDigitStyle">
+        <item name="android:textSize">@dimen/text_size_14sp</item>
     </style>
 
     <style name="MainButtonStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:background">@drawable/square_background</item>
-        <item name="android:fontFamily">casual</item>
+        <item name="android:fontFamily">@font/neucha</item>
+        <item name="android:textSize">@dimen/text_size_16sp</item>
         <item name="android:paddingStart">@dimen/dimen_8dp</item>
         <item name="android:paddingTop">2dp</item>
         <item name="android:paddingEnd">@dimen/dimen_8dp</item>
         <item name="android:paddingBottom">2dp</item>
+    </style>
+
+    <style name="FireButtonStyle" parent="MainButtonStyle">
+        <item name="android:paddingStart">@dimen/dimen_16dp</item>
+        <item name="android:paddingEnd">@dimen/dimen_16dp</item>
+        <item name="android:paddingTop">@dimen/dimen_4dp</item>
+        <item name="android:paddingBottom">@dimen/dimen_4dp</item>
     </style>
 
 </resources>

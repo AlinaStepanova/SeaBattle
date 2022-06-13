@@ -21,7 +21,7 @@ class Cell() {
         this.cellState = cellState
     }
 
-    fun isState(cellState: CellState) : Boolean {
+    fun isState(cellState: CellState): Boolean {
         return this.getCellState() == cellState
     }
 

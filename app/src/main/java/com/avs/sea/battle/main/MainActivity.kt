@@ -16,11 +16,11 @@ import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.avs.sea.battle.*
 import com.avs.sea.battle.databinding.ActivityMainBinding
 import com.avs.sea.battle.privacy_policy.PrivacyPolicyActivity
+import com.google.android.play.core.review.ReviewManagerFactory
 
 class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
 
@@ -32,60 +32,68 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         binding.mainViewModel = viewModel
 
-        binding.viewPerson.provideViewModel(viewModel)
         binding.viewComputer.provideViewModel(viewModel)
 
-        viewModel.status.observe(this, Observer { newStatusId ->
+        viewModel.status.observe(this, { newStatusId ->
             binding.tvStatus.text = resources.getText(newStatusId)
         })
 
-        viewModel.selectedByPersonCoordinate.observe(this, Observer { point ->
+        viewModel.selectedByPersonCoordinate.observe(this, { point ->
             binding.viewComputer.getSelectedCoordinate(point)
             binding.viewFire.visibility = if (point == null) View.INVISIBLE else View.VISIBLE
         })
 
-        viewModel.selectedByComputerCoordinate.observe(this, Observer {
+        viewModel.selectedByComputerCoordinate.observe(this, {
             binding.progressBar.visibility = View.VISIBLE
         })
 
-        viewModel.personShips.observe(this, Observer { coordinates ->
+        viewModel.personShips.observe(this, { coordinates ->
             binding.viewPerson.getShipsCoordinates(coordinates)
             if (coordinates.isNotEmpty()) {
                 binding.viewStart.visibility = View.VISIBLE
             }
         })
 
-        viewModel.personSuccessfulShots.observe(this, Observer { coordinates ->
+        viewModel.computerShips.observe(this, { coordinates ->
+            binding.viewComputer.setShipsCoordinates(coordinates)
+        })
+
+        viewModel.personSuccessfulShots.observe(this, { coordinates ->
             binding.viewComputer.getCrossesCoordinates(coordinates)
-            binding.viewFire.visibility = View.INVISIBLE
         })
 
-        viewModel.personFailedShots.observe(this, Observer { coordinates ->
+        viewModel.personFailedShots.observe(this, { coordinates ->
             binding.viewComputer.getDotsCoordinates(coordinates)
-            binding.viewFire.visibility = View.INVISIBLE
         })
 
-        viewModel.computerSuccessfulShots.observe(this, Observer { coordinates ->
+        viewModel.computerSuccessfulShots.observe(this, { coordinates ->
             binding.viewPerson.getCrossesCoordinates(coordinates)
             binding.progressBar.visibility = View.INVISIBLE
         })
 
-        viewModel.computerFailedShots.observe(this, Observer { coordinates ->
+        viewModel.computerFailedShots.observe(this, { coordinates ->
             binding.viewPerson.getDotsCoordinates(coordinates)
             binding.progressBar.visibility = View.INVISIBLE
         })
 
-        viewModel.startGameEvent.observe(this, Observer { isStarted ->
-            if (isStarted) binding.viewStart.visibility = View.INVISIBLE
+        viewModel.startGameEvent.observe(this, { isStarted ->
+            if (isStarted) binding.viewStart.visibility = View.GONE
             if (!isStarted) binding.viewNewGame.visibility = View.INVISIBLE
             binding.viewGenerate.visibility = if (isStarted) View.INVISIBLE else View.VISIBLE
         })
 
-        viewModel.endGameEvent.observe(this, Observer { isEnded ->
-            binding.viewNewGame.visibility = if (isEnded) View.VISIBLE else View.INVISIBLE
+        viewModel.endGameEvent.observe(this, { eventPair ->
+            if (eventPair.first) {
+                binding.viewNewGame.visibility = View.VISIBLE
+                if (eventPair.second == Player.PERSON) {
+                    launchReviewFlow()
+                }
+            } else {
+                binding.viewNewGame.visibility = View.INVISIBLE
+            }
         })
         binding.ivMore.setOnClickListener { view -> showPopup(view) }
         binding.viewGenerate.setOnTouchListener(customOnTouchListener)
@@ -123,18 +131,7 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
             PopupMenu(wrapper, v).apply {
                 setOnMenuItemClickListener(this@MainActivity)
                 inflate(R.menu.menu)
-                try {
-                    val fieldMPopup = PopupMenu::class.java.getDeclaredField("mPopup")
-                    fieldMPopup.isAccessible = true
-                    val popup = fieldMPopup.get(this)
-                    popup.javaClass
-                        .getDeclaredMethod("setForceShowIcon", Boolean::class.java)
-                        .invoke(popup, true)
-                } catch (e: Exception) {
-                    if (BuildConfig.DEBUG) Log.d(this::class.java.simpleName, e.toString())
-                } finally {
-                    show()
-                }
+                show()
             }
         }
     }
@@ -175,6 +172,19 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
             call()
         } catch (e: ActivityNotFoundException) {
             Toast.makeText(this, resources.getString(messageId), Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun launchReviewFlow() {
+        baseContext?.let { context ->
+            val manager = ReviewManagerFactory.create(context)
+            val request = manager.requestReviewFlow()
+            request.addOnCompleteListener {
+                val flow = manager.launchReviewFlow(this, it.result)
+                flow.addOnCompleteListener {
+                    Log.d("Review", "Review flow completed")
+                }
+            }
         }
     }
 }

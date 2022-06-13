@@ -10,16 +10,16 @@
     <string name="letter_h">H</string>
     <string name="letter_i">I</string>
     <string name="letter_j">J</string>
-    <string name="number_1">1</string>
-    <string name="number_2">2</string>
-    <string name="number_3">3</string>
-    <string name="number_4">4</string>
-    <string name="number_5">5</string>
-    <string name="number_6">6</string>
-    <string name="number_7">7</string>
-    <string name="number_8">8</string>
-    <string name="number_9">9</string>
-    <string name="number_10">10</string>
+    <string name="number_1" translatable="false">1</string>
+    <string name="number_2" translatable="false">2</string>
+    <string name="number_3" translatable="false">3</string>
+    <string name="number_4" translatable="false">4</string>
+    <string name="number_5" translatable="false">5</string>
+    <string name="number_6" translatable="false">6</string>
+    <string name="number_7" translatable="false">7</string>
+    <string name="number_8" translatable="false">8</string>
+    <string name="number_9" translatable="false">9</string>
+    <string name="number_10" translatable="false">10</string>
     <string name="generate_ships_text">Generate Ships</string>
     <string name="fire_text">Fire!</string>
     <string name="start_text">Start</string>

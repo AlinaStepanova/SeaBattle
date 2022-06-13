@@ -146,17 +146,17 @@ class ShotManager {
 
     fun getMaxCoordinate(list: MutableList<Coordinate>, orientation: Orientation): Coordinate {
         return if (orientation == Orientation.VERTICAL) {
-            list.maxBy { it.x }!!
+            list.maxByOrNull { it.x }!!
         } else {
-            list.maxBy { it.y }!!
+            list.maxByOrNull { it.y }!!
         }
     }
 
     fun getMinCoordinate(list: MutableList<Coordinate>, orientation: Orientation): Coordinate {
         return if (orientation == Orientation.VERTICAL) {
-            list.minBy { it.x }!!
+            list.minByOrNull { it.x }!!
         } else {
-            list.minBy { it.y }!!
+            list.minByOrNull { it.y }!!
         }
     }
 
@@ -291,11 +291,19 @@ class ShotManager {
     fun markHorizontalNeighbours(cell: Cell) {
         battleField.setCellState(Coordinate(cell.getX(), cell.getY() - 1), SHOT_FAILURE)
         battleField.setCellState(Coordinate(cell.getX(), cell.getY() + 1), SHOT_FAILURE)
+        battleField.setCellState(Coordinate(cell.getX() - 1, cell.getY() - 1), SHOT_FAILURE)
+        battleField.setCellState(Coordinate(cell.getX() - 1, cell.getY() + 1), SHOT_FAILURE)
+        battleField.setCellState(Coordinate(cell.getX() + 1, cell.getY() - 1), SHOT_FAILURE)
+        battleField.setCellState(Coordinate(cell.getX() + 1, cell.getY() + 1), SHOT_FAILURE)
     }
 
     fun markVerticalNeighbours(cell: Cell) {
         battleField.setCellState(Coordinate(cell.getX() - 1, cell.getY()), SHOT_FAILURE)
         battleField.setCellState(Coordinate(cell.getX() + 1, cell.getY()), SHOT_FAILURE)
+        battleField.setCellState(Coordinate(cell.getX() - 1, cell.getY() - 1), SHOT_FAILURE)
+        battleField.setCellState(Coordinate(cell.getX() + 1, cell.getY() - 1), SHOT_FAILURE)
+        battleField.setCellState(Coordinate(cell.getX() - 1, cell.getY() + 1), SHOT_FAILURE)
+        battleField.setCellState(Coordinate(cell.getX() + 1, cell.getY() + 1), SHOT_FAILURE)
     }
 
     fun updateBattleField(shipHit: Boolean, currentCell: Cell) {

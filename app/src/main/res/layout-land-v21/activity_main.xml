@@ -34,54 +34,48 @@
             android:id="@+id/tvStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dimen_8dp"
+            android:layout_marginTop="@dimen/dimen_10dp"
             android:ellipsize="end"
             android:fontFamily="@font/neucha"
             android:gravity="center"
             android:paddingStart="@dimen/dimen_10dp"
             android:paddingEnd="@dimen/dimen_10dp"
-            android:singleLine="false"
+            android:singleLine="true"
             android:text="@string/status_welcome_text"
-            android:maxLines="2"
-            android:layout_marginStart="@dimen/dimen_4dp"
-            android:layout_marginEnd="@dimen/dimen_4dp"
             android:textColor="@color/colorAccent"
             android:textSize="@dimen/text_size_16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/viewComputer"
+            app:layout_constraintStart_toStartOf="@+id/viewPerson"
             app:layout_constraintTop_toTopOf="parent" />
 
         <include
             android:id="@+id/lettersPerson"
             layout="@layout/layout_letters_person" />
 
-        <include
-            android:id="@+id/numbersPerson"
-            layout="@layout/layout_numbers_person" />
+        <include layout="@layout/layout_numbers_person" />
 
         <com.avs.sea.battle.views.PersonSquareView
             android:id="@+id/viewPerson"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginBottom="@dimen/dimen_16dp"
+            android:layout_marginStart="@dimen/dimen_16dp"
+            android:layout_marginTop="@dimen/dimen_24dp"
+            android:layout_marginEnd="@dimen/dimen_8dp"
             android:background="@drawable/square_background"
-            app:layout_constraintBottom_toTopOf="@+id/guideline2"
+            app:layout_constraintBottom_toBottomOf="@id/guideline"
             app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintEnd_toStartOf="@+id/guideline5"
-            app:layout_constraintStart_toStartOf="@+id/guideline4"
-            app:layout_constraintTop_toTopOf="@+id/guideline6"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/viewComputer"
+            app:layout_constraintTop_toBottomOf="@+id/tvStatus" />
 
         <TextView
             android:id="@+id/viewGenerate"
             style="@style/MainButtonStyle"
-            android:gravity="center"
             android:onClick="@{() -> mainViewModel.generateShips()}"
             android:text="@string/generate_ships_text"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/viewStart"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/viewPerson"
+            app:layout_constraintStart_toStartOf="@+id/viewPerson"
             app:layout_constraintTop_toTopOf="@+id/guideline" />
 
         <include
@@ -94,14 +88,15 @@
             android:id="@+id/viewComputer"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="@dimen/dimen_16dp"
+            android:layout_marginStart="@dimen/dimen_16dp"
+            android:layout_marginTop="@dimen/dimen_24dp"
+            android:layout_marginEnd="@dimen/dimen_8dp"
             android:background="@drawable/square_background"
             app:layout_constraintBottom_toBottomOf="@id/guideline"
             app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintEnd_toStartOf="@+id/guideline5"
-            app:layout_constraintStart_toStartOf="@+id/guideline4"
-            app:layout_constraintTop_toTopOf="@+id/guideline2"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintLeft_toRightOf="@+id/viewPerson"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvStatus" />
 
         <TextView
             android:id="@+id/viewFire"
@@ -110,8 +105,8 @@
             android:text="@string/fire_text"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/viewComputer"
+            app:layout_constraintStart_toStartOf="@+id/viewComputer"
             app:layout_constraintTop_toTopOf="@+id/guideline" />
 
         <androidx.constraintlayout.widget.Guideline
@@ -119,18 +114,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.9" />
+            app:layout_constraintGuide_percent="0.85" />
 
         <TextView
             android:id="@+id/viewStart"
             style="@style/MainButtonStyle"
             android:onClick="@{() -> mainViewModel.startGame()}"
             android:text="@string/start_text"
-            android:visibility="gone"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/viewGenerate"
+            app:layout_constraintEnd_toStartOf="@+id/viewComputer"
+            app:layout_constraintStart_toEndOf="@+id/viewPerson"
             app:layout_constraintTop_toTopOf="@+id/guideline" />
 
         <TextView
@@ -140,8 +134,8 @@
             android:text="@string/new_game_text"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/viewComputer"
+            app:layout_constraintStart_toEndOf="@+id/viewPerson"
             app:layout_constraintTop_toTopOf="@+id/guideline" />
 
         <ProgressBar
@@ -149,39 +143,13 @@
             style="?android:attr/progressBarStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:indeterminateTint="@color/colorAccent"
+            android:indeterminateTintMode="src_in"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/viewPerson"
+            app:layout_constraintStart_toStartOf="@+id/viewPerson"
             app:layout_constraintTop_toTopOf="@+id/guideline" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.5" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.15" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.85" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.1" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

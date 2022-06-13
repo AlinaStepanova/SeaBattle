@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Морской Бой</string>
+    <string name="letter_a">А</string>
+    <string name="letter_b">Б</string>
+    <string name="letter_c">В</string>
+    <string name="letter_d">Г</string>
+    <string name="letter_e">Д</string>
+    <string name="letter_f">Е</string>
+    <string name="letter_g">Ж</string>
+    <string name="letter_h">З</string>
+    <string name="letter_i">И</string>
+    <string name="letter_j">К</string>
+    <string name="generate_ships_text">Расставить корабли случайно</string>
+    <string name="fire_text">Огонь!</string>
+    <string name="start_text">Старт</string>
+    <string name="new_game_text">Новая игра</string>
+    <string name="status_welcome_text">Добро пожаловать!</string>
+    <string name="status_generate_or_start_text">Сгенерируйте корабли снова или начните игру</string>
+    <string name="status_select_to_fire_text">Выберите клетку для выстрела</string>
+    <string name="status_game_over_you_win_text">Игра окончена вы победили!</string>
+    <string name="status_game_over_you_lose_text">Игра окончена вы проиграли</string>
+    <string name="status_shot_ship_again_text">Выберите клетку и сделайте выстрел снова</string>
+    <string name="status_opponent_shot_text">Оппонент совершает выстрел</string>
+    <string name="status_opponent_shot_again_text">Оппонент совершает выстрел снова</string>
+    <string name="menu_share_text">Поделиться</string>
+    <string name="menu_rate_on_play_market_text">Оценить на Play Market</string>
+    <string name="menu_write_to_author_text">Письмо автору</string>
+    <string name="menu_more_apps_text">Больше приложений</string>
+    <string name="menu_privacy_policy_text">Политика конфиденциальности</string>
+    <string name="cannot_send_email_error_text">Невозможно отправить email</string>
+    <string name="share_body_text">Рекомендую вам игру Морской бой!</string>
+    <string name="share_text">Завершить действие с помощью</string>
+    <string name="cannot_open_market_error_text">Невозможно запустить приложение Play Market</string>
+    <string name="more_settings">Больше</string>
+</resources>
