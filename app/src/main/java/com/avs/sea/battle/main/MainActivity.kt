@@ -37,55 +37,55 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
 
         binding.viewComputer.provideViewModel(viewModel)
 
-        viewModel.status.observe(this, { newStatusId ->
+        viewModel.status.observe(this) { newStatusId ->
             binding.tvStatus.text = resources.getText(newStatusId)
-        })
+        }
 
-        viewModel.selectedByPersonCoordinate.observe(this, { point ->
+        viewModel.selectedByPersonCoordinate.observe(this) { point ->
             binding.viewComputer.getSelectedCoordinate(point)
             binding.viewFire.visibility = if (point == null) View.INVISIBLE else View.VISIBLE
-        })
+        }
 
-        viewModel.selectedByComputerCoordinate.observe(this, {
+        viewModel.selectedByComputerCoordinate.observe(this) {
             binding.progressBar.visibility = View.VISIBLE
-        })
+        }
 
-        viewModel.personShips.observe(this, { coordinates ->
+        viewModel.personShips.observe(this) { coordinates ->
             binding.viewPerson.getShipsCoordinates(coordinates)
             if (coordinates.isNotEmpty()) {
                 binding.viewStart.visibility = View.VISIBLE
             }
-        })
+        }
 
-        viewModel.computerShips.observe(this, { coordinates ->
+        viewModel.computerShips.observe(this) { coordinates ->
             binding.viewComputer.setShipsCoordinates(coordinates)
-        })
+        }
 
-        viewModel.personSuccessfulShots.observe(this, { coordinates ->
+        viewModel.personSuccessfulShots.observe(this) { coordinates ->
             binding.viewComputer.getCrossesCoordinates(coordinates)
-        })
+        }
 
-        viewModel.personFailedShots.observe(this, { coordinates ->
+        viewModel.personFailedShots.observe(this) { coordinates ->
             binding.viewComputer.getDotsCoordinates(coordinates)
-        })
+        }
 
-        viewModel.computerSuccessfulShots.observe(this, { coordinates ->
+        viewModel.computerSuccessfulShots.observe(this) { coordinates ->
             binding.viewPerson.getCrossesCoordinates(coordinates)
             binding.progressBar.visibility = View.INVISIBLE
-        })
+        }
 
-        viewModel.computerFailedShots.observe(this, { coordinates ->
+        viewModel.computerFailedShots.observe(this) { coordinates ->
             binding.viewPerson.getDotsCoordinates(coordinates)
             binding.progressBar.visibility = View.INVISIBLE
-        })
+        }
 
-        viewModel.startGameEvent.observe(this, { isStarted ->
+        viewModel.startGameEvent.observe(this) { isStarted ->
             if (isStarted) binding.viewStart.visibility = View.GONE
             if (!isStarted) binding.viewNewGame.visibility = View.INVISIBLE
             binding.viewGenerate.visibility = if (isStarted) View.INVISIBLE else View.VISIBLE
-        })
+        }
 
-        viewModel.endGameEvent.observe(this, { eventPair ->
+        viewModel.endGameEvent.observe(this) { eventPair ->
             if (eventPair.first) {
                 binding.viewNewGame.visibility = View.VISIBLE
                 if (eventPair.second == Player.PERSON) {
@@ -94,7 +94,7 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
             } else {
                 binding.viewNewGame.visibility = View.INVISIBLE
             }
-        })
+        }
         binding.ivMore.setOnClickListener { view -> showPopup(view) }
         binding.viewGenerate.setOnTouchListener(customOnTouchListener)
         binding.viewFire.setOnTouchListener(customOnTouchListener)

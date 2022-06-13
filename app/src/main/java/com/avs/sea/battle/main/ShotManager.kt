@@ -54,53 +54,16 @@ class ShotManager {
         } else if (firstCell.isState(SHOT_SUCCESS)
             && (secondCell.isState(EMPTY) || secondCell.isState(SHOT_FAILURE))
         ) {
-            if (ships.contains(TWO_DECK_SHIP_SIZE)
-                || ships.contains(THREE_DECK_SHIP_SIZE)
-                || ships.contains(FOUR_DECK_SHIP_SIZE)
-            ) {
-                coordinate = getNextCoordinateToShot(firstCell)
-            }
-            if (coordinate.x == -1) {
-                coordinate = resetValuesAfterShipIsDead(
-                    ONE_DECK_SHIP_SIZE,
-                    mutableListOf(firstCell.getCoordinate())
-                )
-            } else {
-                secondCell = Cell(coordinate.x, coordinate.y)
-            }
+            coordinate = shotSecondCell(coordinate)
         } else if (firstCell.isState(SHOT_SUCCESS) && secondCell.isState(SHOT_SUCCESS)
             && (thirdCell.isState(EMPTY) || thirdCell.isState(SHOT_FAILURE))
         ) {
-            if (ships.contains(THREE_DECK_SHIP_SIZE)
-                || ships.contains(FOUR_DECK_SHIP_SIZE)
-            ) {
-                coordinate = checkNeighbourCells(firstCell, secondCell)
-            }
-            if (coordinate.x == -1) {
-                coordinate = resetValuesAfterShipIsDead(
-                    TWO_DECK_SHIP_SIZE,
-                    mutableListOf(firstCell.getCoordinate(), secondCell.getCoordinate())
-                )
-            } else {
-                thirdCell = Cell(coordinate.x, coordinate.y)
-            }
+            coordinate = shotThirdCell(coordinate)
         } else if (firstCell.isState(SHOT_SUCCESS) && secondCell.isState(SHOT_SUCCESS)
-            && thirdCell.isState(SHOT_SUCCESS)
-            && (fourthCell.isState(EMPTY) || fourthCell.isState(SHOT_FAILURE))
+            && thirdCell.isState(SHOT_SUCCESS) && (fourthCell.isState(EMPTY)
+                    || fourthCell.isState(SHOT_FAILURE))
         ) {
-            if (ships.contains(FOUR_DECK_SHIP_SIZE)) {
-                coordinate = checkNeighbourCells(firstCell, thirdCell)
-            }
-            if (coordinate.x == -1) {
-                coordinate = resetValuesAfterShipIsDead(
-                    THREE_DECK_SHIP_SIZE, mutableListOf(
-                        firstCell.getCoordinate(),
-                        secondCell.getCoordinate(), thirdCell.getCoordinate()
-                    )
-                )
-            } else {
-                fourthCell = Cell(coordinate.x, coordinate.y)
-            }
+            coordinate = shotFourthCell(coordinate)
         } else {
             coordinate = resetValuesAfterShipIsDead(
                 FOUR_DECK_SHIP_SIZE, mutableListOf(
@@ -110,6 +73,59 @@ class ShotManager {
             )
         }
         return coordinate
+    }
+
+    private fun shotFourthCell(coordinate: Coordinate): Coordinate {
+        var coordinateFourth = coordinate
+        if (ships.contains(FOUR_DECK_SHIP_SIZE)) {
+            coordinateFourth = checkNeighbourCells(firstCell, thirdCell)
+        }
+        if (coordinateFourth.x == -1) {
+            coordinateFourth = resetValuesAfterShipIsDead(
+                THREE_DECK_SHIP_SIZE, mutableListOf(
+                    firstCell.getCoordinate(), secondCell.getCoordinate(), thirdCell.getCoordinate()
+                )
+            )
+        } else {
+            fourthCell = Cell(coordinateFourth.x, coordinateFourth.y)
+        }
+        return coordinateFourth
+    }
+
+    private fun shotThirdCell(coordinate: Coordinate): Coordinate {
+        var coordinateThird = coordinate
+        if (ships.contains(THREE_DECK_SHIP_SIZE) || ships.contains(FOUR_DECK_SHIP_SIZE)
+        ) {
+            coordinateThird = checkNeighbourCells(firstCell, secondCell)
+        }
+        if (coordinateThird.x == -1) {
+            coordinateThird = resetValuesAfterShipIsDead(
+                TWO_DECK_SHIP_SIZE,
+                mutableListOf(firstCell.getCoordinate(), secondCell.getCoordinate())
+            )
+        } else {
+            thirdCell = Cell(coordinateThird.x, coordinateThird.y)
+        }
+        return coordinateThird
+    }
+
+    private fun shotSecondCell(coordinate: Coordinate): Coordinate {
+        var coordinateSecond = coordinate
+        if (ships.contains(TWO_DECK_SHIP_SIZE)
+            || ships.contains(THREE_DECK_SHIP_SIZE)
+            || ships.contains(FOUR_DECK_SHIP_SIZE)
+        ) {
+            coordinateSecond = getNextCoordinateToShot(firstCell)
+        }
+        if (coordinateSecond.x == -1) {
+            coordinateSecond = resetValuesAfterShipIsDead(
+                ONE_DECK_SHIP_SIZE,
+                mutableListOf(firstCell.getCoordinate())
+            )
+        } else {
+            secondCell = Cell(coordinateSecond.x, coordinateSecond.y)
+        }
+        return coordinateSecond
     }
 
     fun resetValuesAfterShipIsDead(
