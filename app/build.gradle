@@ -9,12 +9,12 @@ def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
-    compileSdkVersion 33
-    buildToolsVersion '30.0.3'
+    compileSdk 34
+    buildToolsVersion = '30.0.3'
     defaultConfig {
         applicationId "com.avs.sea.battle"
         minSdkVersion 19
-        targetSdkVersion 33
+        targetSdkVersion 34
         versionCode 8
         versionName "8"
         vectorDrawables.useSupportLibrary = true
