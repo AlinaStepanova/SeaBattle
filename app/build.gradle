@@ -20,7 +20,7 @@ android {
         versionCode 8
         versionName "8"
         vectorDrawables.useSupportLibrary = true
-        resConfigs "en", "uk", "ru"
+        resConfigs 'en', 'uk', 'ru'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
@@ -41,6 +41,7 @@ android {
     dataBinding {
         enabled = true
     }
+    namespace 'com.avs.sea.battle'
 }
 
 dependencies {
