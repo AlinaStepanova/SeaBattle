@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ResolveInfo
+import android.content.res.Configuration
+import android.graphics.Color
 import android.net.Uri
 import java.util.*
 
@@ -44,4 +46,9 @@ fun openMarket(showAppsList: Boolean): Intent {
         Uri.parse("market://details?id=$NAMESPACE")
     }
     return Intent(Intent.ACTION_VIEW, uri)
+}
+
+fun isDarkThemeOn(context: Context): Boolean {
+    return context.resources.configuration.uiMode and
+            Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
 }
