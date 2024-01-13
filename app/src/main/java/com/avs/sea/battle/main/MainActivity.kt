@@ -106,12 +106,11 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
         return { v: View, event: MotionEvent ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    v.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccent))
-                    setTextColor(v, R.color.colorPrimary)
+                    v.setBackgroundColor(ContextCompat.getColor(this, R.color.greySelected))
                 }
+
                 MotionEvent.ACTION_UP -> {
                     v.background = ContextCompat.getDrawable(this, R.drawable.square_background)
-                    setTextColor(v, R.color.colorPrimaryDark)
                     v.performClick()
                 }
             }
@@ -139,30 +138,45 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
     override fun onMenuItemClick(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.share -> {
-                startActivity(Intent.createChooser(getShareIntent(this),
-                    resources.getString(R.string.share_text)))
+                startActivity(
+                    Intent.createChooser(
+                        getShareIntent(this),
+                        resources.getString(R.string.share_text)
+                    )
+                )
                 true
             }
+
             R.id.rate -> {
                 val call = { startActivity(openMarket(false)) }
                 openActivity(call, R.string.cannot_open_market_error_text)
                 true
             }
+
             R.id.write_to_author -> {
-                val call = { startActivity(openGmail(this, RECIPIENTS,
-                    resources.getString(R.string.app_name))) }
+                val call = {
+                    startActivity(
+                        openGmail(
+                            this, RECIPIENTS,
+                            resources.getString(R.string.app_name)
+                        )
+                    )
+                }
                 openActivity(call, R.string.cannot_send_email_error_text)
                 true
             }
+
             R.id.more_apps -> {
                 val call = { startActivity(openMarket(true)) }
                 openActivity(call, R.string.cannot_open_market_error_text)
                 true
             }
+
             R.id.privacy_policy -> {
                 startActivity(Intent(this, PrivacyPolicyActivity::class.java))
                 true
             }
+
             else -> false
         }
     }
