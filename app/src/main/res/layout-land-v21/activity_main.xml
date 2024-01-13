@@ -141,7 +141,7 @@
             style="?android:attr/progressBarStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:indeterminateTint="@color/colorAccent"
+            android:indeterminateTint="?attr/colorAccent"
             android:indeterminateTintMode="src_in"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
