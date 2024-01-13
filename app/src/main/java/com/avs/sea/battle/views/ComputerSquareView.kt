@@ -40,25 +40,25 @@ class ComputerSquareView : SquareView {
         setOnTouchListener(OnTouchListener(getCustomOnTouchListener()))
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         if (shipsCoordinates.isNotEmpty()) {
             for (ship in shipsCoordinates) {
-                canvas?.drawSquare(ship.y, ship.x, paintShipSquare)
+                canvas.drawSquare(ship.y, ship.x, paintShipSquare)
             }
         }
         if (dotsCoordinates.isNotEmpty()) {
             for (coordinate in dotsCoordinates) {
-                canvas?.drawDot(coordinate)
+                canvas.drawDot(coordinate)
             }
         }
         if (crossesCoordinates.isNotEmpty()) {
             for (cross in crossesCoordinates) {
-                canvas?.drawCross(cross.y, cross.x)
+                canvas.drawCross(cross.y, cross.x)
             }
         }
         if (selectedSquare != null) {
-            canvas?.drawSquare(selectedSquare!!.x, selectedSquare!!.y, paintSelected)
+            canvas.drawSquare(selectedSquare!!.x, selectedSquare!!.y, paintSelected)
         }
     }
 
