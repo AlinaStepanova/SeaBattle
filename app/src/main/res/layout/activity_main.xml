@@ -44,7 +44,6 @@
             android:maxLines="2"
             android:layout_marginStart="@dimen/dimen_4dp"
             android:layout_marginEnd="@dimen/dimen_4dp"
-            android:textColor="@color/colorAccent"
             android:textSize="@dimen/text_size_16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

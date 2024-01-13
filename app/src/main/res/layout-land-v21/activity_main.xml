@@ -41,7 +41,6 @@
             android:paddingEnd="@dimen/dimen_10dp"
             android:singleLine="true"
             android:text="@string/status_welcome_text"
-            android:textColor="@color/colorAccent"
             android:textSize="@dimen/text_size_16sp"
             app:layout_constraintEnd_toEndOf="@+id/viewComputer"
             app:layout_constraintStart_toStartOf="@+id/viewPerson"
