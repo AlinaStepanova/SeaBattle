@@ -1,11 +1,14 @@
 package com.avs.sea.battle.views
 
 import android.content.Context
+import android.content.res.Configuration
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.util.AttributeSet
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -13,6 +16,7 @@ import com.avs.sea.battle.R
 import com.avs.sea.battle.SQUARES_COUNT
 import com.avs.sea.battle.battle_field.Coordinate
 import com.avs.sea.battle.battle_field.CoordinateF
+import com.avs.sea.battle.isDarkThemeOn
 import com.avs.sea.battle.main.MainViewModel
 
 abstract class SquareView : View {
@@ -42,7 +46,7 @@ abstract class SquareView : View {
     private fun init(context: Context) {
         circleRadius = getFloatValue(context)
         paint = Paint()
-        paint.color = Color.BLACK
+        paint.color = if (isDarkThemeOn(context)) Color.WHITE else Color.BLACK
         paint.strokeWidth = lineWidth
         paintShipSquare = Paint()
         paintShipSquare.color = ContextCompat.getColor(context, R.color.greyTransparent)
@@ -65,13 +69,17 @@ abstract class SquareView : View {
         screenWidth = MeasureSpec.getSize(widthMeasureSpec).toFloat()
     }
 
-    override fun onDraw(canvas: Canvas?) {
-        paint.color = Color.BLACK
-        paint.strokeWidth = lineWidth
-        canvas?.let {
+    override fun onDraw(canvas: Canvas) {
+        canvas.let {
             drawHorizontalLines(it)
             drawVerticalLines(it)
         }
+    }
+
+    private fun getColor(): Int {
+        return if (resources.configuration.uiMode and
+            Configuration.UI_MODE_NIGHT_MASK == UI_MODE_NIGHT_YES
+        ) Color.WHITE else Color.BLACK
     }
 
     private fun drawHorizontalLines(canvas: Canvas) {

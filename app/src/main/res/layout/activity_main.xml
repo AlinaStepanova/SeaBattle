@@ -13,7 +13,6 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorPrimary"
         android:orientation="horizontal"
         tools:context=".main.MainActivity">
 
@@ -45,7 +44,6 @@
             android:maxLines="2"
             android:layout_marginStart="@dimen/dimen_4dp"
             android:layout_marginEnd="@dimen/dimen_4dp"
-            android:textColor="@color/colorAccent"
             android:textSize="@dimen/text_size_16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

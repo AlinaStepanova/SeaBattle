@@ -28,7 +28,7 @@ class ShipTest {
 
     @Test
     fun getShipCells() {
-        assertFalse(fourDeckShip.getShipCells().isNullOrEmpty())
+        assertFalse(fourDeckShip.getShipCells().isEmpty())
         assertEquals(fourDeckShip.getShipCells().size, FOUR_DECK_SHIP_SIZE)
         assertEquals(threeDeckShip.getShipCells().size, THREE_DECK_SHIP_SIZE)
         assertEquals(twoDeckShip.getShipCells().size, TWO_DECK_SHIP_SIZE)
