@@ -267,7 +267,8 @@ class ShotManager {
         return firstCell.getCoordinate()
     }
 
-    fun handleShot(shipHit: Boolean) {
+    fun handleShot(shipState: Pair<Boolean, ArrayList<Coordinate>>) {
+        val shipHit = shipState.first
         if (firstCell.isState(EMPTY) || firstCell.isState(SHOT_FAILURE)) {
             updateBattleField(shipHit, firstCell)
         } else if (firstCell.isState(SHOT_SUCCESS)
@@ -293,6 +294,9 @@ class ShotManager {
             if (shipHit) {
                 markNeighbours(fourthCell)
             }
+        }
+        if (shipState.second.isNotEmpty()) {
+            resetValuesAfterShipIsDead(shipState.second.size, shipState.second)
         }
     }
 

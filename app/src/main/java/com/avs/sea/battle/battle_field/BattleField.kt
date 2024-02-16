@@ -1,5 +1,6 @@
 package com.avs.sea.battle.battle_field
 
+import android.util.Log
 import com.avs.sea.battle.SQUARES_COUNT
 import com.avs.sea.battle.ships.*
 
@@ -48,27 +49,76 @@ class BattleField : BaseBattleField() {
         printBattleField()
     }
 
-    fun handleShot(coordinate: Coordinate?): Boolean {
+    fun handleShot(coordinate: Coordinate?): Pair<Boolean, ArrayList<Coordinate>> {
         var isShipHit = false
+        var coordinates: ArrayList<Coordinate> = ArrayList()
         if (coordinate != null && coordinate.x in 0 until SQUARES_COUNT && coordinate.y in 0 until SQUARES_COUNT) {
             if (battleField[coordinate.x][coordinate.y]?.getCellState() == CellState.EMPTY) {
                 battleField[coordinate.x][coordinate.y]?.setCellState(CellState.SHOT_FAILURE)
             } else {
                 battleField[coordinate.x][coordinate.y]?.setCellState(CellState.SHOT_SUCCESS)
-                defineShipByCoordinate(coordinate)
                 isShipHit = true
+                coordinates = getCoordinatesOfShipIfDead(coordinate)
             }
         }
-        return isShipHit
+        return isShipHit to coordinates
     }
 
-    private fun defineShipByCoordinate(coordinate: Coordinate) {
+    private fun markNeighbours(ship: Ship) {
+        if (ship.getShipOrientation() == Orientation.VERTICAL) {
+            markVerticalNeighbours(ship)
+        } else {
+            markHorizontalNeighbours(ship)
+        }
+    }
+
+    private fun markHorizontalNeighbours(ship: Ship) {
+        for (cell in ship.getShipCells()) {
+            if (cell.getX() != 0) battleField[cell.getX() - 1][cell.getY()]?.setCellState(CellState.SHOT_FAILURE)
+            if (cell.getX() != battleField.size - 1) battleField[cell.getX() + 1][cell.getY()]?.setCellState(
+                CellState.SHOT_FAILURE
+            )
+        }
+        val fistCell = ship.getShipCells().first()
+        if (fistCell.getY() != 0) battleField[fistCell.getX()][fistCell.getY() - 1]?.setCellState(
+            CellState.SHOT_FAILURE
+        )
+        val lastCell = ship.getShipCells().last()
+        if (lastCell.getY() != battleField.size - 1) battleField[lastCell.getX()][lastCell.getY() + 1]?.setCellState(
+            CellState.SHOT_FAILURE
+        )
+    }
+
+    private fun markVerticalNeighbours(ship: Ship) {
+        for (cell in ship.getShipCells()) {
+            if (cell.getY() != 0) battleField[cell.getX()][cell.getY() - 1]?.setCellState(CellState.SHOT_FAILURE)
+            if (cell.getY() != battleField.size - 1) battleField[cell.getX()][cell.getY() + 1]?.setCellState(
+                CellState.SHOT_FAILURE
+            )
+        }
+        val fistCell = ship.getShipCells().first()
+        if (fistCell.getX() != 0) battleField[fistCell.getX() - 1][fistCell.getY()]?.setCellState(
+            CellState.SHOT_FAILURE
+        )
+        val lastCell = ship.getShipCells().last()
+        if (lastCell.getX() != battleField.size - 1) battleField[lastCell.getX() + 1][lastCell.getY()]?.setCellState(
+            CellState.SHOT_FAILURE
+        )
+
+    }
+
+    private fun getCoordinatesOfShipIfDead(coordinate: Coordinate): ArrayList<Coordinate> {
         for (ship in ships) {
             if (coordinate.x in ship.getRowCoordinates() && coordinate.y in ship.getColumnCoordinates()) {
                 ship.setShotSuccessState(coordinate)
+                if (ship.isDead()) {
+                    markNeighbours(ship)
+                    return getShipCoordinates(ship)
+                }
                 break
             }
         }
+        return ArrayList()
     }
 
     fun isGameOver(): Boolean {
@@ -100,6 +150,14 @@ class BattleField : BaseBattleField() {
             ship.getShipCells().forEach { cell ->
                 shipsCoordinates.add(cell.getCoordinate())
             }
+        }
+        return shipsCoordinates
+    }
+
+    private fun getShipCoordinates(ship: Ship): ArrayList<Coordinate> {
+        val shipsCoordinates = arrayListOf<Coordinate>()
+        ship.getShipCells().forEach { cell ->
+            shipsCoordinates.add(cell.getCoordinate())
         }
         return shipsCoordinates
     }

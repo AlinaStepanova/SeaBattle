@@ -105,9 +105,12 @@ class MainViewModel : ViewModel() {
 
     fun makeFireAsPerson() {
         if (activePlayer == Player.PERSON) {
-            val isShipHit = computerBattleField.handleShot(_selectedByPersonCoordinate.value)
+            val shipState = computerBattleField.handleShot(_selectedByPersonCoordinate.value)
             _selectedByPersonCoordinate.value = null
-            if (isShipHit) {
+            if (shipState.first) {
+                if (shipState.second.isNotEmpty()) {
+                    _personFailShots.value = computerBattleField.getDotsCoordinates()
+                }
                 _status.value = R.string.status_shot_ship_again_text
                 _personSuccessfulShots.value = computerBattleField.getCrossesCoordinates()
                 if (computerBattleField.isGameOver()) {
@@ -127,12 +130,15 @@ class MainViewModel : ViewModel() {
     private fun playAsComputer() {
         val coordinate: Coordinate = shotManager.getCoordinateToShot()
         _selectedByComputerCoordinate.value = coordinate
-        val isShipHit = personBattleField.handleShot(coordinate)
-        shotManager.handleShot(isShipHit)
-        if (isShipHit) {
+        val shipState = personBattleField.handleShot(coordinate)
+        shotManager.handleShot(shipState)
+        if (shipState.first) {
             viewModelScope.launch {
                 delay(SECOND_IN_MILLIS)
                 _computerSuccessfulShots.value = personBattleField.getCrossesCoordinates()
+                if (shipState.second.isNotEmpty()) {
+                    _computerFailShots.value = personBattleField.getDotsCoordinates()
+                }
                 if (personBattleField.isGameOver()) {
                     endGame(false)
                 } else {
