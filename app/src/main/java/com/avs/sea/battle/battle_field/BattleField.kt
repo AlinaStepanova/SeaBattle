@@ -80,13 +80,25 @@ class BattleField : BaseBattleField() {
             )
         }
         val fistCell = ship.getShipCells().first()
-        if (fistCell.getY() != 0) battleField[fistCell.getX()][fistCell.getY() - 1]?.setCellState(
-            CellState.SHOT_FAILURE
-        )
+        if (fistCell.getY() != 0) {
+            battleField[fistCell.getX()][fistCell.getY() - 1]?.setCellState(CellState.SHOT_FAILURE)
+            if (fistCell.getX() != 0) {
+                battleField[fistCell.getX() - 1][fistCell.getY() - 1]?.setCellState(CellState.SHOT_FAILURE)
+            }
+            if (fistCell.getX() != battleField.size - 1) {
+                battleField[fistCell.getX() + 1][fistCell.getY() - 1]?.setCellState(CellState.SHOT_FAILURE)
+            }
+        }
         val lastCell = ship.getShipCells().last()
-        if (lastCell.getY() != battleField.size - 1) battleField[lastCell.getX()][lastCell.getY() + 1]?.setCellState(
-            CellState.SHOT_FAILURE
-        )
+        if (lastCell.getY() != battleField.size - 1) {
+            battleField[lastCell.getX()][lastCell.getY() + 1]?.setCellState(CellState.SHOT_FAILURE)
+            if (lastCell.getX() != 0) {
+                battleField[lastCell.getX() - 1][lastCell.getY() + 1]?.setCellState(CellState.SHOT_FAILURE)
+            }
+            if (lastCell.getX() != battleField.size - 1) {
+                battleField[lastCell.getX() + 1][lastCell.getY() + 1]?.setCellState(CellState.SHOT_FAILURE)
+            }
+        }
     }
 
     private fun markVerticalNeighbours(ship: Ship) {
@@ -97,14 +109,25 @@ class BattleField : BaseBattleField() {
             )
         }
         val fistCell = ship.getShipCells().first()
-        if (fistCell.getX() != 0) battleField[fistCell.getX() - 1][fistCell.getY()]?.setCellState(
-            CellState.SHOT_FAILURE
-        )
+        if (fistCell.getX() != 0) {
+            battleField[fistCell.getX() - 1][fistCell.getY()]?.setCellState(CellState.SHOT_FAILURE)
+            if (fistCell.getY() != 0) {
+                battleField[fistCell.getX() - 1][fistCell.getY() - 1]?.setCellState(CellState.SHOT_FAILURE)
+            }
+            if (fistCell.getY() != battleField.size - 1) {
+                battleField[fistCell.getX() - 1][fistCell.getY() + 1]?.setCellState(CellState.SHOT_FAILURE)
+            }
+        }
         val lastCell = ship.getShipCells().last()
-        if (lastCell.getX() != battleField.size - 1) battleField[lastCell.getX() + 1][lastCell.getY()]?.setCellState(
-            CellState.SHOT_FAILURE
-        )
-
+        if (lastCell.getX() != battleField.size - 1) {
+            battleField[lastCell.getX() + 1][lastCell.getY()]?.setCellState(CellState.SHOT_FAILURE)
+            if (lastCell.getY() != 0) {
+                battleField[lastCell.getX() + 1][lastCell.getY() - 1]?.setCellState(CellState.SHOT_FAILURE)
+            }
+            if (lastCell.getY() != battleField.size - 1) {
+                battleField[lastCell.getX() + 1][lastCell.getY() + 1]?.setCellState(CellState.SHOT_FAILURE)
+            }
+        }
     }
 
     private fun getCoordinatesOfShipIfDead(coordinate: Coordinate): ArrayList<Coordinate> {
