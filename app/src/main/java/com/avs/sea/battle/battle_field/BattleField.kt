@@ -167,16 +167,6 @@ class BattleField : BaseBattleField() {
         return shipsCoordinates
     }
 
-    fun getAllShipsCoordinates(): ArrayList<Coordinate> {
-        val shipsCoordinates = arrayListOf<Coordinate>()
-        ships.forEach { ship ->
-            ship.getShipCells().forEach { cell ->
-                shipsCoordinates.add(cell.getCoordinate())
-            }
-        }
-        return shipsCoordinates
-    }
-
     private fun getShipCoordinates(ship: Ship): ArrayList<Coordinate> {
         val shipsCoordinates = arrayListOf<Coordinate>()
         ship.getShipCells().forEach { cell ->

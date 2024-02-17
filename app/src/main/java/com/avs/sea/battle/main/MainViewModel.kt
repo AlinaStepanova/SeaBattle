@@ -167,7 +167,7 @@ class MainViewModel : ViewModel() {
 
     private fun endGame(isPersonWon: Boolean) {
         activePlayer = Player.NONE
-        _computerShips.value = computerBattleField.getAllShipsCoordinates()
+        _computerShips.value = computerBattleField.getShipsCoordinates()
         if (isPersonWon) {
             _endGameEvent.value = true to Player.PERSON
             _status.value = R.string.status_game_over_you_win_text
