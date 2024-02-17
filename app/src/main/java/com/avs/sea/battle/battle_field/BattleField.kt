@@ -1,6 +1,5 @@
 package com.avs.sea.battle.battle_field
 
-import android.util.Log
 import com.avs.sea.battle.SQUARES_COUNT
 import com.avs.sea.battle.ships.*
 
@@ -51,17 +50,24 @@ class BattleField : BaseBattleField() {
 
     fun handleShot(coordinate: Coordinate?): Pair<Boolean, ArrayList<Coordinate>> {
         var isShipHit = false
-        var coordinates: ArrayList<Coordinate> = ArrayList()
+        var killedShipCoordinates: ArrayList<Coordinate> = ArrayList()
         if (coordinate != null && coordinate.x in 0 until SQUARES_COUNT && coordinate.y in 0 until SQUARES_COUNT) {
             if (battleField[coordinate.x][coordinate.y]?.getCellState() == CellState.EMPTY) {
                 battleField[coordinate.x][coordinate.y]?.setCellState(CellState.SHOT_FAILURE)
             } else {
                 battleField[coordinate.x][coordinate.y]?.setCellState(CellState.SHOT_SUCCESS)
                 isShipHit = true
-                coordinates = getCoordinatesOfShipIfDead(coordinate)
+                val ship = getShipByCoordinate(coordinate)
+                ship?.let {
+                    it.setShotSuccessState(coordinate)
+                    if (it.isDead()) {
+                        markNeighbours(ship)
+                        killedShipCoordinates = getShipCoordinates(ship)
+                    }
+                }
             }
         }
-        return isShipHit to coordinates
+        return isShipHit to killedShipCoordinates
     }
 
     private fun markNeighbours(ship: Ship) {
@@ -130,18 +136,13 @@ class BattleField : BaseBattleField() {
         }
     }
 
-    private fun getCoordinatesOfShipIfDead(coordinate: Coordinate): ArrayList<Coordinate> {
+    private fun getShipByCoordinate(coordinate: Coordinate): Ship? {
         for (ship in ships) {
             if (coordinate.x in ship.getRowCoordinates() && coordinate.y in ship.getColumnCoordinates()) {
-                ship.setShotSuccessState(coordinate)
-                if (ship.isDead()) {
-                    markNeighbours(ship)
-                    return getShipCoordinates(ship)
-                }
-                break
+                return ship
             }
         }
-        return ArrayList()
+        return null
     }
 
     fun isGameOver(): Boolean {
