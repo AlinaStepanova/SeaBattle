@@ -48,27 +48,101 @@ class BattleField : BaseBattleField() {
         printBattleField()
     }
 
-    fun handleShot(coordinate: Coordinate?): Boolean {
+    fun handleShot(coordinate: Coordinate?): Pair<Boolean, ArrayList<Coordinate>> {
         var isShipHit = false
+        var killedShipCoordinates: ArrayList<Coordinate> = ArrayList()
         if (coordinate != null && coordinate.x in 0 until SQUARES_COUNT && coordinate.y in 0 until SQUARES_COUNT) {
             if (battleField[coordinate.x][coordinate.y]?.getCellState() == CellState.EMPTY) {
                 battleField[coordinate.x][coordinate.y]?.setCellState(CellState.SHOT_FAILURE)
             } else {
                 battleField[coordinate.x][coordinate.y]?.setCellState(CellState.SHOT_SUCCESS)
-                defineShipByCoordinate(coordinate)
                 isShipHit = true
+                val ship = getShipByCoordinate(coordinate)
+                ship?.let {
+                    it.setShotSuccessState(coordinate)
+                    if (it.isDead()) {
+                        markNeighbours(ship)
+                        killedShipCoordinates = getShipCoordinates(ship)
+                    }
+                }
             }
         }
-        return isShipHit
+        return isShipHit to killedShipCoordinates
     }
 
-    private fun defineShipByCoordinate(coordinate: Coordinate) {
-        for (ship in ships) {
-            if (coordinate.x in ship.getRowCoordinates() && coordinate.y in ship.getColumnCoordinates()) {
-                ship.setShotSuccessState(coordinate)
-                break
+    private fun markNeighbours(ship: Ship) {
+        if (ship.getShipOrientation() == Orientation.VERTICAL) {
+            markVerticalNeighbours(ship)
+        } else {
+            markHorizontalNeighbours(ship)
+        }
+    }
+
+    private fun markHorizontalNeighbours(ship: Ship) {
+        for (cell in ship.getShipCells()) {
+            if (cell.getX() != 0) battleField[cell.getX() - 1][cell.getY()]?.setCellState(CellState.SHOT_FAILURE)
+            if (cell.getX() != battleField.size - 1) battleField[cell.getX() + 1][cell.getY()]?.setCellState(
+                CellState.SHOT_FAILURE
+            )
+        }
+        val fistCell = ship.getShipCells().first()
+        if (fistCell.getY() != 0) {
+            battleField[fistCell.getX()][fistCell.getY() - 1]?.setCellState(CellState.SHOT_FAILURE)
+            if (fistCell.getX() != 0) {
+                battleField[fistCell.getX() - 1][fistCell.getY() - 1]?.setCellState(CellState.SHOT_FAILURE)
+            }
+            if (fistCell.getX() != battleField.size - 1) {
+                battleField[fistCell.getX() + 1][fistCell.getY() - 1]?.setCellState(CellState.SHOT_FAILURE)
             }
         }
+        val lastCell = ship.getShipCells().last()
+        if (lastCell.getY() != battleField.size - 1) {
+            battleField[lastCell.getX()][lastCell.getY() + 1]?.setCellState(CellState.SHOT_FAILURE)
+            if (lastCell.getX() != 0) {
+                battleField[lastCell.getX() - 1][lastCell.getY() + 1]?.setCellState(CellState.SHOT_FAILURE)
+            }
+            if (lastCell.getX() != battleField.size - 1) {
+                battleField[lastCell.getX() + 1][lastCell.getY() + 1]?.setCellState(CellState.SHOT_FAILURE)
+            }
+        }
+    }
+
+    private fun markVerticalNeighbours(ship: Ship) {
+        for (cell in ship.getShipCells()) {
+            if (cell.getY() != 0) battleField[cell.getX()][cell.getY() - 1]?.setCellState(CellState.SHOT_FAILURE)
+            if (cell.getY() != battleField.size - 1) battleField[cell.getX()][cell.getY() + 1]?.setCellState(
+                CellState.SHOT_FAILURE
+            )
+        }
+        val fistCell = ship.getShipCells().first()
+        if (fistCell.getX() != 0) {
+            battleField[fistCell.getX() - 1][fistCell.getY()]?.setCellState(CellState.SHOT_FAILURE)
+            if (fistCell.getY() != 0) {
+                battleField[fistCell.getX() - 1][fistCell.getY() - 1]?.setCellState(CellState.SHOT_FAILURE)
+            }
+            if (fistCell.getY() != battleField.size - 1) {
+                battleField[fistCell.getX() - 1][fistCell.getY() + 1]?.setCellState(CellState.SHOT_FAILURE)
+            }
+        }
+        val lastCell = ship.getShipCells().last()
+        if (lastCell.getX() != battleField.size - 1) {
+            battleField[lastCell.getX() + 1][lastCell.getY()]?.setCellState(CellState.SHOT_FAILURE)
+            if (lastCell.getY() != 0) {
+                battleField[lastCell.getX() + 1][lastCell.getY() - 1]?.setCellState(CellState.SHOT_FAILURE)
+            }
+            if (lastCell.getY() != battleField.size - 1) {
+                battleField[lastCell.getX() + 1][lastCell.getY() + 1]?.setCellState(CellState.SHOT_FAILURE)
+            }
+        }
+    }
+
+    private fun getShipByCoordinate(coordinate: Coordinate): Ship? {
+        for (ship in ships) {
+            if (coordinate.x in ship.getRowCoordinates() && coordinate.y in ship.getColumnCoordinates()) {
+                return ship
+            }
+        }
+        return null
     }
 
     fun isGameOver(): Boolean {
@@ -94,12 +168,10 @@ class BattleField : BaseBattleField() {
         return shipsCoordinates
     }
 
-    fun getAllShipsCoordinates(): ArrayList<Coordinate> {
+    private fun getShipCoordinates(ship: Ship): ArrayList<Coordinate> {
         val shipsCoordinates = arrayListOf<Coordinate>()
-        ships.forEach { ship ->
-            ship.getShipCells().forEach { cell ->
-                shipsCoordinates.add(cell.getCoordinate())
-            }
+        ship.getShipCells().forEach { cell ->
+            shipsCoordinates.add(cell.getCoordinate())
         }
         return shipsCoordinates
     }

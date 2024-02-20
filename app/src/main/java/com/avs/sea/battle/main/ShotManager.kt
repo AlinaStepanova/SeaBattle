@@ -22,29 +22,17 @@ class ShotManager {
         ONE_DECK_SHIP_SIZE, ONE_DECK_SHIP_SIZE, ONE_DECK_SHIP_SIZE, ONE_DECK_SHIP_SIZE
     )
 
-    fun getShipsSize(): Int {
-        return ships.size
-    }
+    fun getShipsSize(): Int = ships.size
 
-    fun getBattleField(): BaseBattleField {
-        return battleField
-    }
+    fun getBattleField(): BaseBattleField = battleField
 
-    fun getFirstCell(): Cell {
-        return firstCell
-    }
+    fun getFirstCell(): Cell = firstCell
 
-    fun getSecondCell(): Cell {
-        return secondCell
-    }
+    fun getSecondCell(): Cell = secondCell
 
-    fun getThirdCell(): Cell {
-        return thirdCell
-    }
+    fun getThirdCell(): Cell = thirdCell
 
-    fun getFourthCell(): Cell {
-        return fourthCell
-    }
+    fun getFourthCell(): Cell = fourthCell
 
     fun getCoordinateToShot(): Coordinate {
         var coordinate = Coordinate()
@@ -162,17 +150,17 @@ class ShotManager {
 
     fun getMaxCoordinate(list: MutableList<Coordinate>, orientation: Orientation): Coordinate {
         return if (orientation == Orientation.VERTICAL) {
-            list.maxByOrNull { it.x }!!
+            list.maxBy { it.x }
         } else {
-            list.maxByOrNull { it.y }!!
+            list.maxBy { it.y }
         }
     }
 
     fun getMinCoordinate(list: MutableList<Coordinate>, orientation: Orientation): Coordinate {
         return if (orientation == Orientation.VERTICAL) {
-            list.minByOrNull { it.x }!!
+            list.minBy { it.x }
         } else {
-            list.minByOrNull { it.y }!!
+            list.minBy { it.y }
         }
     }
 
@@ -267,7 +255,8 @@ class ShotManager {
         return firstCell.getCoordinate()
     }
 
-    fun handleShot(shipHit: Boolean) {
+    fun handleShot(shipState: Pair<Boolean, ArrayList<Coordinate>>) {
+        val shipHit = shipState.first
         if (firstCell.isState(EMPTY) || firstCell.isState(SHOT_FAILURE)) {
             updateBattleField(shipHit, firstCell)
         } else if (firstCell.isState(SHOT_SUCCESS)
@@ -293,6 +282,9 @@ class ShotManager {
             if (shipHit) {
                 markNeighbours(fourthCell)
             }
+        }
+        if (shipState.second.isNotEmpty()) {
+            resetValuesAfterShipIsDead(shipState.second.size, shipState.second)
         }
     }
 
