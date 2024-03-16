@@ -234,9 +234,7 @@ class ShotManagerTest {
     @Test
     fun resetValuesAfterShipIsDead() {
         assertEquals(shotManager.getShipsSize(), 10)
-        shotManager.resetValuesAfterShipIsDead(
-            TWO_DECK_SHIP_SIZE, mutableListOf(Coordinate(1, 1), Coordinate(1, 2))
-        )
+        shotManager.resetValuesAfterShipIsDead(mutableListOf(Coordinate(1, 1), Coordinate(1, 2)))
         assertFalse(shotManager.getBattleField().isCellFreeToBeSelected(Coordinate(1, 0)))
         assertFalse(shotManager.getBattleField().isCellFreeToBeSelected(Coordinate(1, 3)))
         resetValues()

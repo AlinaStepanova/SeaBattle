@@ -53,12 +53,7 @@ class ShotManager {
         ) {
             coordinate = shotFourthCell(coordinate)
         } else {
-            coordinate = resetValuesAfterShipIsDead(
-                FOUR_DECK_SHIP_SIZE, mutableListOf(
-                    firstCell.getCoordinate(), secondCell.getCoordinate(),
-                    thirdCell.getCoordinate(), fourthCell.getCoordinate()
-                )
-            )
+            coordinate = getRandomCoordinate()
         }
         return coordinate
     }
@@ -69,11 +64,7 @@ class ShotManager {
             coordinateFourth = checkNeighbourCells(firstCell, thirdCell)
         }
         if (coordinateFourth.x == -1) {
-            coordinateFourth = resetValuesAfterShipIsDead(
-                THREE_DECK_SHIP_SIZE, mutableListOf(
-                    firstCell.getCoordinate(), secondCell.getCoordinate(), thirdCell.getCoordinate()
-                )
-            )
+            coordinateFourth = getRandomCoordinate()
         } else {
             fourthCell = Cell(coordinateFourth.x, coordinateFourth.y)
         }
@@ -87,10 +78,7 @@ class ShotManager {
             coordinateThird = checkNeighbourCells(firstCell, secondCell)
         }
         if (coordinateThird.x == -1) {
-            coordinateThird = resetValuesAfterShipIsDead(
-                TWO_DECK_SHIP_SIZE,
-                mutableListOf(firstCell.getCoordinate(), secondCell.getCoordinate())
-            )
+            coordinateThird = getRandomCoordinate()
         } else {
             thirdCell = Cell(coordinateThird.x, coordinateThird.y)
         }
@@ -106,24 +94,17 @@ class ShotManager {
             coordinateSecond = getNextCoordinateToShot(firstCell)
         }
         if (coordinateSecond.x == -1) {
-            coordinateSecond = resetValuesAfterShipIsDead(
-                ONE_DECK_SHIP_SIZE,
-                mutableListOf(firstCell.getCoordinate())
-            )
+            coordinateSecond = getRandomCoordinate()
         } else {
             secondCell = Cell(coordinateSecond.x, coordinateSecond.y)
         }
         return coordinateSecond
     }
 
-    fun resetValuesAfterShipIsDead(
-        deadShip: Int,
-        cells: MutableList<Coordinate>
-    ): Coordinate {
-        ships.remove(deadShip)
-        markEdgeCells(cells)
+    fun resetValuesAfterShipIsDead(deadShipCoordinates: MutableList<Coordinate>) {
+        ships.remove(deadShipCoordinates.size)
+        markEdgeCells(deadShipCoordinates)
         resetCells()
-        return getRandomCoordinate()
     }
 
     fun markEdgeCells(cells: MutableList<Coordinate>) {
@@ -284,7 +265,7 @@ class ShotManager {
             }
         }
         if (shipState.second.isNotEmpty()) {
-            resetValuesAfterShipIsDead(shipState.second.size, shipState.second)
+            resetValuesAfterShipIsDead(shipState.second)
         }
     }
 
