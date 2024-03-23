@@ -9,7 +9,6 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ContextThemeWrapper
@@ -116,12 +115,6 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
             }
             true
         }
-    }
-
-    private fun setTextColor(v: View, color: Int) {
-        if (v is TextView) v.setTextColor(
-            ContextCompat.getColor(this, color)
-        )
     }
 
     private fun showPopup(v: View?) {

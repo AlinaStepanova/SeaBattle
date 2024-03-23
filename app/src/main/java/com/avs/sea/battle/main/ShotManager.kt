@@ -22,29 +22,17 @@ class ShotManager {
         ONE_DECK_SHIP_SIZE, ONE_DECK_SHIP_SIZE, ONE_DECK_SHIP_SIZE, ONE_DECK_SHIP_SIZE
     )
 
-    fun getShipsSize(): Int {
-        return ships.size
-    }
+    fun getShipsSize(): Int = ships.size
 
-    fun getBattleField(): BaseBattleField {
-        return battleField
-    }
+    fun getBattleField(): BaseBattleField = battleField
 
-    fun getFirstCell(): Cell {
-        return firstCell
-    }
+    fun getFirstCell(): Cell = firstCell
 
-    fun getSecondCell(): Cell {
-        return secondCell
-    }
+    fun getSecondCell(): Cell = secondCell
 
-    fun getThirdCell(): Cell {
-        return thirdCell
-    }
+    fun getThirdCell(): Cell = thirdCell
 
-    fun getFourthCell(): Cell {
-        return fourthCell
-    }
+    fun getFourthCell(): Cell = fourthCell
 
     fun getCoordinateToShot(): Coordinate {
         var coordinate = Coordinate()
@@ -65,12 +53,7 @@ class ShotManager {
         ) {
             coordinate = shotFourthCell(coordinate)
         } else {
-            coordinate = resetValuesAfterShipIsDead(
-                FOUR_DECK_SHIP_SIZE, mutableListOf(
-                    firstCell.getCoordinate(), secondCell.getCoordinate(),
-                    thirdCell.getCoordinate(), fourthCell.getCoordinate()
-                )
-            )
+            coordinate = getRandomCoordinate()
         }
         return coordinate
     }
@@ -81,11 +64,7 @@ class ShotManager {
             coordinateFourth = checkNeighbourCells(firstCell, thirdCell)
         }
         if (coordinateFourth.x == -1) {
-            coordinateFourth = resetValuesAfterShipIsDead(
-                THREE_DECK_SHIP_SIZE, mutableListOf(
-                    firstCell.getCoordinate(), secondCell.getCoordinate(), thirdCell.getCoordinate()
-                )
-            )
+            coordinateFourth = getRandomCoordinate()
         } else {
             fourthCell = Cell(coordinateFourth.x, coordinateFourth.y)
         }
@@ -99,10 +78,7 @@ class ShotManager {
             coordinateThird = checkNeighbourCells(firstCell, secondCell)
         }
         if (coordinateThird.x == -1) {
-            coordinateThird = resetValuesAfterShipIsDead(
-                TWO_DECK_SHIP_SIZE,
-                mutableListOf(firstCell.getCoordinate(), secondCell.getCoordinate())
-            )
+            coordinateThird = getRandomCoordinate()
         } else {
             thirdCell = Cell(coordinateThird.x, coordinateThird.y)
         }
@@ -118,24 +94,17 @@ class ShotManager {
             coordinateSecond = getNextCoordinateToShot(firstCell)
         }
         if (coordinateSecond.x == -1) {
-            coordinateSecond = resetValuesAfterShipIsDead(
-                ONE_DECK_SHIP_SIZE,
-                mutableListOf(firstCell.getCoordinate())
-            )
+            coordinateSecond = getRandomCoordinate()
         } else {
             secondCell = Cell(coordinateSecond.x, coordinateSecond.y)
         }
         return coordinateSecond
     }
 
-    fun resetValuesAfterShipIsDead(
-        deadShip: Int,
-        cells: MutableList<Coordinate>
-    ): Coordinate {
-        ships.remove(deadShip)
-        markEdgeCells(cells)
+    fun resetValuesAfterShipIsDead(deadShipCoordinates: MutableList<Coordinate>) {
+        ships.remove(deadShipCoordinates.size)
+        markEdgeCells(deadShipCoordinates)
         resetCells()
-        return getRandomCoordinate()
     }
 
     fun markEdgeCells(cells: MutableList<Coordinate>) {
@@ -162,17 +131,17 @@ class ShotManager {
 
     fun getMaxCoordinate(list: MutableList<Coordinate>, orientation: Orientation): Coordinate {
         return if (orientation == Orientation.VERTICAL) {
-            list.maxByOrNull { it.x }!!
+            list.maxBy { it.x }
         } else {
-            list.maxByOrNull { it.y }!!
+            list.maxBy { it.y }
         }
     }
 
     fun getMinCoordinate(list: MutableList<Coordinate>, orientation: Orientation): Coordinate {
         return if (orientation == Orientation.VERTICAL) {
-            list.minByOrNull { it.x }!!
+            list.minBy { it.x }
         } else {
-            list.minByOrNull { it.y }!!
+            list.minBy { it.y }
         }
     }
 
@@ -267,7 +236,8 @@ class ShotManager {
         return firstCell.getCoordinate()
     }
 
-    fun handleShot(shipHit: Boolean) {
+    fun handleShot(shipState: Pair<Boolean, ArrayList<Coordinate>>) {
+        val shipHit = shipState.first
         if (firstCell.isState(EMPTY) || firstCell.isState(SHOT_FAILURE)) {
             updateBattleField(shipHit, firstCell)
         } else if (firstCell.isState(SHOT_SUCCESS)
@@ -293,6 +263,9 @@ class ShotManager {
             if (shipHit) {
                 markNeighbours(fourthCell)
             }
+        }
+        if (shipState.second.isNotEmpty()) {
+            resetValuesAfterShipIsDead(shipState.second)
         }
     }
 
