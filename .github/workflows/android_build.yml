@@ -18,6 +18,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: 17
+          distribution: "temurin"
+
       - name: Restore Cache
         uses: actions/cache@v2
         with:
@@ -46,6 +52,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: 17
+          distribution: "temurin"
+
       - name: Restore Cache
         uses: actions/cache@v2
         with:
@@ -73,6 +85,12 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v2
+
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: 17
+          distribution: "temurin"
 
       - name: Restore Cache
         uses: actions/cache@v2
