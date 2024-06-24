@@ -10,7 +10,6 @@ keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
     compileSdk 34
-    buildToolsVersion = '30.0.3'
     defaultConfig {
         applicationId "com.avs.sea.battle"
         minSdkVersion 21
