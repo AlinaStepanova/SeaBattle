@@ -13,8 +13,8 @@ import kotlinx.coroutines.*
 class MainViewModel : ViewModel() {
 
     private lateinit var activePlayer: Player
-    private var _selectedByPersonCoordinate = MutableLiveData<Coordinate>()
-    val selectedByPersonCoordinate: LiveData<Coordinate>
+    private var _selectedByPersonCoordinate = MutableLiveData<Coordinate?>()
+    val selectedByPersonCoordinate: LiveData<Coordinate?>
         get() = _selectedByPersonCoordinate
     private var _selectedByComputerCoordinate = MutableLiveData<Coordinate>()
     val selectedByComputerCoordinate: LiveData<Coordinate>

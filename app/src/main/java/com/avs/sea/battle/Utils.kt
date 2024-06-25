@@ -5,9 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ResolveInfo
 import android.content.res.Configuration
-import android.graphics.Color
 import android.net.Uri
-import java.util.*
+import java.util.Locale
 
 fun openGmail(activity: Activity, email: Array<String>, subject: String?): Intent {
     val emailIntent = Intent(Intent.ACTION_SEND)

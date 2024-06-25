@@ -40,7 +40,7 @@ class ShipTest {
     @Test
     fun getShipOrientation() {
         assertTrue(fourDeckShip.getShipOrientation().name.isNotEmpty())
-        assertTrue(threeDeckShip.getShipOrientation() in Orientation.values())
+        assertTrue(threeDeckShip.getShipOrientation() in Orientation.entries.toTypedArray())
     }
 
     @Test

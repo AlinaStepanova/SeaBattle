@@ -1,14 +1,14 @@
 package com.avs.sea.battle.main
 
-import com.avs.sea.battle.TWO_DECK_SHIP_SIZE
 import com.avs.sea.battle.battle_field.Cell
 import com.avs.sea.battle.battle_field.CellState
 import com.avs.sea.battle.battle_field.Coordinate
 import com.avs.sea.battle.ships.Orientation
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-
-import org.junit.Assert.*
 
 class ShotManagerTest {
 
