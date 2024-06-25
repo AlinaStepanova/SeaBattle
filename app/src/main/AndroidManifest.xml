@@ -5,13 +5,14 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
         android:appCategory="game"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.avs.sea.battle.main.MainActivity"
+        <activity
+            android:name="com.avs.sea.battle.main.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,8 +22,7 @@
         </activity>
         <activity
             android:name="com.avs.sea.battle.privacy_policy.PrivacyPolicyActivity"
-            android:parentActivityName="com.avs.sea.battle.main.MainActivity"
-            android:screenOrientation="fullSensor" />
+            android:parentActivityName="com.avs.sea.battle.main.MainActivity" />
     </application>
 
 </manifest>

@@ -1,31 +1,16 @@
 package com.avs.sea.battle
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.pm.ResolveInfo
 import android.content.res.Configuration
 import android.net.Uri
-import java.util.Locale
 
-fun openGmail(activity: Activity, email: Array<String>, subject: String?): Intent {
-    val emailIntent = Intent(Intent.ACTION_SEND)
-    emailIntent.putExtra(Intent.EXTRA_EMAIL, email)
-    emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject)
-    emailIntent.type = "text/plain"
-    val pm = activity.packageManager
-    val matches = pm.queryIntentActivities(emailIntent, 0)
-    var best: ResolveInfo? = null
-    for (info in matches) {
-        if (info.activityInfo.packageName.endsWith(".gm")
-            || info.activityInfo.name.lowercase(Locale.getDefault()).contains("gmail")
-        ) best = info
-    }
-    if (best != null) emailIntent.setClassName(
-        best.activityInfo.packageName,
-        best.activityInfo.name
-    )
-    return emailIntent
+fun openGmail(email: String, subject: String?): Intent {
+    val intent = Intent(Intent.ACTION_SENDTO)
+    intent.setData(Uri.parse("mailto:")) // only email apps should handle this
+    intent.putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
+    intent.putExtra(Intent.EXTRA_SUBJECT, subject)
+    return intent
 }
 
 fun getShareIntent(context: Context): Intent {

@@ -150,7 +150,7 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
                 val call = {
                     startActivity(
                         openGmail(
-                            this, RECIPIENTS,
+                            RECIPIENTS,
                             resources.getString(R.string.app_name)
                         )
                     )
