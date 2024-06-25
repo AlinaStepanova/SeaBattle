@@ -187,9 +187,13 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
             val manager = ReviewManagerFactory.create(context)
             val request = manager.requestReviewFlow()
             request.addOnCompleteListener {
-                val flow = manager.launchReviewFlow(this, it.result)
-                flow.addOnCompleteListener {
-                    Log.d("Review", "Review flow completed")
+                try {
+                    val flow = manager.launchReviewFlow(this, it.result)
+                    flow.addOnCompleteListener {
+                        Log.d("Review", "Review flow completed")
+                    }
+                } catch (e: Exception) {
+                    Log.e("Review", "Error: ${e.message}")
                 }
             }
         }
