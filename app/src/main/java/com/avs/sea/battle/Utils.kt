@@ -7,7 +7,7 @@ import android.net.Uri
 
 fun openGmail(email: String, subject: String?): Intent {
     val intent = Intent(Intent.ACTION_SENDTO)
-    intent.setData(Uri.parse("mailto:")) // only email apps should handle this
+    intent.setData(Uri.parse("mailto:"))
     intent.putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
     intent.putExtra(Intent.EXTRA_SUBJECT, subject)
     return intent
