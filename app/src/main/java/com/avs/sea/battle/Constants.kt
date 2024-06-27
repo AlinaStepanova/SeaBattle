@@ -11,4 +11,4 @@ const val SHARE_INTENT_TYPE = "text/plain"
 const val DEV_NAME = "Alina Stepanova"
 const val PRIVACY_POLICY_URL = "https://alinastepanova.github.io/SeaBattle/"
 const val PLAY_MARKET_URL = "https://play.google.com/store/apps/details?id=$NAMESPACE"
-val RECIPIENTS = arrayOf("alina.stepanova.work@gmail.com")
+const val RECIPIENTS = "alina.stepanova.work@gmail.com"

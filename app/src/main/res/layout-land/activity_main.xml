@@ -141,6 +141,8 @@
             style="?android:attr/progressBarStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:indeterminateTint="?attr/colorAccent"
+            android:indeterminateTintMode="src_in"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/viewPerson"
