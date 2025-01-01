@@ -71,7 +71,7 @@
 
         <TextView
             android:id="@+id/viewGenerate"
-            style="@style/MainButtonStyle"
+            style="@style/MainButtonStylePortrait"
             android:gravity="center"
             android:onClick="@{() -> mainViewModel.generateShips()}"
             android:text="@string/generate_ships_text"
@@ -102,7 +102,7 @@
 
         <TextView
             android:id="@+id/viewFire"
-            style="@style/FireButtonStyle"
+            style="@style/FireButtonStylePortrait"
             android:onClick="@{() -> mainViewModel.makeFireAsPerson()}"
             android:text="@string/fire_text"
             android:visibility="invisible"
@@ -120,7 +120,7 @@
 
         <TextView
             android:id="@+id/viewStart"
-            style="@style/MainButtonStyle"
+            style="@style/MainButtonStylePortrait"
             android:onClick="@{() -> mainViewModel.startGame()}"
             android:text="@string/start_text"
             android:visibility="gone"
@@ -132,7 +132,7 @@
 
         <TextView
             android:id="@+id/viewNewGame"
-            style="@style/MainButtonStyle"
+            style="@style/MainButtonStylePortrait"
             android:onClick="@{() -> mainViewModel.startNewGame()}"
             android:text="@string/new_game_text"
             android:visibility="invisible"

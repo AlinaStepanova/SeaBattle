@@ -6,7 +6,7 @@
 
     <TextView
         android:id="@+id/tvLetterPCA"
-        style="@style/SingleCharacterStylePortrait"
+        style="@style/SingleCharacterStyle"
         android:text="@string/letter_a"
         app:layout_constraintBottom_toTopOf="@+id/viewComputer"
         app:layout_constraintDimensionRatio="1:1"
@@ -16,7 +16,7 @@
 
     <TextView
         android:id="@+id/tvLetterPCB"
-        style="@style/SingleCharacterStylePortrait"
+        style="@style/SingleCharacterStyle"
         android:text="@string/letter_b"
         app:layout_constraintBottom_toTopOf="@+id/viewComputer"
         app:layout_constraintDimensionRatio="1:1"
@@ -25,7 +25,7 @@
 
     <TextView
         android:id="@+id/tvLetterPCC"
-        style="@style/SingleCharacterStylePortrait"
+        style="@style/SingleCharacterStyle"
         android:text="@string/letter_c"
         app:layout_constraintBottom_toTopOf="@+id/viewComputer"
         app:layout_constraintDimensionRatio="1:1"
@@ -34,7 +34,7 @@
 
     <TextView
         android:id="@+id/tvLetterPCD"
-        style="@style/SingleCharacterStylePortrait"
+        style="@style/SingleCharacterStyle"
         android:text="@string/letter_d"
         app:layout_constraintBottom_toTopOf="@+id/viewComputer"
         app:layout_constraintDimensionRatio="1:1"
@@ -43,7 +43,7 @@
 
     <TextView
         android:id="@+id/tvLetterPCE"
-        style="@style/SingleCharacterStylePortrait"
+        style="@style/SingleCharacterStyle"
         android:text="@string/letter_e"
         app:layout_constraintBottom_toTopOf="@+id/viewComputer"
         app:layout_constraintDimensionRatio="1:1"
@@ -52,7 +52,7 @@
 
     <TextView
         android:id="@+id/tvLetterPCF"
-        style="@style/SingleCharacterStylePortrait"
+        style="@style/SingleCharacterStyle"
         android:text="@string/letter_f"
         app:layout_constraintBottom_toTopOf="@+id/viewComputer"
         app:layout_constraintDimensionRatio="1:1"
@@ -61,7 +61,7 @@
 
     <TextView
         android:id="@+id/tvLetterPCG"
-        style="@style/SingleCharacterStylePortrait"
+        style="@style/SingleCharacterStyle"
         android:text="@string/letter_g"
         app:layout_constraintBottom_toTopOf="@+id/viewComputer"
         app:layout_constraintDimensionRatio="1:1"
@@ -70,7 +70,7 @@
 
     <TextView
         android:id="@+id/tvLetterPCH"
-        style="@style/SingleCharacterStylePortrait"
+        style="@style/SingleCharacterStyle"
         android:text="@string/letter_h"
         app:layout_constraintBottom_toTopOf="@+id/viewComputer"
         app:layout_constraintDimensionRatio="1:1"
@@ -79,7 +79,7 @@
 
     <TextView
         android:id="@+id/tvLetterPCI"
-        style="@style/SingleCharacterStylePortrait"
+        style="@style/SingleCharacterStyle"
         android:text="@string/letter_i"
         app:layout_constraintBottom_toTopOf="@+id/viewComputer"
         app:layout_constraintDimensionRatio="1:1"
@@ -88,7 +88,7 @@
 
     <TextView
         android:id="@+id/tvLetterPCJ"
-        style="@style/SingleCharacterStylePortrait"
+        style="@style/SingleCharacterStyle"
         android:text="@string/letter_j"
         app:layout_constraintBottom_toTopOf="@+id/viewComputer"
         app:layout_constraintDimensionRatio="1:1"

@@ -23,8 +23,16 @@
         <item name="android:textSize">@dimen/text_size_15sp</item>
     </style>
 
+    <style name="SingleDigitStylePortrait" parent="SingleDigitStyle">
+        <item name="android:textSize">@dimen/text_size_18sp</item>
+    </style>
+
     <style name="SingleCharacterStyle" parent="SingleDigitStyle">
         <item name="android:textSize">@dimen/text_size_14sp</item>
+    </style>
+
+    <style name="SingleCharacterStylePortrait" parent="SingleDigitStyle">
+        <item name="android:textSize">@dimen/text_size_16sp</item>
     </style>
 
     <style name="MainButtonStyle">
@@ -39,11 +47,23 @@
         <item name="android:paddingBottom">2dp</item>
     </style>
 
+    <style name="MainButtonStylePortrait" parent="MainButtonStyle">
+        <item name="android:textSize">@dimen/text_size_20sp</item>
+        <item name="android:paddingStart">@dimen/dimen_16dp</item>
+        <item name="android:paddingEnd">@dimen/dimen_16dp</item>
+        <item name="android:paddingTop">@dimen/dimen_4dp</item>
+        <item name="android:paddingBottom">@dimen/dimen_4dp</item>
+    </style>
+
     <style name="FireButtonStyle" parent="MainButtonStyle">
         <item name="android:paddingStart">@dimen/dimen_16dp</item>
         <item name="android:paddingEnd">@dimen/dimen_16dp</item>
         <item name="android:paddingTop">@dimen/dimen_4dp</item>
         <item name="android:paddingBottom">@dimen/dimen_4dp</item>
+    </style>
+
+    <style name="FireButtonStylePortrait" parent="FireButtonStyle">
+        <item name="android:textSize">@dimen/text_size_20sp</item>
     </style>
 
 </resources>
