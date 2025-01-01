@@ -9,11 +9,11 @@ def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
-    compileSdk 34
+    compileSdk 35
     defaultConfig {
         applicationId "com.avs.sea.battle"
         minSdkVersion 21
-        targetSdkVersion 34
+        targetSdkVersion 35
         versionCode 14
         versionName "1.0.$versionCode"
         vectorDrawables.useSupportLibrary = true
@@ -55,8 +55,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.7.0'
-    implementation 'androidx.core:core-ktx:1.13.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.core:core-ktx:1.15.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.0'
     implementation 'com.google.android.material:material:1.12.0'
 
     testImplementation 'junit:junit:4.13.2'
@@ -66,11 +66,11 @@ dependencies {
 
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3'
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.2"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7"
 
     kapt "com.android.databinding:compiler:3.1.4"
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     androidTestImplementation 'androidx.test:rules:1.6.1'
-    implementation 'com.google.android.play:review:2.0.1'
-    implementation 'com.google.android.play:review-ktx:2.0.1'
+    implementation 'com.google.android.play:review:2.0.2'
+    implementation 'com.google.android.play:review-ktx:2.0.2'
 }
