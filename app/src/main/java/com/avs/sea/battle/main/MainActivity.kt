@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemGestures())
-            view.updatePadding(insets.left, insets.top, insets.right, insets.bottom)
+            view.updatePadding(top = insets.top, bottom = insets.bottom)
             WindowInsetsCompat.CONSUMED
         }
 
