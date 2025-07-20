@@ -14,6 +14,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.avs.sea.battle.*
@@ -30,9 +34,16 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.enableEdgeToEdge(window)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         binding.mainViewModel = viewModel
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemGestures())
+            view.updatePadding(top = insets.top, bottom = insets.bottom)
+            WindowInsetsCompat.CONSUMED
+        }
 
         binding.viewComputer.provideViewModel(viewModel)
 

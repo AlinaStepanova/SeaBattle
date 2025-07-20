@@ -3,7 +3,7 @@ Sea Battle - a classic puzzle 2D-game created using Canvas, Custom Views, Corout
 
 ![push](https://github.com/AlinaStepanova/SeaBattle/workflows/Android%20Build/badge.svg?branch=dev&event=push)
 
-[Play Market](https://play.google.com/store/apps/details?id=com.avs.sea.battle) <b>10K+ downloads</b>
+[Play Market](https://play.google.com/store/apps/details?id=com.avs.sea.battle) <b>50K+ downloads</b>
 
 [How to play](https://youtu.be/ZrbtILJjqpU)
 
