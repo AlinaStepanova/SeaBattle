@@ -4,14 +4,18 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.avs.sea.battle.R
 import com.avs.sea.battle.SQUARES_COUNT
 import com.avs.sea.battle.battle_field.Coordinate
+import com.avs.sea.battle.ui.GamePhase
+import com.avs.sea.battle.ui.UiEvent
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Rule
@@ -24,54 +28,75 @@ class MainViewModelTest {
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private lateinit var viewModel: MainViewModel
+    private val events = mutableListOf<UiEvent>()
+    private lateinit var eventsJob: Job
 
     @Before
     fun setUp() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
         viewModel = MainViewModel()
+        events.clear()
+        eventsJob = CoroutineScope(UnconfinedTestDispatcher()).launch {
+            viewModel.events.collect { events.add(it) }
+        }
         viewModel.generateShips()
         viewModel.startGame()
     }
 
     @After
     fun tearDown() {
+        eventsJob.cancel()
         Dispatchers.resetMain()
+    }
+
+    @Test
+    fun startedGameIsInBattlePhaseWithShipsPlaced() {
+        assertEquals(GamePhase.BATTLE, viewModel.uiState.value.phase)
+        assertEquals(20, viewModel.uiState.value.personBoardShips.size)
+        assertEquals(R.string.status_select_to_fire_text, viewModel.uiState.value.statusResId)
     }
 
     @Test
     fun makeFireAsPersonWithoutSelectionKeepsPersonTurn() {
         viewModel.makeFireAsPerson()
-        assertEquals(R.string.status_select_to_fire_text, viewModel.status.value)
-        assertNull(viewModel.selectedByComputerCoordinate.value)
+        assertEquals(GamePhase.BATTLE, viewModel.uiState.value.phase)
+        assertEquals(R.string.status_select_to_fire_text, viewModel.uiState.value.statusResId)
     }
 
     @Test
     fun makeFireAsPersonAtEmptyCellPassesTurnToComputer() {
         viewModel.handlePCAreaClick(findEmptyCell())
         viewModel.makeFireAsPerson()
-        assertEquals(R.string.status_opponent_shot_text, viewModel.status.value)
-        assertNotNull(viewModel.selectedByComputerCoordinate.value)
+        assertEquals(GamePhase.COMPUTER_TURN, viewModel.uiState.value.phase)
+        assertEquals(R.string.status_opponent_shot_text, viewModel.uiState.value.statusResId)
+        assertNull(viewModel.uiState.value.selectedCoordinate)
     }
 
     @Test
-    fun winningGameRequestsReview() {
+    fun winningGameEndsGameWithAllComputerShipsSunk() {
         winGame()
-        assertEquals(true to Player.PERSON, viewModel.endGameEvent.value)
-        assertEquals(true, viewModel.showReviewRequest.value)
+        assertEquals(GamePhase.OVER, viewModel.uiState.value.phase)
+        assertEquals(Player.PERSON, viewModel.uiState.value.winner)
+        // every computer ship cell is hit, so the board shows 20 crosses and no remaining ships
+        assertEquals(20, viewModel.uiState.value.computerBoardCrosses.size)
+        assertEquals(emptyList<Coordinate>(), viewModel.uiState.value.computerBoardShips)
+        assertEquals(R.string.status_game_over_you_win_text, viewModel.uiState.value.statusResId)
     }
 
     @Test
-    fun reviewRequestIsClearedOnceLaunched() {
+    fun winningGameEmitsSingleReviewRequest() {
         winGame()
-        viewModel.onReviewFlowLaunched()
-        assertEquals(false, viewModel.showReviewRequest.value)
+        assertEquals(listOf<UiEvent>(UiEvent.RequestReview), events)
     }
 
     @Test
-    fun startingNewGameClearsReviewRequest() {
+    fun startingNewGameResetsState() {
         winGame()
         viewModel.startNewGame()
-        assertEquals(false, viewModel.showReviewRequest.value)
+        assertEquals(GamePhase.PLACING, viewModel.uiState.value.phase)
+        assertEquals(emptyList<Coordinate>(), viewModel.uiState.value.personBoardShips)
+        assertEquals(emptyList<Coordinate>(), viewModel.uiState.value.computerBoardCrosses)
+        assertNull(viewModel.uiState.value.winner)
     }
 
     private fun findEmptyCell(): Coordinate {
