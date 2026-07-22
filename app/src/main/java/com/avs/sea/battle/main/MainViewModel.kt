@@ -1,58 +1,37 @@
 package com.avs.sea.battle.main
 
 import androidx.annotation.VisibleForTesting
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.avs.sea.battle.R
 import com.avs.sea.battle.SECOND_IN_MILLIS
 import com.avs.sea.battle.battle_field.BattleField
 import com.avs.sea.battle.battle_field.Coordinate
-import kotlinx.coroutines.*
+import com.avs.sea.battle.ui.GamePhase
+import com.avs.sea.battle.ui.GameUiState
+import com.avs.sea.battle.ui.UiEvent
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
 
-    private lateinit var activePlayer: Player
-    private var _selectedByPersonCoordinate = MutableLiveData<Coordinate?>()
-    val selectedByPersonCoordinate: LiveData<Coordinate?>
-        get() = _selectedByPersonCoordinate
-    private var _selectedByComputerCoordinate = MutableLiveData<Coordinate>()
-    val selectedByComputerCoordinate: LiveData<Coordinate>
-        get() = _selectedByComputerCoordinate
-    private var _status = MutableLiveData<Int>()
-    val status: LiveData<Int>
-        get() = _status
-    private var _personShips = MutableLiveData<ArrayList<Coordinate>>()
-    val personShips: LiveData<ArrayList<Coordinate>>
-        get() = _personShips
-    private var _computerShips = MutableLiveData<ArrayList<Coordinate>>()
-    val computerShips: LiveData<ArrayList<Coordinate>>
-        get() = _computerShips
-    private var _personFailShots = MutableLiveData<ArrayList<Coordinate>>()
-    val personFailedShots: LiveData<ArrayList<Coordinate>>
-        get() = _personFailShots
-    private var _personSuccessfulShots = MutableLiveData<ArrayList<Coordinate>>()
-    val personSuccessfulShots: LiveData<ArrayList<Coordinate>>
-        get() = _personSuccessfulShots
-    private var _computerFailShots = MutableLiveData<ArrayList<Coordinate>>()
-    val computerFailedShots: LiveData<ArrayList<Coordinate>>
-        get() = _computerFailShots
-    private var _computerSuccessfulShots = MutableLiveData<ArrayList<Coordinate>>()
-    val computerSuccessfulShots: LiveData<ArrayList<Coordinate>>
-        get() = _computerSuccessfulShots
-    private var _startGameEvent = MutableLiveData<Boolean>()
-    val startGameEvent: LiveData<Boolean>
-        get() = _startGameEvent
-    private var _endGameEvent = MutableLiveData<Pair<Boolean, Player?>>()
-    val endGameEvent: LiveData<Pair<Boolean, Player?>>
-        get() = _endGameEvent
-    private var _showReviewRequest = MutableLiveData<Boolean>()
-    val showReviewRequest: LiveData<Boolean>
-        get() = _showReviewRequest
+    private var activePlayer: Player = Player.NONE
     private lateinit var personBattleField: BattleField
     private lateinit var computerBattleField: BattleField
     private lateinit var shotManager: ShotManager
+
+    private val _uiState = MutableStateFlow(GameUiState())
+    val uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
+
+    private val _events = MutableSharedFlow<UiEvent>(extraBufferCapacity = 1)
+    val events: SharedFlow<UiEvent> = _events.asSharedFlow()
 
     init {
         initValues()
@@ -63,130 +42,127 @@ class MainViewModel : ViewModel() {
         shotManager = ShotManager()
         personBattleField = BattleField()
         computerBattleField = BattleField()
-        _status.value = R.string.status_welcome_text
-        _startGameEvent.value = false
-        _endGameEvent.value = false to null
-        _selectedByPersonCoordinate.value = null
-        _showReviewRequest.value = false
         computerBattleField.randomizeShips()
-    }
-
-    fun onReviewFlowLaunched() {
-        _showReviewRequest.value = false
-    }
-
-    @VisibleForTesting
-    fun getComputerBattleField(): BattleField = computerBattleField
-
-    fun startGame() {
-        _startGameEvent.value = true
-        playAsPerson()
+        _uiState.value = GameUiState()
     }
 
     fun generateShips() {
         personBattleField.initBattleShip()
         personBattleField.randomizeShips()
-        _personShips.value = personBattleField.getShipsCoordinates()
-        _status.value = R.string.status_generate_or_start_text
+        _uiState.update {
+            it.copy(
+                personBoardShips = personBattleField.getShipsCoordinates(),
+                statusResId = R.string.status_generate_or_start_text,
+            )
+        }
+    }
+
+    fun startGame() {
+        activePlayer = Player.PERSON
+        _uiState.update {
+            it.copy(phase = GamePhase.BATTLE, statusResId = R.string.status_select_to_fire_text)
+        }
     }
 
     fun startNewGame() {
         initValues()
-        _personShips.value = ArrayList()
-        _computerShips.value = ArrayList()
-        _personFailShots.value = ArrayList()
-        _personSuccessfulShots.value = ArrayList()
-        _computerFailShots.value = ArrayList()
-        _computerSuccessfulShots.value = ArrayList()
     }
 
     fun handlePCAreaClick(coordinate: Coordinate) {
-        if (activePlayer == Player.PERSON) {
-            if (computerBattleField.isCellFreeToBeSelected(coordinate)) {
-                _selectedByPersonCoordinate.value = coordinate
-            }
-        }
-    }
-
-    private fun playAsPerson() {
-        activePlayer = Player.PERSON
-        if (_status.value != R.string.status_shot_ship_again_text) {
-            _status.value = R.string.status_select_to_fire_text
+        if (activePlayer == Player.PERSON && computerBattleField.isCellFreeToBeSelected(coordinate)) {
+            _uiState.update { it.copy(selectedCoordinate = coordinate) }
         }
     }
 
     fun makeFireAsPerson() {
-        if (activePlayer == Player.PERSON && _selectedByPersonCoordinate.value != null) {
-            val shipState = computerBattleField.handleShot(_selectedByPersonCoordinate.value)
-            _selectedByPersonCoordinate.value = null
-            if (shipState.first) {
-                if (shipState.second.isNotEmpty()) {
-                    _personFailShots.value = computerBattleField.getDotsCoordinates()
-                }
-                _status.value = R.string.status_shot_ship_again_text
-                _personSuccessfulShots.value = computerBattleField.getCrossesCoordinates()
-                if (computerBattleField.isGameOver()) {
-                    endGame(true)
-                } else {
-                    playAsPerson()
-                }
-            } else {
-                _personFailShots.value = computerBattleField.getDotsCoordinates()
-                _status.value = R.string.status_opponent_shot_text
-                activePlayer = Player.COMPUTER
-                playAsComputer()
+        val target = _uiState.value.selectedCoordinate
+        if (activePlayer != Player.PERSON || target == null) return
+        val shipState = computerBattleField.handleShot(target)
+        if (shipState.first) {
+            _uiState.update {
+                it.copy(
+                    selectedCoordinate = null,
+                    computerBoardCrosses = computerBattleField.getCrossesCoordinates(),
+                    computerBoardDots = if (shipState.second.isNotEmpty()) {
+                        computerBattleField.getDotsCoordinates()
+                    } else {
+                        it.computerBoardDots
+                    },
+                    statusResId = R.string.status_shot_ship_again_text,
+                )
             }
+            if (computerBattleField.isGameOver()) {
+                endGame(isPersonWon = true)
+            }
+        } else {
+            activePlayer = Player.COMPUTER
+            _uiState.update {
+                it.copy(
+                    selectedCoordinate = null,
+                    computerBoardDots = computerBattleField.getDotsCoordinates(),
+                    statusResId = R.string.status_opponent_shot_text,
+                    phase = GamePhase.COMPUTER_TURN,
+                )
+            }
+            playAsComputer()
         }
     }
 
     private fun playAsComputer() {
-        val coordinate: Coordinate = shotManager.getCoordinateToShot()
-        _selectedByComputerCoordinate.value = coordinate
+        val coordinate = shotManager.getCoordinateToShot()
         val shipState = personBattleField.handleShot(coordinate)
         shotManager.handleShot(shipState)
-        if (shipState.first) {
-            viewModelScope.launch {
-                delay(SECOND_IN_MILLIS)
-                _computerSuccessfulShots.value = personBattleField.getCrossesCoordinates()
-                if (shipState.second.isNotEmpty()) {
-                    _computerFailShots.value = personBattleField.getDotsCoordinates()
+        viewModelScope.launch {
+            delay(SECOND_IN_MILLIS)
+            if (shipState.first) {
+                _uiState.update {
+                    it.copy(
+                        personBoardCrosses = personBattleField.getCrossesCoordinates(),
+                        personBoardDots = if (shipState.second.isNotEmpty()) {
+                            personBattleField.getDotsCoordinates()
+                        } else {
+                            it.personBoardDots
+                        },
+                    )
                 }
                 if (personBattleField.isGameOver()) {
-                    endGame(false)
+                    endGame(isPersonWon = false)
                 } else {
-                    _status.value = R.string.status_opponent_shot_again_text
-                    checkCurrentPlayer()
+                    _uiState.update { it.copy(statusResId = R.string.status_opponent_shot_again_text) }
+                    playAsComputer()
+                }
+            } else {
+                activePlayer = Player.PERSON
+                _uiState.update {
+                    it.copy(
+                        personBoardDots = personBattleField.getDotsCoordinates(),
+                        phase = GamePhase.BATTLE,
+                        statusResId = R.string.status_select_to_fire_text,
+                    )
                 }
             }
-        } else {
-            viewModelScope.launch {
-                delay(SECOND_IN_MILLIS)
-                _computerFailShots.value = personBattleField.getDotsCoordinates()
-                activePlayer = Player.PERSON
-                checkCurrentPlayer()
-                _status.value = R.string.status_select_to_fire_text
-            }
-        }
-    }
-
-    private fun checkCurrentPlayer() {
-        if (activePlayer == Player.PERSON) {
-            playAsPerson()
-        } else {
-            playAsComputer()
         }
     }
 
     private fun endGame(isPersonWon: Boolean) {
         activePlayer = Player.NONE
-        _computerShips.value = computerBattleField.getShipsCoordinates()
+        _uiState.update {
+            it.copy(
+                phase = GamePhase.OVER,
+                winner = if (isPersonWon) Player.PERSON else Player.COMPUTER,
+                computerBoardShips = computerBattleField.getShipsCoordinates(),
+                statusResId = if (isPersonWon) {
+                    R.string.status_game_over_you_win_text
+                } else {
+                    R.string.status_game_over_you_lose_text
+                },
+            )
+        }
         if (isPersonWon) {
-            _endGameEvent.value = true to Player.PERSON
-            _status.value = R.string.status_game_over_you_win_text
-            _showReviewRequest.value = true
-        } else {
-            _endGameEvent.value = true to Player.COMPUTER
-            _status.value = R.string.status_game_over_you_lose_text
+            _events.tryEmit(UiEvent.RequestReview)
         }
     }
+
+    @VisibleForTesting
+    fun getComputerBattleField(): BattleField = computerBattleField
 }
