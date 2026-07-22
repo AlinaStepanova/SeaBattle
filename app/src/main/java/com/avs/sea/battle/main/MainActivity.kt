@@ -1,19 +1,16 @@
 package com.avs.sea.battle.main
 
-import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
-import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.PopupMenu
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -29,9 +26,7 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainViewModel
-    private val customOnTouchListener = View.OnTouchListener(implementCustomTouchListener())
 
-    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.enableEdgeToEdge(window)
@@ -96,36 +91,16 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
         }
 
         viewModel.endGameEvent.observe(this) { eventPair ->
-            if (eventPair.first) {
-                binding.viewNewGame.visibility = View.VISIBLE
-                if (eventPair.second == Player.PERSON) {
-                    launchReviewFlow()
-                }
-            } else {
-                binding.viewNewGame.visibility = View.INVISIBLE
+            binding.viewNewGame.visibility = if (eventPair.first) View.VISIBLE else View.INVISIBLE
+        }
+
+        viewModel.showReviewRequest.observe(this) { showReview ->
+            if (showReview) {
+                viewModel.onReviewFlowLaunched()
+                launchReviewFlow()
             }
         }
         binding.ivMore.setOnClickListener { view -> showPopup(view) }
-        binding.viewGenerate.setOnTouchListener(customOnTouchListener)
-        binding.viewFire.setOnTouchListener(customOnTouchListener)
-        binding.viewStart.setOnTouchListener(customOnTouchListener)
-        binding.viewNewGame.setOnTouchListener(customOnTouchListener)
-    }
-
-    private fun implementCustomTouchListener(): (View, MotionEvent) -> Boolean {
-        return { v: View, event: MotionEvent ->
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    v.setBackgroundColor(ContextCompat.getColor(this, R.color.greySelected))
-                }
-
-                MotionEvent.ACTION_UP -> {
-                    v.background = ContextCompat.getDrawable(this, R.drawable.square_background)
-                    v.performClick()
-                }
-            }
-            true
-        }
     }
 
     private fun showPopup(v: View?) {

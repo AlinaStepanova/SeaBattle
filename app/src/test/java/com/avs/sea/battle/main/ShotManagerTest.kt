@@ -276,4 +276,18 @@ class ShotManagerTest {
         shotManager.handleShot(true to ArrayList())
         assertFalse(shotManager.getBattleField().isCellFreeToBeSelected(coordinate8))
     }
+
+    @Test
+    fun getRandomCoordinateResetsHuntState() {
+        shotManager.getCoordinateToShot()
+        shotManager.handleShot(true to ArrayList())
+        shotManager.getCoordinateToShot()
+        shotManager.handleShot(true to ArrayList())
+        assertTrue(shotManager.getSecondCell().isState(CellState.SHOT_SUCCESS))
+        shotManager.getRandomCoordinate()
+        assertTrue(shotManager.getFirstCell().isState(CellState.EMPTY))
+        assertTrue(shotManager.getSecondCell().isState(CellState.EMPTY))
+        assertTrue(shotManager.getThirdCell().isState(CellState.EMPTY))
+        assertTrue(shotManager.getFourthCell().isState(CellState.EMPTY))
+    }
 }

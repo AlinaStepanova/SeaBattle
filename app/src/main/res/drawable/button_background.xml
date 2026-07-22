@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <shape>
+            <solid android:color="@color/greySelected" />
+            <stroke
+                android:width="1px"
+                android:color="?attr/colorAccent">
+            </stroke>
+        </shape>
+    </item>
+    <item android:drawable="@drawable/square_background" />
+</selector>
