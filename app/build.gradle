@@ -2,8 +2,6 @@ apply plugin: 'com.android.application'
 
 apply plugin: 'kotlin-android'
 
-apply plugin: 'kotlin-kapt'
-
 apply plugin: 'org.jetbrains.kotlin.plugin.compose'
 
 def keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -37,11 +35,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    dataBinding {
-        enabled = true
-    }
     buildFeatures {
-        viewBinding = true
         compose = true
     }
     compileOptions {
@@ -73,8 +67,6 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.2"
 
-    kapt "com.android.databinding:compiler:3.1.4"
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     androidTestImplementation 'androidx.test:rules:1.6.1'
     implementation 'com.google.android.play:review:2.0.2'
     implementation 'com.google.android.play:review-ktx:2.0.2'
