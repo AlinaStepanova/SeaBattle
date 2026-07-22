@@ -227,6 +227,9 @@ class ShotManager {
 
     fun getRandomCoordinate(): Coordinate {
         firstCell = Cell()
+        secondCell = Cell()
+        thirdCell = Cell()
+        fourthCell = Cell()
         do {
             firstCell.setCoordinates(
                 (0 until SQUARES_COUNT).random(),
