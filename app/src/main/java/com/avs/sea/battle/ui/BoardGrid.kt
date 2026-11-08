@@ -3,12 +3,15 @@ package com.avs.sea.battle.ui
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.platform.testTag
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.avs.sea.battle.R
@@ -57,32 +61,33 @@ fun LabeledBoard(
         fontSize = 18.sp,
         textAlign = TextAlign.Center,
     )
-    Column(modifier = modifier) {
-        Row(Modifier.fillMaxWidth().padding(start = LABEL_SIZE)) {
-            LETTER_IDS.forEach { id ->
-                BasicText(
-                    text = stringResource(id),
-                    style = labelStyle,
-                    modifier = Modifier.weight(1f),
-                )
-            }
-        }
-        Row(Modifier.fillMaxWidth()) {
-            Column(Modifier.width(LABEL_SIZE).aspectRatio(1f / SQUARES_COUNT)) {
-                NUMBER_IDS.forEach { id ->
-                    Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
+    BoxWithConstraints(modifier, contentAlignment = Alignment.Center) {
+        val boardSide = boardSideFor(maxWidth, maxHeight)
+        Column {
+            Row(Modifier.padding(start = LABEL_SIZE).size(width = boardSide, height = LABEL_SIZE)) {
+                LETTER_IDS.forEach { id ->
+                    Box(Modifier.weight(1f).fillMaxHeight(), contentAlignment = Alignment.Center) {
                         BasicText(text = stringResource(id), style = labelStyle)
                     }
                 }
             }
-            BoardGrid(
-                ships = ships,
-                crosses = crosses,
-                dots = dots,
-                selected = selected,
-                onCellTap = onCellTap,
-                modifier = Modifier.weight(1f),
-            )
+            Row {
+                Column(Modifier.size(width = LABEL_SIZE, height = boardSide)) {
+                    NUMBER_IDS.forEach { id ->
+                        Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+                            BasicText(text = stringResource(id), style = labelStyle)
+                        }
+                    }
+                }
+                BoardGrid(
+                    ships = ships,
+                    crosses = crosses,
+                    dots = dots,
+                    selected = selected,
+                    onCellTap = onCellTap,
+                    modifier = Modifier.size(boardSide),
+                )
+            }
         }
     }
 }
@@ -109,7 +114,7 @@ fun BoardGrid(
     } else {
         Modifier
     }
-    Canvas(modifier = modifier.aspectRatio(1f).then(tapModifier)) {
+    Canvas(modifier = modifier.aspectRatio(1f).testTag(BOARD_GRID_TAG).then(tapModifier)) {
         val cell = size.width / SQUARES_COUNT
         val stroke = 1f
         ships.forEach { ship ->
@@ -159,3 +164,10 @@ private fun LabeledBoardPreview() {
         )
     }
 }
+
+internal const val BOARD_GRID_TAG = "board_grid"
+
+// The letter row sits above the board and the number column to its left, so both
+// labels take LABEL_SIZE away from the space available for the square board.
+internal fun boardSideFor(maxWidth: Dp, maxHeight: Dp): Dp =
+    (minOf(maxWidth, maxHeight) - LABEL_SIZE).coerceAtLeast(0.dp)
