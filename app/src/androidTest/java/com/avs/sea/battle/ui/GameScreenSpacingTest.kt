@@ -7,6 +7,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -19,6 +23,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.avs.sea.battle.R
 import com.avs.sea.battle.ui.theme.SeaBattleTheme
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -49,6 +54,25 @@ class GameScreenSpacingTest {
         setGameScreen(isLandscape = true)
         val gap = grid(COMPUTER).left - grid(PERSON).right
         assertTrue("gap between boards was $gap", gap <= 80.dp)
+    }
+
+    @Test
+    fun landscapeBoardsHaveClearSpaceBetweenThem() {
+        setGameScreen(isLandscape = true)
+        val gap = grid(COMPUTER).left - grid(PERSON).right
+        assertTrue("gap between boards was $gap", gap >= 64.dp)
+    }
+
+    @Test
+    fun landscapeBoardLabelsUseLandscapeSize() {
+        setGameScreen(isLandscape = true)
+        assertEquals(BoardStyle.Landscape.labelFontSize, labelFontSize("J"))
+    }
+
+    @Test
+    fun portraitBoardLabelsUsePortraitSize() {
+        setGameScreen(isLandscape = false)
+        assertEquals(BoardStyle.Portrait.labelFontSize, labelFontSize("J"))
     }
 
     @Test
@@ -112,6 +136,13 @@ class GameScreenSpacingTest {
 
     private fun generateButton(): DpRect =
         composeTestRule.onNodeWithText(string(R.string.generate_ships_text)).getBoundsInRoot()
+
+    private fun labelFontSize(text: String): TextUnit {
+        val node = composeTestRule.onAllNodesWithText(text)[0].fetchSemanticsNode()
+        val layouts = mutableListOf<TextLayoutResult>()
+        node.config[SemanticsActions.GetTextLayoutResult].action?.invoke(layouts)
+        return layouts.single().layoutInput.style.fontSize
+    }
 
     private fun string(id: Int): String =
         InstrumentationRegistry.getInstrumentation().targetContext.getString(id)

@@ -42,7 +42,7 @@ import com.avs.sea.battle.ui.theme.NeuchaFontFamily
 import com.avs.sea.battle.ui.theme.SeaBattleTheme
 
 private val MENU_BUTTON_SIZE = 48.dp
-private val BOARD_GAP = 32.dp
+private val BOARD_GAP = 56.dp
 private val ACTION_AREA_HEIGHT = 56.dp
 private val LANDSCAPE_ACTION_AREA_HEIGHT = 44.dp
 private val SPINNER_SIZE = 16.dp
@@ -92,8 +92,8 @@ fun GameScreen(
                         .weight(1f, fill = false)
                         .fillMaxHeight()
                         .aspectRatio(1f, matchHeightConstraintsFirst = true)
-                    PersonBoard(uiState, boardModifier)
-                    ComputerBoard(uiState, onCellClick, boardModifier)
+                    PersonBoard(uiState, BoardStyle.Landscape, boardModifier)
+                    ComputerBoard(uiState, onCellClick, BoardStyle.Landscape, boardModifier)
                 }
             } else {
                 Column(
@@ -104,8 +104,8 @@ fun GameScreen(
                     val boardModifier = Modifier
                         .weight(1f, fill = false)
                         .fillMaxWidth(PORTRAIT_BOARD_WIDTH_FRACTION)
-                    PersonBoard(uiState, boardModifier)
-                    ComputerBoard(uiState, onCellClick, boardModifier)
+                    PersonBoard(uiState, BoardStyle.Portrait, boardModifier)
+                    ComputerBoard(uiState, onCellClick, BoardStyle.Portrait, boardModifier)
                 }
             }
             Box(
@@ -136,7 +136,7 @@ private fun StatusText(statusResId: Int, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun PersonBoard(uiState: GameUiState, modifier: Modifier = Modifier) {
+private fun PersonBoard(uiState: GameUiState, style: BoardStyle, modifier: Modifier = Modifier) {
     LabeledBoard(
         ships = uiState.personBoardShips,
         crosses = uiState.personBoardCrosses,
@@ -144,6 +144,7 @@ private fun PersonBoard(uiState: GameUiState, modifier: Modifier = Modifier) {
         selected = null,
         onCellTap = null,
         modifier = modifier,
+        style = style,
     )
 }
 
@@ -151,6 +152,7 @@ private fun PersonBoard(uiState: GameUiState, modifier: Modifier = Modifier) {
 private fun ComputerBoard(
     uiState: GameUiState,
     onCellClick: (Coordinate) -> Unit,
+    style: BoardStyle,
     modifier: Modifier = Modifier,
 ) {
     LabeledBoard(
@@ -160,6 +162,7 @@ private fun ComputerBoard(
         selected = uiState.selectedCoordinate,
         onCellTap = if (uiState.phase == GamePhase.BATTLE) onCellClick else null,
         modifier = modifier,
+        style = style,
     )
 }
 

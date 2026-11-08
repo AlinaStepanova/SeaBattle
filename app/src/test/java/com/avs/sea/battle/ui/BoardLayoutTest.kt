@@ -29,13 +29,25 @@ class BoardLayoutTest {
     }
 
     @Test
-    fun dotIsSmallComparedToTheCell() {
+    fun portraitDotsAreLargerThanLandscapeDots() {
+        assertTrue(dotRadiusFor(80f, BoardStyle.Portrait) > dotRadiusFor(80f, BoardStyle.Landscape))
+    }
+
+    @Test
+    fun dotsStayWellInsideTheCellInBothOrientations() {
         val cell = 80f
-        assertTrue(dotRadiusFor(cell) * 2 <= cell / 8)
+        listOf(BoardStyle.Portrait, BoardStyle.Landscape).forEach { style ->
+            assertTrue(dotRadiusFor(cell, style) * 2 <= cell / 5)
+        }
     }
 
     @Test
     fun dotScalesWithTheCell() {
-        assertEquals(dotRadiusFor(40f) * 2, dotRadiusFor(80f), 0.001f)
+        assertEquals(dotRadiusFor(40f, BoardStyle.Portrait) * 2, dotRadiusFor(80f, BoardStyle.Portrait), 0.001f)
+    }
+
+    @Test
+    fun landscapeLabelsAreSmallerThanPortraitLabels() {
+        assertTrue(BoardStyle.Landscape.labelFontSize.value < BoardStyle.Portrait.labelFontSize.value)
     }
 }

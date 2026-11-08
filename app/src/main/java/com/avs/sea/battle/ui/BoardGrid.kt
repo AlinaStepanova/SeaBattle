@@ -24,6 +24,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.avs.sea.battle.R
@@ -54,11 +55,12 @@ fun LabeledBoard(
     selected: Coordinate?,
     onCellTap: ((Coordinate) -> Unit)?,
     modifier: Modifier = Modifier,
+    style: BoardStyle = BoardStyle.Portrait,
 ) {
     val labelStyle = TextStyle(
         color = SeaBattleTheme.colors.foreground,
         fontFamily = NeuchaFontFamily,
-        fontSize = 18.sp,
+        fontSize = style.labelFontSize,
         textAlign = TextAlign.Center,
     )
     BoxWithConstraints(modifier, contentAlignment = Alignment.Center) {
@@ -86,6 +88,7 @@ fun LabeledBoard(
                     selected = selected,
                     onCellTap = onCellTap,
                     modifier = Modifier.size(boardSide),
+                    style = style,
                 )
             }
         }
@@ -100,6 +103,7 @@ fun BoardGrid(
     selected: Coordinate?,
     onCellTap: ((Coordinate) -> Unit)?,
     modifier: Modifier = Modifier,
+    style: BoardStyle = BoardStyle.Portrait,
 ) {
     val colors = SeaBattleTheme.colors
     val tapModifier = if (onCellTap != null) {
@@ -138,7 +142,7 @@ fun BoardGrid(
         dots.forEach { dot ->
             drawCircle(
                 color = colors.foreground,
-                radius = dotRadiusFor(cell),
+                radius = dotRadiusFor(cell, style),
                 center = Offset(dot.y * cell + cell / 2, dot.x * cell + cell / 2),
             )
         }
@@ -172,7 +176,13 @@ internal const val BOARD_GRID_TAG = "board_grid"
 internal fun boardSideFor(maxWidth: Dp, maxHeight: Dp): Dp =
     (minOf(maxWidth, maxHeight) - LABEL_SIZE).coerceAtLeast(0.dp)
 
-// Matches the original views: a dot about a tenth of the cell wide.
-internal fun dotRadiusFor(cellSize: Float): Float = cellSize * DOT_RADIUS_TO_CELL
+// Landscape boards are shorter, so they get smaller labels; portrait boards are wide enough
+// for larger dots.
+data class BoardStyle(val labelFontSize: TextUnit, val dotRadiusToCell: Float) {
+    companion object {
+        val Portrait = BoardStyle(labelFontSize = 18.sp, dotRadiusToCell = 0.08f)
+        val Landscape = BoardStyle(labelFontSize = 15.sp, dotRadiusToCell = 0.05f)
+    }
+}
 
-private const val DOT_RADIUS_TO_CELL = 0.05f
+internal fun dotRadiusFor(cellSize: Float, style: BoardStyle): Float = cellSize * style.dotRadiusToCell
