@@ -4,12 +4,11 @@ import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -34,6 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.avs.sea.battle.R
@@ -42,7 +42,7 @@ import com.avs.sea.battle.ui.theme.NeuchaFontFamily
 import com.avs.sea.battle.ui.theme.SeaBattleTheme
 
 private val MENU_BUTTON_SIZE = 48.dp
-private val BOARD_GAP = 56.dp
+private const val BOARD_GAP_TO_BOARD = 0.2f
 private val ACTION_AREA_HEIGHT = 56.dp
 private val LANDSCAPE_ACTION_AREA_HEIGHT = 44.dp
 private val SPINNER_SIZE = 16.dp
@@ -80,20 +80,23 @@ fun GameScreen(
             )
             if (isLandscape) {
                 // Horizontal padding keeps the computer board clear of the overflow menu.
-                Row(
+                BoxWithConstraints(
                     Modifier
                         .weight(1f)
                         .fillMaxWidth()
                         .padding(horizontal = MENU_BUTTON_SIZE, vertical = 4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(BOARD_GAP, Alignment.CenterHorizontally),
-                    verticalAlignment = Alignment.CenterVertically,
+                    contentAlignment = Alignment.Center,
                 ) {
-                    val boardModifier = Modifier
-                        .weight(1f, fill = false)
-                        .fillMaxHeight()
-                        .aspectRatio(1f, matchHeightConstraintsFirst = true)
-                    PersonBoard(uiState, BoardStyle.Landscape, boardModifier)
-                    ComputerBoard(uiState, onCellClick, BoardStyle.Landscape, boardModifier)
+                    val layout = landscapeBoardsLayout(maxWidth, maxHeight)
+                    Row(horizontalArrangement = Arrangement.spacedBy(layout.gap)) {
+                        PersonBoard(uiState, BoardStyle.Landscape, Modifier.size(layout.boardSize))
+                        ComputerBoard(
+                            uiState,
+                            onCellClick,
+                            BoardStyle.Landscape,
+                            Modifier.size(layout.boardSize),
+                        )
+                    }
                 }
             } else {
                 Column(
@@ -244,4 +247,13 @@ private fun GameScreenPreview() {
             onCellClick = {}, onFire = {}, onMenuAction = {},
         )
     }
+}
+
+internal data class LandscapeBoardsLayout(val boardSize: Dp, val gap: Dp)
+
+// Two square boards side by side with a gap that scales with them, so the proportions stay
+// the same on every screen; the boards fill the height unless the width runs out first.
+internal fun landscapeBoardsLayout(maxWidth: Dp, maxHeight: Dp): LandscapeBoardsLayout {
+    val boardSize = minOf(maxHeight, maxWidth / (2 + BOARD_GAP_TO_BOARD))
+    return LandscapeBoardsLayout(boardSize = boardSize, gap = boardSize * BOARD_GAP_TO_BOARD)
 }
