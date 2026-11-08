@@ -38,6 +38,8 @@ import com.avs.sea.battle.battle_field.Coordinate
 import com.avs.sea.battle.ui.theme.NeuchaFontFamily
 import com.avs.sea.battle.ui.theme.SeaBattleTheme
 
+private val MENU_BUTTON_SIZE = 48.dp
+
 @Composable
 fun GameScreen(
     uiState: GameUiState,
@@ -57,7 +59,11 @@ fun GameScreen(
             .safeDrawingPadding()
     ) {
         if (isLandscape) {
-            Row(Modifier.fillMaxSize(), horizontalArrangement = Arrangement.SpaceEvenly) {
+            // The overflow menu sits in the top-end corner; keep the computer board clear of it.
+            Row(
+                Modifier.fillMaxSize().padding(end = MENU_BUTTON_SIZE),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+            ) {
                 PersonBoard(
                     uiState,
                     Modifier.weight(1f).padding(8.dp).align(Alignment.CenterVertically)
