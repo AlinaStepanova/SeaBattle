@@ -138,7 +138,7 @@ fun BoardGrid(
         dots.forEach { dot ->
             drawCircle(
                 color = colors.foreground,
-                radius = 4.dp.toPx(),
+                radius = dotRadiusFor(cell),
                 center = Offset(dot.y * cell + cell / 2, dot.x * cell + cell / 2),
             )
         }
@@ -171,3 +171,8 @@ internal const val BOARD_GRID_TAG = "board_grid"
 // labels take LABEL_SIZE away from the space available for the square board.
 internal fun boardSideFor(maxWidth: Dp, maxHeight: Dp): Dp =
     (minOf(maxWidth, maxHeight) - LABEL_SIZE).coerceAtLeast(0.dp)
+
+// Matches the original views: a dot about a tenth of the cell wide.
+internal fun dotRadiusFor(cellSize: Float): Float = cellSize * DOT_RADIUS_TO_CELL
+
+private const val DOT_RADIUS_TO_CELL = 0.05f

@@ -4,6 +4,9 @@ import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -39,6 +42,12 @@ import com.avs.sea.battle.ui.theme.NeuchaFontFamily
 import com.avs.sea.battle.ui.theme.SeaBattleTheme
 
 private val MENU_BUTTON_SIZE = 48.dp
+private val BOARD_GAP = 32.dp
+private val ACTION_AREA_HEIGHT = 56.dp
+private val SPINNER_SIZE = 16.dp
+
+// The grid itself spans about 75% of the width, as in the original layout; the rest is labels.
+private const val PORTRAIT_BOARD_WIDTH_FRACTION = 0.8f
 
 @Composable
 fun GameScreen(
@@ -58,44 +67,46 @@ fun GameScreen(
             .background(SeaBattleTheme.colors.background)
             .safeDrawingPadding()
     ) {
-        if (isLandscape) {
-            // The overflow menu sits in the top-end corner; keep the computer board clear of it.
-            Row(
-                Modifier.fillMaxSize().padding(end = MENU_BUTTON_SIZE),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-            ) {
-                PersonBoard(
-                    uiState,
-                    Modifier.weight(1f).padding(8.dp).align(Alignment.CenterVertically)
-                )
+        Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+            StatusText(
+                uiState.statusResId,
+                Modifier.padding(top = 10.dp, start = MENU_BUTTON_SIZE, end = MENU_BUTTON_SIZE)
+            )
+            if (isLandscape) {
+                // Horizontal padding keeps the computer board clear of the overflow menu.
+                Row(
+                    Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .padding(horizontal = MENU_BUTTON_SIZE, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(BOARD_GAP, Alignment.CenterHorizontally),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    val boardModifier = Modifier
+                        .weight(1f, fill = false)
+                        .fillMaxHeight()
+                        .aspectRatio(1f, matchHeightConstraintsFirst = true)
+                    PersonBoard(uiState, boardModifier)
+                    ComputerBoard(uiState, onCellClick, boardModifier)
+                }
+            } else {
                 Column(
-                    Modifier.weight(0.8f).fillMaxHeight().padding(vertical = 8.dp),
+                    Modifier.weight(1f).fillMaxWidth(),
+                    verticalArrangement = Arrangement.SpaceEvenly,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    StatusText(uiState.statusResId, Modifier.weight(1f))
-                    ActionArea(uiState, onGenerateShips, onStartGame, onNewGame, onFire)
+                    val boardModifier = Modifier
+                        .weight(1f, fill = false)
+                        .fillMaxWidth(PORTRAIT_BOARD_WIDTH_FRACTION)
+                    PersonBoard(uiState, boardModifier)
+                    ComputerBoard(uiState, onCellClick, boardModifier)
                 }
-                ComputerBoard(
-                    uiState,
-                    onCellClick,
-                    Modifier.weight(1f).padding(8.dp).align(Alignment.CenterVertically)
-                )
             }
-        } else {
-            Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-                StatusText(
-                    uiState.statusResId,
-                    Modifier.padding(top = 10.dp, start = 40.dp, end = 40.dp)
-                )
-                PersonBoard(uiState, Modifier.fillMaxWidth(0.75f).padding(top = 8.dp))
-                ComputerBoard(
-                    uiState,
-                    onCellClick,
-                    Modifier.fillMaxWidth(0.75f).padding(top = 16.dp)
-                )
-                Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                    ActionArea(uiState, onGenerateShips, onStartGame, onNewGame, onFire)
-                }
+            Box(
+                Modifier.fillMaxWidth().height(ACTION_AREA_HEIGHT),
+                contentAlignment = Alignment.Center,
+            ) {
+                ActionArea(uiState, onGenerateShips, onStartGame, onNewGame, onFire)
             }
         }
         MoreMenu(onMenuAction, Modifier.align(Alignment.TopEnd))
@@ -167,7 +178,8 @@ private fun ActionArea(
             }
             GamePhase.COMPUTER_TURN -> CircularProgressIndicator(
                 color = SeaBattleTheme.colors.foreground,
-                modifier = Modifier.padding(4.dp),
+                strokeWidth = 2.dp,
+                modifier = Modifier.size(SPINNER_SIZE),
             )
             GamePhase.OVER -> GameButton(stringResource(R.string.new_game_text), onNewGame)
         }

@@ -3,6 +3,7 @@ package com.avs.sea.battle.ui
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class BoardLayoutTest {
@@ -25,5 +26,16 @@ class BoardLayoutTest {
     @Test
     fun boardSideIsNeverNegativeWhenSpaceIsSmallerThanLabels() {
         assertEquals(0.dp, boardSideFor(maxWidth = 10.dp, maxHeight = 10.dp))
+    }
+
+    @Test
+    fun dotIsSmallComparedToTheCell() {
+        val cell = 80f
+        assertTrue(dotRadiusFor(cell) * 2 <= cell / 8)
+    }
+
+    @Test
+    fun dotScalesWithTheCell() {
+        assertEquals(dotRadiusFor(40f) * 2, dotRadiusFor(80f), 0.001f)
     }
 }
