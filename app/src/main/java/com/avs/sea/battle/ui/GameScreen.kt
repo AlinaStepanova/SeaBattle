@@ -44,6 +44,7 @@ import com.avs.sea.battle.ui.theme.SeaBattleTheme
 private val MENU_BUTTON_SIZE = 48.dp
 private val BOARD_GAP = 32.dp
 private val ACTION_AREA_HEIGHT = 56.dp
+private val LANDSCAPE_ACTION_AREA_HEIGHT = 44.dp
 private val SPINNER_SIZE = 16.dp
 
 // The grid itself spans about 75% of the width, as in the original layout; the rest is labels.
@@ -68,9 +69,14 @@ fun GameScreen(
             .safeDrawingPadding()
     ) {
         Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+            // Landscape is short on height, so it gets tighter vertical spacing.
             StatusText(
                 uiState.statusResId,
-                Modifier.padding(top = 10.dp, start = MENU_BUTTON_SIZE, end = MENU_BUTTON_SIZE)
+                Modifier.padding(
+                    top = if (isLandscape) 2.dp else 10.dp,
+                    start = MENU_BUTTON_SIZE,
+                    end = MENU_BUTTON_SIZE,
+                )
             )
             if (isLandscape) {
                 // Horizontal padding keeps the computer board clear of the overflow menu.
@@ -78,7 +84,7 @@ fun GameScreen(
                     Modifier
                         .weight(1f)
                         .fillMaxWidth()
-                        .padding(horizontal = MENU_BUTTON_SIZE, vertical = 8.dp),
+                        .padding(horizontal = MENU_BUTTON_SIZE, vertical = 4.dp),
                     horizontalArrangement = Arrangement.spacedBy(BOARD_GAP, Alignment.CenterHorizontally),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -103,7 +109,9 @@ fun GameScreen(
                 }
             }
             Box(
-                Modifier.fillMaxWidth().height(ACTION_AREA_HEIGHT),
+                Modifier
+                    .fillMaxWidth()
+                    .height(if (isLandscape) LANDSCAPE_ACTION_AREA_HEIGHT else ACTION_AREA_HEIGHT),
                 contentAlignment = Alignment.Center,
             ) {
                 ActionArea(uiState, onGenerateShips, onStartGame, onNewGame, onFire)

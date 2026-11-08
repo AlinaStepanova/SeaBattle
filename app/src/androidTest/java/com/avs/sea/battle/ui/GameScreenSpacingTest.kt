@@ -52,6 +52,21 @@ class GameScreenSpacingTest {
     }
 
     @Test
+    fun landscapeBoardsStartRightBelowStatus() {
+        setGameScreen(isLandscape = true)
+        val status = composeTestRule.onNodeWithText(string(R.string.status_welcome_text)).getBoundsInRoot()
+        val gap = grid(PERSON).top - status.bottom
+        assertTrue("gap between status and board was $gap", gap <= 26.dp)
+    }
+
+    @Test
+    fun landscapeButtonsSitRightBelowBoards() {
+        setGameScreen(isLandscape = true)
+        val gap = generateButton().bottom - grid(PERSON).bottom
+        assertTrue("space from board to button bottom was $gap", gap <= 48.dp)
+    }
+
+    @Test
     fun computerTurnSpinnerIsSmall() {
         setGameScreen(isLandscape = false, uiState = GameUiState(phase = GamePhase.COMPUTER_TURN))
         val spinner = composeTestRule
@@ -95,11 +110,11 @@ class GameScreenSpacingTest {
     private fun grid(index: Int): DpRect =
         composeTestRule.onAllNodesWithTag(BOARD_GRID_TAG)[index].getBoundsInRoot()
 
-    private fun generateButton(): DpRect {
-        val text = InstrumentationRegistry.getInstrumentation().targetContext
-            .getString(R.string.generate_ships_text)
-        return composeTestRule.onNodeWithText(text).getBoundsInRoot()
-    }
+    private fun generateButton(): DpRect =
+        composeTestRule.onNodeWithText(string(R.string.generate_ships_text)).getBoundsInRoot()
+
+    private fun string(id: Int): String =
+        InstrumentationRegistry.getInstrumentation().targetContext.getString(id)
 
     private val DpRect.width: Dp get() = right - left
 
