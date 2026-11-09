@@ -286,7 +286,7 @@ private fun MenuEntry(
     dismiss: () -> Unit,
 ) {
     DropdownMenuItem(
-        text = { Text(stringResource(textResId), fontFamily = NeuchaFontFamily, fontSize = 16.sp) },
+        text = { Text(stringResource(textResId), fontFamily = NeuchaFontFamily, fontSize = 20.sp) },
         onClick = {
             dismiss()
             onMenuAction(action)

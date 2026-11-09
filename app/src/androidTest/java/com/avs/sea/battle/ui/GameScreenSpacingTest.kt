@@ -21,6 +21,8 @@ import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpRect
 import androidx.compose.ui.unit.dp
@@ -147,6 +149,15 @@ class GameScreenSpacingTest {
     fun smallPhoneLandscapeComputerGridSitsOnTheNotebookSquares() {
         setGameScreen(isLandscape = true, width = SMALL_PHONE_LONG_SIDE, height = SMALL_PHONE_SHORT_SIDE)
         assertWholeSquares(grid(COMPUTER).left - grid(PERSON).left)
+    }
+
+    @Test
+    fun menuItemsAreAtLeastAsLargeAsTheStatusText() {
+        setGameScreen(isLandscape = false)
+        composeTestRule.onNodeWithContentDescription(string(R.string.more_settings)).performClick()
+        val menuItem = textLayout(string(R.string.menu_share_text)).layoutInput.style.fontSize
+        val status = textLayout(string(R.string.status_welcome_text)).layoutInput.style.fontSize
+        assertTrue("menu item is $menuItem, status is $status", menuItem.value >= status.value)
     }
 
     @Test

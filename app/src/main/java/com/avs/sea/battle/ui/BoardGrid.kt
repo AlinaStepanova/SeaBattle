@@ -162,8 +162,9 @@ fun BoardGrid(
         crosses.forEach { cross ->
             val left = cross.y * cell
             val top = cross.x * cell
-            drawLine(colors.hit, Offset(left, top), Offset(left + cell, top + cell), stroke * 2.5f)
-            drawLine(colors.hit, Offset(left + cell, top), Offset(left, top + cell), stroke * 2.5f)
+            val width = hitStrokeWidth(cell)
+            drawLine(colors.hit, Offset(left, top), Offset(left + cell, top + cell), width, cap = StrokeCap.Round)
+            drawLine(colors.hit, Offset(left + cell, top), Offset(left, top + cell), width, cap = StrokeCap.Round)
         }
     }
 }
@@ -197,5 +198,8 @@ data class BoardStyle(val labelFontSize: TextUnit, val dotRadiusToCell: Float) {
         val Landscape = BoardStyle(labelFontSize = 15.sp, dotRadiusToCell = 0.05f)
     }
 }
+
+// A hit is crossed out with a firm red pen stroke, bold enough for the red to read clearly.
+internal fun hitStrokeWidth(cellSize: Float): Float = cellSize * 0.07f
 
 internal fun dotRadiusFor(cellSize: Float, style: BoardStyle): Float = cellSize * style.dotRadiusToCell

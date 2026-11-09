@@ -50,4 +50,15 @@ class BoardLayoutTest {
     fun landscapeLabelsAreSmallerThanPortraitLabels() {
         assertTrue(BoardStyle.Landscape.labelFontSize.value < BoardStyle.Portrait.labelFontSize.value)
     }
+
+    @Test
+    fun hitCrossIsClearlyBolderThanAGridLine() {
+        // On a Pixel 8a a portrait cell is about 81px; the grid line is 1px.
+        assertTrue(hitStrokeWidth(81f) >= 5f)
+    }
+
+    @Test
+    fun hitCrossScalesWithTheCell() {
+        assertEquals(hitStrokeWidth(40f) * 2, hitStrokeWidth(80f), 0.001f)
+    }
 }
