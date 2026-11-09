@@ -8,7 +8,11 @@ import org.junit.Test
 
 class PortraitBoardsLayoutTest {
 
-    private val screens = listOf(411.dp to 750.dp, 360.dp to 560.dp, 320.dp to 460.dp, 600.dp to 900.dp, 411.dp to 500.dp)
+    // Includes compact areas (split screen, small windows) where a cell is smaller than the label row.
+    private val screens = listOf(
+        411.dp to 750.dp, 360.dp to 560.dp, 320.dp to 460.dp, 600.dp to 900.dp, 411.dp to 500.dp,
+        320.dp to 400.dp, 411.dp to 300.dp, 300.dp to 200.dp,
+    )
 
     @Test
     fun boardsUseEightyPercentOfTheWidthOnATallScreen() {
@@ -36,9 +40,9 @@ class PortraitBoardsLayoutTest {
     }
 
     @Test
-    fun boardsAreSeparatedByAGap() {
+    fun gapIsNeverNegative() {
         screens.forEach { (width, height) ->
-            assertTrue("screen $width x $height", portraitBoardsLayout(width, height).gap > 0.dp)
+            assertTrue("screen $width x $height", portraitBoardsLayout(width, height).gap >= 0.dp)
         }
     }
 }

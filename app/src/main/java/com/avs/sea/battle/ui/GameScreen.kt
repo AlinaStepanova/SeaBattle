@@ -309,33 +309,39 @@ private fun GameScreenPreview() {
 internal data class LandscapeBoardsLayout(val boardSize: Dp, val gap: Dp)
 
 // Two square boards side by side, sized together from the available space so they keep the
-// same proportions on every screen. The grids are exactly LANDSCAPE_GAP_SQUARES notebook
-// squares apart, so both sit on the page's lines; the gap also holds the computer board's
-// number column.
+// same proportions on every screen. The grids are LANDSCAPE_GAP_SQUARES notebook squares
+// apart, so both sit on the page's lines; the gap also holds the computer board's number
+// column, so on tiny screens, where those squares are narrower than it, more squares are used.
 internal fun landscapeBoardsLayout(maxWidth: Dp, maxHeight: Dp): LandscapeBoardsLayout {
     val cellByHeight = (maxHeight - LABEL_SIZE) / SQUARES_COUNT
-    val cellByWidth = (maxWidth - LABEL_SIZE) / (2 * SQUARES_COUNT + LANDSCAPE_GAP_SQUARES)
-    val cell = minOf(cellByHeight, cellByWidth).coerceAtLeast(0.dp)
-    return LandscapeBoardsLayout(
-        boardSize = LABEL_SIZE + cell * SQUARES_COUNT,
-        gap = (cell * LANDSCAPE_GAP_SQUARES - LABEL_SIZE).coerceAtLeast(0.dp),
-    )
+    for (squares in LANDSCAPE_GAP_SQUARES..MAX_GAP_SQUARES) {
+        val cell = minOf(cellByHeight, (maxWidth - LABEL_SIZE) / (2 * SQUARES_COUNT + squares))
+        if (cell <= 0.dp) break
+        if (cell * squares >= LABEL_SIZE) {
+            return LandscapeBoardsLayout(boardSize = LABEL_SIZE + cell * SQUARES_COUNT, gap = cell * squares - LABEL_SIZE)
+        }
+    }
+    return LandscapeBoardsLayout(boardSize = 0.dp, gap = 0.dp)
 }
 
 internal data class PortraitBoardsLayout(val boardSize: Dp, val gap: Dp)
 
-// Two boards stacked, as wide as PORTRAIT_BOARD_WIDTH_FRACTION allows. The gap is rounded so
-// the computer's grid starts a whole number of notebook squares below the player's grid,
-// staying close to an even share of the free height.
+// Two boards stacked, as wide as PORTRAIT_BOARD_WIDTH_FRACTION allows. The computer's grid
+// starts a whole number of notebook squares below the player's grid: at least enough squares
+// to hold its letter row, and otherwise close to an even share of the free height.
 internal fun portraitBoardsLayout(maxWidth: Dp, maxHeight: Dp): PortraitBoardsLayout {
     val cellByWidth = (maxWidth * PORTRAIT_BOARD_WIDTH_FRACTION - LABEL_SIZE) / SQUARES_COUNT
-    // At least one square between the grid tops beyond the board itself.
-    val cellByHeight = (maxHeight - LABEL_SIZE) / (2 * SQUARES_COUNT + 1)
-    val cell = minOf(cellByWidth, cellByHeight).coerceAtLeast(0.dp)
-    if (cell == 0.dp) return PortraitBoardsLayout(boardSize = 0.dp, gap = 0.dp)
+    val fit = (1..MAX_GAP_SQUARES).firstNotNullOfOrNull { squares ->
+        val cell = minOf(cellByWidth, (maxHeight - LABEL_SIZE) / (2 * SQUARES_COUNT + squares))
+        if (cell > 0.dp && cell * squares >= LABEL_SIZE) cell to squares else null
+    } ?: return PortraitBoardsLayout(boardSize = 0.dp, gap = 0.dp)
+    val (cell, minSquares) = fit
     val boardSize = LABEL_SIZE + cell * SQUARES_COUNT
     val freeHeight = maxHeight - boardSize * 2
-    var squares = ((freeHeight / 3 + LABEL_SIZE) / cell).roundToInt().coerceAtLeast(1)
-    while (squares > 1 && cell * squares - LABEL_SIZE > freeHeight) squares--
-    return PortraitBoardsLayout(boardSize = boardSize, gap = (cell * squares - LABEL_SIZE).coerceAtLeast(0.dp))
+    var squares = ((freeHeight / 3 + LABEL_SIZE) / cell).roundToInt().coerceAtLeast(minSquares)
+    while (squares > minSquares && cell * squares - LABEL_SIZE > freeHeight) squares--
+    return PortraitBoardsLayout(boardSize = boardSize, gap = cell * squares - LABEL_SIZE)
 }
+
+// Beyond this, the screen is too small to draw the boards at all.
+private const val MAX_GAP_SQUARES = 40
