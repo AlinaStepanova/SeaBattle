@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,7 +34,7 @@ fun GameButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier)
             textAlign = TextAlign.Center,
         ),
         modifier = modifier
-            .background(if (pressed) colors.selected else colors.background)
+            .background(if (pressed) colors.selected else Color.Transparent)
             .border(1.dp, colors.foreground)
             .clickable(interactionSource = interactionSource, indication = null, onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 4.dp)

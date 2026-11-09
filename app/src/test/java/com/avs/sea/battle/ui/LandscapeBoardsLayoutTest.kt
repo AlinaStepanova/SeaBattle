@@ -1,6 +1,7 @@
 package com.avs.sea.battle.ui
 
 import androidx.compose.ui.unit.dp
+import com.avs.sea.battle.SQUARES_COUNT
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -21,13 +22,14 @@ class LandscapeBoardsLayoutTest {
     }
 
     @Test
-    fun gapIsTheSameShareOfTheBoardOnAnyScreen() {
+    fun gridsAreExactlyTwoSquaresApartOnAnyScreen() {
         val screens = listOf(800.dp to 280.dp, 440.dp to 280.dp, 560.dp to 200.dp, 1200.dp to 600.dp)
-        val ratios = screens.map { (width, height) ->
+        screens.forEach { (width, height) ->
             val layout = landscapeBoardsLayout(width, height)
-            layout.gap / layout.boardSize
+            val cell = (layout.boardSize - LABEL_SIZE) / SQUARES_COUNT
+            // The computer board's number column sits between the grids, inside the gap.
+            assertEquals(2 * cell.value, (layout.gap + LABEL_SIZE).value, 0.01f)
         }
-        ratios.forEach { assertEquals(ratios.first(), it, 0.001f) }
     }
 
     @Test
@@ -41,8 +43,9 @@ class LandscapeBoardsLayoutTest {
     }
 
     @Test
-    fun boardsAreClearlySeparated() {
+    fun gridsAreClearlySeparated() {
         val layout = landscapeBoardsLayout(maxWidth = 800.dp, maxHeight = 280.dp)
-        assertTrue(layout.gap >= layout.boardSize * 0.15f)
+        val grid = layout.boardSize - LABEL_SIZE
+        assertTrue(layout.gap + LABEL_SIZE >= grid * 0.15f)
     }
 }

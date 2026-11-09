@@ -27,6 +27,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -37,18 +44,31 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.avs.sea.battle.R
+import kotlin.math.roundToInt
+import com.avs.sea.battle.SQUARES_COUNT
 import com.avs.sea.battle.battle_field.Coordinate
 import com.avs.sea.battle.ui.theme.NeuchaFontFamily
 import com.avs.sea.battle.ui.theme.SeaBattleTheme
 
 private val MENU_BUTTON_SIZE = 48.dp
-private const val BOARD_GAP_TO_BOARD = 0.2f
+private const val LANDSCAPE_GAP_SQUARES = 2
 private val ACTION_AREA_HEIGHT = 56.dp
 private val LANDSCAPE_ACTION_AREA_HEIGHT = 44.dp
 private val SPINNER_SIZE = 16.dp
 
 // The grid itself spans about 75% of the width, as in the original layout; the rest is labels.
 private const val PORTRAIT_BOARD_WIDTH_FRACTION = 0.8f
+
+private fun DrawScope.drawNotebookSquares(playerGrid: Rect, screenOrigin: Offset, color: Color) {
+    val cell = playerGrid.width / SQUARES_COUNT
+    val origin = playerGrid.topLeft - screenOrigin
+    pageLinePositions(origin.x, cell, size.width).forEach { x ->
+        drawLine(color, Offset(x, 0f), Offset(x, size.height), strokeWidth = 1f)
+    }
+    pageLinePositions(origin.y, cell, size.height).forEach { y ->
+        drawLine(color, Offset(0f, y), Offset(size.width, y), strokeWidth = 1f)
+    }
+}
 
 @Composable
 fun GameScreen(
@@ -62,10 +82,17 @@ fun GameScreen(
 ) {
     val isLandscape =
         LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val colors = SeaBattleTheme.colors
+    // The notebook squares run through the player's grid, one square per board cell.
+    var screenOrigin by remember { mutableStateOf(Offset.Zero) }
+    var playerGrid by remember { mutableStateOf<Rect?>(null) }
+    val onGridPlaced: (Rect) -> Unit = { playerGrid = it }
     Box(
         Modifier
             .fillMaxSize()
-            .background(SeaBattleTheme.colors.background)
+            .background(colors.background)
+            .onGloballyPositioned { screenOrigin = it.positionInRoot() }
+            .drawBehind { playerGrid?.let { drawNotebookSquares(it, screenOrigin, colors.pageLine) } }
             .safeDrawingPadding()
     ) {
         Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -89,7 +116,12 @@ fun GameScreen(
                 ) {
                     val layout = landscapeBoardsLayout(maxWidth, maxHeight)
                     Row(horizontalArrangement = Arrangement.spacedBy(layout.gap)) {
-                        PersonBoard(uiState, BoardStyle.Landscape, Modifier.size(layout.boardSize))
+                        PersonBoard(
+                            uiState,
+                            BoardStyle.Landscape,
+                            Modifier.size(layout.boardSize),
+                            onGridPlaced,
+                        )
                         ComputerBoard(
                             uiState,
                             onCellClick,
@@ -99,16 +131,28 @@ fun GameScreen(
                     }
                 }
             } else {
-                Column(
+                BoxWithConstraints(
                     Modifier.weight(1f).fillMaxWidth(),
-                    verticalArrangement = Arrangement.SpaceEvenly,
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                    contentAlignment = Alignment.Center,
                 ) {
-                    val boardModifier = Modifier
-                        .weight(1f, fill = false)
-                        .fillMaxWidth(PORTRAIT_BOARD_WIDTH_FRACTION)
-                    PersonBoard(uiState, BoardStyle.Portrait, boardModifier)
-                    ComputerBoard(uiState, onCellClick, BoardStyle.Portrait, boardModifier)
+                    val layout = portraitBoardsLayout(maxWidth, maxHeight)
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(layout.gap),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        PersonBoard(
+                            uiState,
+                            BoardStyle.Portrait,
+                            Modifier.size(layout.boardSize),
+                            onGridPlaced,
+                        )
+                        ComputerBoard(
+                            uiState,
+                            onCellClick,
+                            BoardStyle.Portrait,
+                            Modifier.size(layout.boardSize),
+                        )
+                    }
                 }
             }
             Box(
@@ -139,7 +183,12 @@ private fun StatusText(statusResId: Int, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun PersonBoard(uiState: GameUiState, style: BoardStyle, modifier: Modifier = Modifier) {
+private fun PersonBoard(
+    uiState: GameUiState,
+    style: BoardStyle,
+    modifier: Modifier = Modifier,
+    onGridPlaced: (Rect) -> Unit = {},
+) {
     LabeledBoard(
         ships = uiState.personBoardShips,
         crosses = uiState.personBoardCrosses,
@@ -148,6 +197,7 @@ private fun PersonBoard(uiState: GameUiState, style: BoardStyle, modifier: Modif
         onCellTap = null,
         modifier = modifier,
         style = style,
+        onGridPlaced = onGridPlaced,
     )
 }
 
@@ -258,9 +308,34 @@ private fun GameScreenPreview() {
 
 internal data class LandscapeBoardsLayout(val boardSize: Dp, val gap: Dp)
 
-// Two square boards side by side with a gap that scales with them, so the proportions stay
-// the same on every screen; the boards fill the height unless the width runs out first.
+// Two square boards side by side, sized together from the available space so they keep the
+// same proportions on every screen. The grids are exactly LANDSCAPE_GAP_SQUARES notebook
+// squares apart, so both sit on the page's lines; the gap also holds the computer board's
+// number column.
 internal fun landscapeBoardsLayout(maxWidth: Dp, maxHeight: Dp): LandscapeBoardsLayout {
-    val boardSize = minOf(maxHeight, maxWidth / (2 + BOARD_GAP_TO_BOARD))
-    return LandscapeBoardsLayout(boardSize = boardSize, gap = boardSize * BOARD_GAP_TO_BOARD)
+    val cellByHeight = (maxHeight - LABEL_SIZE) / SQUARES_COUNT
+    val cellByWidth = (maxWidth - LABEL_SIZE) / (2 * SQUARES_COUNT + LANDSCAPE_GAP_SQUARES)
+    val cell = minOf(cellByHeight, cellByWidth).coerceAtLeast(0.dp)
+    return LandscapeBoardsLayout(
+        boardSize = LABEL_SIZE + cell * SQUARES_COUNT,
+        gap = (cell * LANDSCAPE_GAP_SQUARES - LABEL_SIZE).coerceAtLeast(0.dp),
+    )
+}
+
+internal data class PortraitBoardsLayout(val boardSize: Dp, val gap: Dp)
+
+// Two boards stacked, as wide as PORTRAIT_BOARD_WIDTH_FRACTION allows. The gap is rounded so
+// the computer's grid starts a whole number of notebook squares below the player's grid,
+// staying close to an even share of the free height.
+internal fun portraitBoardsLayout(maxWidth: Dp, maxHeight: Dp): PortraitBoardsLayout {
+    val cellByWidth = (maxWidth * PORTRAIT_BOARD_WIDTH_FRACTION - LABEL_SIZE) / SQUARES_COUNT
+    // At least one square between the grid tops beyond the board itself.
+    val cellByHeight = (maxHeight - LABEL_SIZE) / (2 * SQUARES_COUNT + 1)
+    val cell = minOf(cellByWidth, cellByHeight).coerceAtLeast(0.dp)
+    if (cell == 0.dp) return PortraitBoardsLayout(boardSize = 0.dp, gap = 0.dp)
+    val boardSize = LABEL_SIZE + cell * SQUARES_COUNT
+    val freeHeight = maxHeight - boardSize * 2
+    var squares = ((freeHeight / 3 + LABEL_SIZE) / cell).roundToInt().coerceAtLeast(1)
+    while (squares > 1 && cell * squares - LABEL_SIZE > freeHeight) squares--
+    return PortraitBoardsLayout(boardSize = boardSize, gap = (cell * squares - LABEL_SIZE).coerceAtLeast(0.dp))
 }
