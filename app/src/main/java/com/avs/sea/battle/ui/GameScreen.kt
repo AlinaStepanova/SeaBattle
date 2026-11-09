@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -114,7 +114,7 @@ fun GameScreen(
             Box(
                 Modifier
                     .fillMaxWidth()
-                    .height(if (isLandscape) LANDSCAPE_ACTION_AREA_HEIGHT else ACTION_AREA_HEIGHT),
+                    .heightIn(min = if (isLandscape) LANDSCAPE_ACTION_AREA_HEIGHT else ACTION_AREA_HEIGHT),
                 contentAlignment = Alignment.Center,
             ) {
                 ActionArea(uiState, onGenerateShips, onStartGame, onNewGame, onFire)
@@ -177,17 +177,24 @@ private fun ActionArea(
     onNewGame: () -> Unit,
     onFire: () -> Unit,
 ) {
-    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+    Row(
+        Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        // Long labels (e.g. the Russian "Generate ships") wrap within the width left over by the
+        // short buttons instead of pushing them off screen.
+        val wrapping = Modifier.weight(1f, fill = false)
         when (uiState.phase) {
             GamePhase.PLACING -> {
-                GameButton(stringResource(R.string.generate_ships_text), onGenerateShips)
+                GameButton(stringResource(R.string.generate_ships_text), onGenerateShips, wrapping)
                 if (uiState.personBoardShips.isNotEmpty()) {
                     GameButton(stringResource(R.string.start_text), onStartGame)
                 }
             }
             GamePhase.BATTLE -> {
                 if (uiState.selectedCoordinate != null) {
-                    GameButton(stringResource(R.string.fire_text), onFire)
+                    GameButton(stringResource(R.string.fire_text), onFire, wrapping)
                 }
             }
             GamePhase.COMPUTER_TURN -> CircularProgressIndicator(
@@ -195,7 +202,7 @@ private fun ActionArea(
                 strokeWidth = 2.dp,
                 modifier = Modifier.size(SPINNER_SIZE),
             )
-            GamePhase.OVER -> GameButton(stringResource(R.string.new_game_text), onNewGame)
+            GamePhase.OVER -> GameButton(stringResource(R.string.new_game_text), onNewGame, wrapping)
         }
     }
 }

@@ -16,6 +16,9 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.input.pointer.pointerInput
@@ -63,33 +66,36 @@ fun LabeledBoard(
         fontSize = style.labelFontSize,
         textAlign = TextAlign.Center,
     )
-    BoxWithConstraints(modifier, contentAlignment = Alignment.Center) {
-        val boardSide = boardSideFor(maxWidth, maxHeight)
-        Column {
-            Row(Modifier.padding(start = LABEL_SIZE).size(width = boardSide, height = LABEL_SIZE)) {
-                LETTER_IDS.forEach { id ->
-                    Box(Modifier.weight(1f).fillMaxHeight(), contentAlignment = Alignment.Center) {
-                        BasicText(text = stringResource(id), style = labelStyle)
-                    }
-                }
-            }
-            Row {
-                Column(Modifier.size(width = LABEL_SIZE, height = boardSide)) {
-                    NUMBER_IDS.forEach { id ->
-                        Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+    // The grid draws and maps taps left to right, so its labels must not mirror in RTL locales.
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+        BoxWithConstraints(modifier, contentAlignment = Alignment.Center) {
+            val boardSide = boardSideFor(maxWidth, maxHeight)
+            Column {
+                Row(Modifier.padding(start = LABEL_SIZE).size(width = boardSide, height = LABEL_SIZE)) {
+                    LETTER_IDS.forEach { id ->
+                        Box(Modifier.weight(1f).fillMaxHeight(), contentAlignment = Alignment.Center) {
                             BasicText(text = stringResource(id), style = labelStyle)
                         }
                     }
                 }
-                BoardGrid(
-                    ships = ships,
-                    crosses = crosses,
-                    dots = dots,
-                    selected = selected,
-                    onCellTap = onCellTap,
-                    modifier = Modifier.size(boardSide),
-                    style = style,
-                )
+                Row {
+                    Column(Modifier.size(width = LABEL_SIZE, height = boardSide)) {
+                        NUMBER_IDS.forEach { id ->
+                            Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+                                BasicText(text = stringResource(id), style = labelStyle)
+                            }
+                        }
+                    }
+                    BoardGrid(
+                        ships = ships,
+                        crosses = crosses,
+                        dots = dots,
+                        selected = selected,
+                        onCellTap = onCellTap,
+                        modifier = Modifier.size(boardSide),
+                        style = style,
+                    )
+                }
             }
         }
     }
