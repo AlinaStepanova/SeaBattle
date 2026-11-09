@@ -120,9 +120,27 @@ class MainViewModelTest {
     }
 
     @Test
-    fun winningGameEmitsSingleReviewRequest() {
+    fun winningGameDoesNotRequestReviewWhileWinIsOnScreen() {
         winGame()
+        assertEquals(R.string.status_game_over_you_win_text, viewModel.uiState.value.statusResId)
+        assertEquals(emptyList<UiEvent>(), events)
+    }
+
+    @Test
+    fun startingNewGameAfterWinRequestsReviewOnce() {
+        winGame()
+        val eventsBeforeNewGame = events.toList()
+        viewModel.startNewGame()
+        viewModel.startNewGame()
+        assertEquals(emptyList<UiEvent>(), eventsBeforeNewGame)
         assertEquals(listOf<UiEvent>(UiEvent.RequestReview), events)
+    }
+
+    @Test
+    fun startingNewGameAfterLossDoesNotRequestReview() {
+        loseGame()
+        viewModel.startNewGame()
+        assertEquals(emptyList<UiEvent>(), events)
     }
 
     @Test
