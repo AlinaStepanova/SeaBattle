@@ -1,5 +1,6 @@
 package com.avs.sea.battle.main
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -46,6 +47,9 @@ class MainViewModel : ViewModel() {
     private var _endGameEvent = MutableLiveData<Pair<Boolean, Player?>>()
     val endGameEvent: LiveData<Pair<Boolean, Player?>>
         get() = _endGameEvent
+    private var _showReviewRequest = MutableLiveData<Boolean>()
+    val showReviewRequest: LiveData<Boolean>
+        get() = _showReviewRequest
     private lateinit var personBattleField: BattleField
     private lateinit var computerBattleField: BattleField
     private lateinit var shotManager: ShotManager
@@ -63,8 +67,16 @@ class MainViewModel : ViewModel() {
         _startGameEvent.value = false
         _endGameEvent.value = false to null
         _selectedByPersonCoordinate.value = null
+        _showReviewRequest.value = false
         computerBattleField.randomizeShips()
     }
+
+    fun onReviewFlowLaunched() {
+        _showReviewRequest.value = false
+    }
+
+    @VisibleForTesting
+    fun getComputerBattleField(): BattleField = computerBattleField
 
     fun startGame() {
         _startGameEvent.value = true
@@ -104,7 +116,7 @@ class MainViewModel : ViewModel() {
     }
 
     fun makeFireAsPerson() {
-        if (activePlayer == Player.PERSON) {
+        if (activePlayer == Player.PERSON && _selectedByPersonCoordinate.value != null) {
             val shipState = computerBattleField.handleShot(_selectedByPersonCoordinate.value)
             _selectedByPersonCoordinate.value = null
             if (shipState.first) {
@@ -171,6 +183,7 @@ class MainViewModel : ViewModel() {
         if (isPersonWon) {
             _endGameEvent.value = true to Player.PERSON
             _status.value = R.string.status_game_over_you_win_text
+            _showReviewRequest.value = true
         } else {
             _endGameEvent.value = true to Player.COMPUTER
             _status.value = R.string.status_game_over_you_lose_text
