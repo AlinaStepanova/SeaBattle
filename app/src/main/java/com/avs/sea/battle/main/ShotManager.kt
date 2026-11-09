@@ -6,8 +6,9 @@ import com.avs.sea.battle.battle_field.Cell
 import com.avs.sea.battle.battle_field.CellState.*
 import com.avs.sea.battle.battle_field.Coordinate
 import com.avs.sea.battle.ships.Orientation
+import kotlin.random.Random
 
-class ShotManager {
+class ShotManager(private val random: Random = Random.Default) {
 
     private val battleField = BaseBattleField()
 
@@ -232,8 +233,8 @@ class ShotManager {
         fourthCell = Cell()
         do {
             firstCell.setCoordinates(
-                (0 until SQUARES_COUNT).random(),
-                (0 until SQUARES_COUNT).random()
+                (0 until SQUARES_COUNT).random(random),
+                (0 until SQUARES_COUNT).random(random)
             )
         } while (!battleField.isCellFreeToBeSelected(firstCell.getCoordinate()))
         return firstCell.getCoordinate()
