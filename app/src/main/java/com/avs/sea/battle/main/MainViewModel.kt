@@ -65,6 +65,11 @@ class MainViewModel : ViewModel() {
     }
 
     fun startNewGame() {
+        // Ask for a review only once the player has seen their win and chosen to play again,
+        // so the dialog doesn't cover the result screen.
+        if (_uiState.value.winner == Player.PERSON) {
+            _events.tryEmit(UiEvent.RequestReview)
+        }
         initValues()
     }
 
@@ -157,9 +162,6 @@ class MainViewModel : ViewModel() {
                     R.string.status_game_over_you_lose_text
                 },
             )
-        }
-        if (isPersonWon) {
-            _events.tryEmit(UiEvent.RequestReview)
         }
     }
 
