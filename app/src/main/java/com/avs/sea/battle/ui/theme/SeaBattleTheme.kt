@@ -33,8 +33,8 @@ internal val LightColors = SeaBattleColors(
     background = Color(0xFFFCFBF6),
     foreground = BlueBallpoint,
     selected = BlueBallpoint.copy(alpha = 0.3f),
-    shipHatch = BlueBallpoint.copy(alpha = 0.55f),
-    hit = Color(0xFF9E2F2A),
+    shipHatch = BlueBallpoint.copy(alpha = 0.7f),
+    hit = Color(0xFFB23A30),
     pageLine = Color(0xFF608CBE).copy(alpha = 0.3f),
 )
 
@@ -42,7 +42,7 @@ internal val DarkColors = SeaBattleColors(
     background = Color(0xFF2C2924),
     foreground = LampLitPen,
     selected = LampLitPen.copy(alpha = 0.3f),
-    shipHatch = LampLitPen.copy(alpha = 0.45f),
+    shipHatch = LampLitPen.copy(alpha = 0.65f),
     hit = Color(0xFFE08A7E),
     pageLine = Color(0xFFCDC3AA).copy(alpha = 0.13f),
 )

@@ -138,7 +138,7 @@ fun BoardGrid(
         ships.forEach { ship ->
             val corner = Offset(ship.y * cell, ship.x * cell)
             hatch.forEach { (start, end) ->
-                drawLine(colors.shipHatch, corner + start, corner + end, stroke * 1.5f, cap = StrokeCap.Round)
+                drawLine(colors.shipHatch, corner + start, corner + end, stroke * 2f, cap = StrokeCap.Round)
             }
         }
         selected?.let { sel ->
@@ -160,11 +160,10 @@ fun BoardGrid(
             )
         }
         crosses.forEach { cross ->
-            val left = cross.y * cell
-            val top = cross.x * cell
-            val width = hitStrokeWidth(cell)
-            drawLine(colors.hit, Offset(left, top), Offset(left + cell, top + cell), width, cap = StrokeCap.Round)
-            drawLine(colors.hit, Offset(left + cell, top), Offset(left, top + cell), width, cap = StrokeCap.Round)
+            val corner = Offset(cross.y * cell, cross.x * cell)
+            hitCrossStrokes(cell).forEach { (start, end) ->
+                drawLine(colors.hit, corner + start, corner + end, hitStrokeWidth(cell), cap = StrokeCap.Round)
+            }
         }
     }
 }
@@ -194,12 +193,21 @@ internal fun boardSideFor(maxWidth: Dp, maxHeight: Dp): Dp =
 // for larger dots.
 data class BoardStyle(val labelFontSize: TextUnit, val dotRadiusToCell: Float) {
     companion object {
-        val Portrait = BoardStyle(labelFontSize = 18.sp, dotRadiusToCell = 0.08f)
-        val Landscape = BoardStyle(labelFontSize = 15.sp, dotRadiusToCell = 0.05f)
+        val Portrait = BoardStyle(labelFontSize = 18.sp, dotRadiusToCell = 0.07f)
+        val Landscape = BoardStyle(labelFontSize = 15.sp, dotRadiusToCell = 0.045f)
     }
 }
 
 // A hit is crossed out with a firm red pen stroke, bold enough for the red to read clearly.
 internal fun hitStrokeWidth(cellSize: Float): Float = cellSize * 0.07f
+
+// The two strokes of a hit cross, drawn a little inside the cell rather than corner to corner.
+internal fun hitCrossStrokes(cell: Float): List<Pair<Offset, Offset>> {
+    val inset = cell * (1 - HIT_CROSS_TO_CELL) / 2
+    val far = cell - inset
+    return listOf(Offset(inset, inset) to Offset(far, far), Offset(far, inset) to Offset(inset, far))
+}
+
+private const val HIT_CROSS_TO_CELL = 0.8f
 
 internal fun dotRadiusFor(cellSize: Float, style: BoardStyle): Float = cellSize * style.dotRadiusToCell

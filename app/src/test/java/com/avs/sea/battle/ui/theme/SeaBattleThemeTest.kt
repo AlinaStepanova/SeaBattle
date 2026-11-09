@@ -45,7 +45,7 @@ class SeaBattleThemeTest {
 
     @Test
     fun hitsAreCrossedOutWithARedPenInBothThemes() {
-        assertEquals(Color(0xFF9E2F2A), LightColors.hit)
+        assertEquals(Color(0xFFB23A30), LightColors.hit)
         assertEquals(Color(0xFFE08A7E), DarkColors.hit)
         listOf(LightColors, DarkColors).forEach { assertNotEquals(it.foreground, it.hit) }
     }
@@ -62,7 +62,7 @@ class SeaBattleThemeTest {
     fun shipsAreHatchedWithThePen() {
         listOf(LightColors, DarkColors).forEach {
             assertEquals(it.foreground, it.shipHatch.copy(alpha = 1f))
-            assertTrue(it.shipHatch.alpha in 0.4f..0.6f)
+            assertTrue(it.shipHatch.alpha in 0.6f..0.75f)
         }
     }
 
