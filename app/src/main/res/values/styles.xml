@@ -38,7 +38,7 @@
     <style name="MainButtonStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@drawable/square_background</item>
+        <item name="android:background">@drawable/button_background</item>
         <item name="android:fontFamily">@font/neucha</item>
         <item name="android:textSize">@dimen/text_size_18sp</item>
         <item name="android:paddingStart">@dimen/dimen_8dp</item>
