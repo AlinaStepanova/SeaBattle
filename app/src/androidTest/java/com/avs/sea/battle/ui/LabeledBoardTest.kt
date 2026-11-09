@@ -1,7 +1,10 @@
 package com.avs.sea.battle.ui
 
 import androidx.compose.foundation.layout.width
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -13,6 +16,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.avs.sea.battle.SQUARES_COUNT
 import com.avs.sea.battle.ui.theme.SeaBattleTheme
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -46,17 +50,33 @@ class LabeledBoardTest {
         assertCenteredVertically("10", board.top + cellSize(board) * (SQUARES_COUNT - 1), board)
     }
 
-    private fun setBoard(width: Dp) {
+    @Test
+    fun columnLettersStayLeftToRightInRtlLayout() {
+        setBoard(width = 320.dp, layoutDirection = LayoutDirection.Rtl)
+        val board = boardBounds()
+        assertCenteredHorizontally("A", board.left, board)
+        assertCenteredHorizontally("J", board.left + cellSize(board) * (SQUARES_COUNT - 1), board)
+    }
+
+    @Test
+    fun rowNumbersStayLeftOfBoardInRtlLayout() {
+        setBoard(width = 320.dp, layoutDirection = LayoutDirection.Rtl)
+        assertTrue("row numbers moved right of the board", labelBounds("1").right <= boardBounds().left)
+    }
+
+    private fun setBoard(width: Dp, layoutDirection: LayoutDirection = LayoutDirection.Ltr) {
         composeTestRule.setContent {
-            SeaBattleTheme {
-                LabeledBoard(
-                    ships = emptyList(),
-                    crosses = emptyList(),
-                    dots = emptyList(),
-                    selected = null,
-                    onCellTap = null,
-                    modifier = Modifier.width(width),
-                )
+            CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
+                SeaBattleTheme {
+                    LabeledBoard(
+                        ships = emptyList(),
+                        crosses = emptyList(),
+                        dots = emptyList(),
+                        selected = null,
+                        onCellTap = null,
+                        modifier = Modifier.width(width),
+                    )
+                }
             }
         }
     }
