@@ -1,0 +1,21 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#000}canvas{display:block}</style></head><body>
+<canvas id="c"></canvas>
+<script>
+// Trims a store screenshot (top/bottom/left/right pixels) and, if it is still taller than 2:1,
+// widens it by repeating each row's own edge pixels, which continues the page lines exactly.
+const q = new URLSearchParams(location.search);
+const crop = { top: +q.get('top'), bottom: +q.get('bottom'), left: +q.get('left'), right: +q.get('right') };
+const img = new Image();
+img.onload = () => {
+  const W = img.width - crop.left - crop.right, H = img.height - crop.top - crop.bottom;
+  const outW = H > 2 * W ? Math.ceil(H / 2) : W, outH = H;
+  const pad = Math.floor((outW - W) / 2), padRight = outW - W - pad;
+  const c = document.getElementById('c'); c.width = outW; c.height = outH;
+  const g = c.getContext('2d'); g.imageSmoothingEnabled = false;
+  g.drawImage(img, crop.left, crop.top, W, H, pad, 0, W, H);
+  if (pad) g.drawImage(img, crop.left, crop.top, 1, H, 0, 0, pad, H);
+  if (padRight) g.drawImage(img, crop.left + W - 1, crop.top, 1, H, pad + W, 0, padRight, H);
+  document.title = `done ${outW}x${outH}`;
+};
+img.src = q.get('src');
+</script></body></html>
