@@ -16,6 +16,10 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.runtime.CompositionLocalProvider
@@ -48,7 +52,7 @@ private val NUMBER_IDS = listOf(
     R.string.number_9, R.string.number_10,
 )
 
-private val LABEL_SIZE = 20.dp
+internal val LABEL_SIZE = 20.dp
 
 @Composable
 fun LabeledBoard(
@@ -59,6 +63,7 @@ fun LabeledBoard(
     onCellTap: ((Coordinate) -> Unit)?,
     modifier: Modifier = Modifier,
     style: BoardStyle = BoardStyle.Portrait,
+    onGridPlaced: (Rect) -> Unit = {},
 ) {
     val labelStyle = TextStyle(
         color = SeaBattleTheme.colors.foreground,
@@ -92,7 +97,9 @@ fun LabeledBoard(
                         dots = dots,
                         selected = selected,
                         onCellTap = onCellTap,
-                        modifier = Modifier.size(boardSide),
+                        modifier = Modifier
+                            .size(boardSide)
+                            .onGloballyPositioned { onGridPlaced(it.boundsInRoot()) },
                         style = style,
                     )
                 }
@@ -127,12 +134,12 @@ fun BoardGrid(
     Canvas(modifier = modifier.aspectRatio(1f).testTag(BOARD_GRID_TAG).then(tapModifier)) {
         val cell = size.width / SQUARES_COUNT
         val stroke = 1f
+        val hatch = hatchStrokes(cell)
         ships.forEach { ship ->
-            drawRect(
-                color = colors.shipFill,
-                topLeft = Offset(ship.y * cell, ship.x * cell),
-                size = Size(cell, cell),
-            )
+            val corner = Offset(ship.y * cell, ship.x * cell)
+            hatch.forEach { (start, end) ->
+                drawLine(colors.shipHatch, corner + start, corner + end, stroke * 2f, cap = StrokeCap.Round)
+            }
         }
         selected?.let { sel ->
             drawRect(
@@ -153,10 +160,10 @@ fun BoardGrid(
             )
         }
         crosses.forEach { cross ->
-            val left = cross.y * cell
-            val top = cross.x * cell
-            drawLine(colors.foreground, Offset(left, top), Offset(left + cell, top + cell), stroke * 2.5f)
-            drawLine(colors.foreground, Offset(left + cell, top), Offset(left, top + cell), stroke * 2.5f)
+            val corner = Offset(cross.y * cell, cross.x * cell)
+            hitCrossStrokes(cell).forEach { (start, end) ->
+                drawLine(colors.hit, corner + start, corner + end, hitStrokeWidth(cell), cap = StrokeCap.Round)
+            }
         }
     }
 }
@@ -186,9 +193,21 @@ internal fun boardSideFor(maxWidth: Dp, maxHeight: Dp): Dp =
 // for larger dots.
 data class BoardStyle(val labelFontSize: TextUnit, val dotRadiusToCell: Float) {
     companion object {
-        val Portrait = BoardStyle(labelFontSize = 18.sp, dotRadiusToCell = 0.08f)
-        val Landscape = BoardStyle(labelFontSize = 15.sp, dotRadiusToCell = 0.05f)
+        val Portrait = BoardStyle(labelFontSize = 18.sp, dotRadiusToCell = 0.07f)
+        val Landscape = BoardStyle(labelFontSize = 15.sp, dotRadiusToCell = 0.045f)
     }
 }
+
+// A hit is crossed out with a firm red pen stroke, bold enough for the red to read clearly.
+internal fun hitStrokeWidth(cellSize: Float): Float = cellSize * 0.07f
+
+// The two strokes of a hit cross, drawn a little inside the cell rather than corner to corner.
+internal fun hitCrossStrokes(cell: Float): List<Pair<Offset, Offset>> {
+    val inset = cell * (1 - HIT_CROSS_TO_CELL) / 2
+    val far = cell - inset
+    return listOf(Offset(inset, inset) to Offset(far, far), Offset(far, inset) to Offset(inset, far))
+}
+
+private const val HIT_CROSS_TO_CELL = 0.8f
 
 internal fun dotRadiusFor(cellSize: Float, style: BoardStyle): Float = cellSize * style.dotRadiusToCell

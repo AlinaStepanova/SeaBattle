@@ -19,21 +19,32 @@ data class SeaBattleColors(
     val background: Color,
     val foreground: Color,
     val selected: Color,
-    val shipFill: Color,
+    val shipHatch: Color,
+    val hit: Color,
+    val pageLine: Color,
 )
 
+// A squared school-notebook page: everything is drawn in one pen on faint squares, and hits
+// are crossed out with a red pen. Dark mode is the same page under a dim lamp.
+private val BlueBallpoint = Color(0xFF2A4DA8)
+private val LampLitPen = Color(0xFFE6DFCF)
+
 internal val LightColors = SeaBattleColors(
-    background = Color(0xFFFAFAFA),
-    foreground = Color.Black,
-    selected = Color(0x99C1C0C0),
-    shipFill = Color(0x99808080),
+    background = Color(0xFFFCFBF6),
+    foreground = BlueBallpoint,
+    selected = BlueBallpoint.copy(alpha = 0.3f),
+    shipHatch = BlueBallpoint.copy(alpha = 0.7f),
+    hit = Color(0xFFB23A30),
+    pageLine = Color(0xFF608CBE).copy(alpha = 0.3f),
 )
 
 internal val DarkColors = SeaBattleColors(
-    background = Color(0xFF303030),
-    foreground = Color.White,
-    selected = Color(0x99C1C0C0),
-    shipFill = Color(0x99808080),
+    background = Color(0xFF2C2924),
+    foreground = LampLitPen,
+    selected = LampLitPen.copy(alpha = 0.3f),
+    shipHatch = LampLitPen.copy(alpha = 0.65f),
+    hit = Color(0xFFE08A7E),
+    pageLine = Color(0xFFCDC3AA).copy(alpha = 0.13f),
 )
 
 private val LocalSeaBattleColors = staticCompositionLocalOf { LightColors }

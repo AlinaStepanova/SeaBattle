@@ -1,6 +1,7 @@
 package com.avs.sea.battle.ui
 
 import androidx.compose.ui.unit.dp
+import com.avs.sea.battle.SQUARES_COUNT
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -21,13 +22,14 @@ class LandscapeBoardsLayoutTest {
     }
 
     @Test
-    fun gapIsTheSameShareOfTheBoardOnAnyScreen() {
+    fun gridsAreExactlyTwoSquaresApartOnAnyScreen() {
         val screens = listOf(800.dp to 280.dp, 440.dp to 280.dp, 560.dp to 200.dp, 1200.dp to 600.dp)
-        val ratios = screens.map { (width, height) ->
+        screens.forEach { (width, height) ->
             val layout = landscapeBoardsLayout(width, height)
-            layout.gap / layout.boardSize
+            val cell = (layout.boardSize - LABEL_SIZE) / SQUARES_COUNT
+            // The computer board's number column sits between the grids, inside the gap.
+            assertEquals(2 * cell.value, (layout.gap + LABEL_SIZE).value, 0.01f)
         }
-        ratios.forEach { assertEquals(ratios.first(), it, 0.001f) }
     }
 
     @Test
@@ -41,8 +43,33 @@ class LandscapeBoardsLayoutTest {
     }
 
     @Test
-    fun boardsAreClearlySeparated() {
+    fun gridsAreClearlySeparated() {
         val layout = landscapeBoardsLayout(maxWidth = 800.dp, maxHeight = 280.dp)
-        assertTrue(layout.gap >= layout.boardSize * 0.15f)
+        val grid = layout.boardSize - LABEL_SIZE
+        assertTrue(layout.gap + LABEL_SIZE >= grid * 0.15f)
+    }
+
+    // Compact areas where a cell is narrower than half the label column.
+    private val compactScreens = listOf(224.dp to 200.dp, 560.dp to 100.dp, 300.dp to 120.dp)
+
+    @Test
+    fun compactLayoutsStillFitTheAvailableSpace() {
+        compactScreens.forEach { (width, height) ->
+            val layout = landscapeBoardsLayout(width, height)
+            assertTrue("screen $width x $height", layout.boardSize * 2 + layout.gap <= width + 0.01.dp)
+            assertTrue("screen $width x $height", layout.boardSize <= height + 0.01.dp)
+            assertTrue("screen $width x $height", layout.gap >= 0.dp)
+        }
+    }
+
+    @Test
+    fun compactLayoutsKeepGridsAWholeNumberOfSquaresApart() {
+        compactScreens.forEach { (width, height) ->
+            val layout = landscapeBoardsLayout(width, height)
+            val cell = ((layout.boardSize - LABEL_SIZE) / SQUARES_COUNT)
+            val squares = (layout.gap + LABEL_SIZE) / cell
+            assertEquals("screen $width x $height", Math.round(squares).toFloat(), squares, 0.01f)
+            assertTrue("screen $width x $height", squares >= 2f - 0.01f)
+        }
     }
 }

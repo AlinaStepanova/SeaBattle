@@ -21,12 +21,15 @@ import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpRect
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.avs.sea.battle.R
+import com.avs.sea.battle.SQUARES_COUNT
 import com.avs.sea.battle.ui.theme.SeaBattleTheme
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -125,12 +128,53 @@ class GameScreenSpacingTest {
     }
 
     @Test
+    fun portraitComputerGridSitsOnTheNotebookSquares() {
+        setGameScreen(isLandscape = false)
+        assertWholeSquares(grid(COMPUTER).top - grid(PERSON).top)
+    }
+
+    @Test
+    fun smallPhonePortraitComputerGridSitsOnTheNotebookSquares() {
+        setGameScreen(isLandscape = false, width = SMALL_PHONE_SHORT_SIDE, height = SMALL_PHONE_LONG_SIDE)
+        assertWholeSquares(grid(COMPUTER).top - grid(PERSON).top)
+    }
+
+    @Test
+    fun landscapeComputerGridSitsOnTheNotebookSquares() {
+        setGameScreen(isLandscape = true)
+        assertWholeSquares(grid(COMPUTER).left - grid(PERSON).left)
+    }
+
+    @Test
+    fun smallPhoneLandscapeComputerGridSitsOnTheNotebookSquares() {
+        setGameScreen(isLandscape = true, width = SMALL_PHONE_LONG_SIDE, height = SMALL_PHONE_SHORT_SIDE)
+        assertWholeSquares(grid(COMPUTER).left - grid(PERSON).left)
+    }
+
+    @Test
+    fun menuItemsAreAtLeastAsLargeAsTheStatusText() {
+        setGameScreen(isLandscape = false)
+        composeTestRule.onNodeWithContentDescription(string(R.string.more_settings)).performClick()
+        val menuItem = textLayout(string(R.string.menu_share_text)).layoutInput.style.fontSize
+        val status = textLayout(string(R.string.status_welcome_text)).layoutInput.style.fontSize
+        assertTrue("menu item is $menuItem, status is $status", menuItem.value >= status.value)
+    }
+
+    @Test
     fun computerTurnSpinnerIsSmall() {
         setGameScreen(isLandscape = false, uiState = GameUiState(phase = GamePhase.COMPUTER_TURN))
         val spinner = composeTestRule
             .onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate))
             .getBoundsInRoot()
         assertTrue("spinner size was ${spinner.width}", spinner.width <= 20.dp)
+    }
+
+    // One notebook square is one board cell; allow a pixel of rounding.
+    private fun assertWholeSquares(distance: Dp) {
+        val cell = grid(PERSON).width / SQUARES_COUNT
+        val squares = distance / cell
+        val offBy = cell * kotlin.math.abs(squares - kotlin.math.round(squares))
+        assertTrue("grids are $squares squares apart", offBy <= 1.dp)
     }
 
     // The gap between grids also holds the computer board's number column.
