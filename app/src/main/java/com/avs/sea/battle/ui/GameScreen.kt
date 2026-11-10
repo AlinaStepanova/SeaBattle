@@ -1,0 +1,347 @@
+package com.avs.sea.battle.ui
+
+import android.content.res.Configuration
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.avs.sea.battle.R
+import kotlin.math.roundToInt
+import com.avs.sea.battle.SQUARES_COUNT
+import com.avs.sea.battle.battle_field.Coordinate
+import com.avs.sea.battle.ui.theme.NeuchaFontFamily
+import com.avs.sea.battle.ui.theme.SeaBattleTheme
+
+private val MENU_BUTTON_SIZE = 48.dp
+private const val LANDSCAPE_GAP_SQUARES = 2
+private val ACTION_AREA_HEIGHT = 56.dp
+private val LANDSCAPE_ACTION_AREA_HEIGHT = 44.dp
+private val SPINNER_SIZE = 16.dp
+
+// The grid itself spans about 75% of the width, as in the original layout; the rest is labels.
+private const val PORTRAIT_BOARD_WIDTH_FRACTION = 0.8f
+
+private fun DrawScope.drawNotebookSquares(playerGrid: Rect, screenOrigin: Offset, color: Color) {
+    val cell = playerGrid.width / SQUARES_COUNT
+    val origin = playerGrid.topLeft - screenOrigin
+    pageLinePositions(origin.x, cell, size.width).forEach { x ->
+        drawLine(color, Offset(x, 0f), Offset(x, size.height), strokeWidth = 1f)
+    }
+    pageLinePositions(origin.y, cell, size.height).forEach { y ->
+        drawLine(color, Offset(0f, y), Offset(size.width, y), strokeWidth = 1f)
+    }
+}
+
+@Composable
+fun GameScreen(
+    uiState: GameUiState,
+    onGenerateShips: () -> Unit,
+    onStartGame: () -> Unit,
+    onNewGame: () -> Unit,
+    onCellClick: (Coordinate) -> Unit,
+    onFire: () -> Unit,
+    onMenuAction: (MenuAction) -> Unit,
+) {
+    val isLandscape =
+        LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val colors = SeaBattleTheme.colors
+    // The notebook squares run through the player's grid, one square per board cell.
+    var screenOrigin by remember { mutableStateOf(Offset.Zero) }
+    var playerGrid by remember { mutableStateOf<Rect?>(null) }
+    val onGridPlaced: (Rect) -> Unit = { playerGrid = it }
+    Box(
+        Modifier
+            .fillMaxSize()
+            .background(colors.background)
+            .onGloballyPositioned { screenOrigin = it.positionInRoot() }
+            .drawBehind { playerGrid?.let { drawNotebookSquares(it, screenOrigin, colors.pageLine) } }
+            .safeDrawingPadding()
+    ) {
+        Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+            // Landscape is short on height, so it gets tighter vertical spacing.
+            StatusText(
+                uiState.statusResId,
+                Modifier.padding(
+                    top = if (isLandscape) 2.dp else 10.dp,
+                    start = MENU_BUTTON_SIZE,
+                    end = MENU_BUTTON_SIZE,
+                )
+            )
+            if (isLandscape) {
+                // Horizontal padding keeps the computer board clear of the overflow menu.
+                BoxWithConstraints(
+                    Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .padding(horizontal = MENU_BUTTON_SIZE, vertical = 4.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    val layout = landscapeBoardsLayout(maxWidth, maxHeight)
+                    Row(horizontalArrangement = Arrangement.spacedBy(layout.gap)) {
+                        PersonBoard(
+                            uiState,
+                            BoardStyle.Landscape,
+                            Modifier.size(layout.boardSize),
+                            onGridPlaced,
+                        )
+                        ComputerBoard(
+                            uiState,
+                            onCellClick,
+                            BoardStyle.Landscape,
+                            Modifier.size(layout.boardSize),
+                        )
+                    }
+                }
+            } else {
+                BoxWithConstraints(
+                    Modifier.weight(1f).fillMaxWidth(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    val layout = portraitBoardsLayout(maxWidth, maxHeight)
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(layout.gap),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        PersonBoard(
+                            uiState,
+                            BoardStyle.Portrait,
+                            Modifier.size(layout.boardSize),
+                            onGridPlaced,
+                        )
+                        ComputerBoard(
+                            uiState,
+                            onCellClick,
+                            BoardStyle.Portrait,
+                            Modifier.size(layout.boardSize),
+                        )
+                    }
+                }
+            }
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = if (isLandscape) LANDSCAPE_ACTION_AREA_HEIGHT else ACTION_AREA_HEIGHT),
+                contentAlignment = Alignment.Center,
+            ) {
+                ActionArea(uiState, onGenerateShips, onStartGame, onNewGame, onFire)
+            }
+        }
+        MoreMenu(onMenuAction, Modifier.align(Alignment.TopEnd))
+    }
+}
+
+@Composable
+private fun StatusText(statusResId: Int, modifier: Modifier = Modifier) {
+    BasicText(
+        text = stringResource(statusResId),
+        style = TextStyle(
+            color = SeaBattleTheme.colors.foreground,
+            fontFamily = NeuchaFontFamily,
+            fontSize = 18.sp,
+            textAlign = TextAlign.Center,
+        ),
+        modifier = modifier,
+    )
+}
+
+@Composable
+private fun PersonBoard(
+    uiState: GameUiState,
+    style: BoardStyle,
+    modifier: Modifier = Modifier,
+    onGridPlaced: (Rect) -> Unit = {},
+) {
+    LabeledBoard(
+        ships = uiState.personBoardShips,
+        crosses = uiState.personBoardCrosses,
+        dots = uiState.personBoardDots,
+        selected = null,
+        onCellTap = null,
+        modifier = modifier,
+        style = style,
+        onGridPlaced = onGridPlaced,
+    )
+}
+
+@Composable
+private fun ComputerBoard(
+    uiState: GameUiState,
+    onCellClick: (Coordinate) -> Unit,
+    style: BoardStyle,
+    modifier: Modifier = Modifier,
+) {
+    LabeledBoard(
+        ships = uiState.computerBoardShips,
+        crosses = uiState.computerBoardCrosses,
+        dots = uiState.computerBoardDots,
+        selected = uiState.selectedCoordinate,
+        onCellTap = if (uiState.phase == GamePhase.BATTLE) onCellClick else null,
+        modifier = modifier,
+        style = style,
+    )
+}
+
+@Composable
+private fun ActionArea(
+    uiState: GameUiState,
+    onGenerateShips: () -> Unit,
+    onStartGame: () -> Unit,
+    onNewGame: () -> Unit,
+    onFire: () -> Unit,
+) {
+    Row(
+        Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        // Long labels (e.g. the Russian "Generate ships") wrap within the width left over by the
+        // short buttons instead of pushing them off screen.
+        val wrapping = Modifier.weight(1f, fill = false)
+        when (uiState.phase) {
+            GamePhase.PLACING -> {
+                GameButton(stringResource(R.string.generate_ships_text), onGenerateShips, wrapping)
+                if (uiState.personBoardShips.isNotEmpty()) {
+                    GameButton(stringResource(R.string.start_text), onStartGame)
+                }
+            }
+            GamePhase.BATTLE -> {
+                if (uiState.selectedCoordinate != null) {
+                    GameButton(stringResource(R.string.fire_text), onFire, wrapping)
+                }
+            }
+            GamePhase.COMPUTER_TURN -> CircularProgressIndicator(
+                color = SeaBattleTheme.colors.foreground,
+                strokeWidth = 2.dp,
+                modifier = Modifier.size(SPINNER_SIZE),
+            )
+            GamePhase.OVER -> GameButton(stringResource(R.string.new_game_text), onNewGame, wrapping)
+        }
+    }
+}
+
+@Composable
+private fun MoreMenu(onMenuAction: (MenuAction) -> Unit, modifier: Modifier = Modifier) {
+    var expanded by remember { mutableStateOf(false) }
+    Box(modifier) {
+        IconButton(onClick = { expanded = true }) {
+            Icon(
+                painter = painterResource(R.drawable.ic_more),
+                contentDescription = stringResource(R.string.more_settings),
+                tint = SeaBattleTheme.colors.foreground,
+            )
+        }
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            MenuEntry(R.string.menu_share_text, MenuAction.SHARE, onMenuAction) { expanded = false }
+            MenuEntry(R.string.menu_rate_on_play_market_text, MenuAction.RATE, onMenuAction) { expanded = false }
+            MenuEntry(R.string.menu_more_apps_text, MenuAction.MORE_APPS, onMenuAction) { expanded = false }
+            MenuEntry(R.string.menu_write_to_author_text, MenuAction.WRITE_TO_AUTHOR, onMenuAction) { expanded = false }
+            MenuEntry(R.string.menu_privacy_policy_text, MenuAction.PRIVACY_POLICY, onMenuAction) { expanded = false }
+        }
+    }
+}
+
+@Composable
+private fun MenuEntry(
+    textResId: Int,
+    action: MenuAction,
+    onMenuAction: (MenuAction) -> Unit,
+    dismiss: () -> Unit,
+) {
+    DropdownMenuItem(
+        text = { Text(stringResource(textResId), fontFamily = NeuchaFontFamily, fontSize = 20.sp) },
+        onClick = {
+            dismiss()
+            onMenuAction(action)
+        },
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun GameScreenPreview() {
+    SeaBattleTheme {
+        GameScreen(
+            uiState = GameUiState(personBoardShips = listOf(Coordinate(1, 1))),
+            onGenerateShips = {}, onStartGame = {}, onNewGame = {},
+            onCellClick = {}, onFire = {}, onMenuAction = {},
+        )
+    }
+}
+
+internal data class LandscapeBoardsLayout(val boardSize: Dp, val gap: Dp)
+
+// Two square boards side by side, sized together from the available space so they keep the
+// same proportions on every screen. The grids are LANDSCAPE_GAP_SQUARES notebook squares
+// apart, so both sit on the page's lines; the gap also holds the computer board's number
+// column, so on tiny screens, where those squares are narrower than it, more squares are used.
+internal fun landscapeBoardsLayout(maxWidth: Dp, maxHeight: Dp): LandscapeBoardsLayout {
+    val cellByHeight = (maxHeight - LABEL_SIZE) / SQUARES_COUNT
+    for (squares in LANDSCAPE_GAP_SQUARES..MAX_GAP_SQUARES) {
+        val cell = minOf(cellByHeight, (maxWidth - LABEL_SIZE) / (2 * SQUARES_COUNT + squares))
+        if (cell <= 0.dp) break
+        if (cell * squares >= LABEL_SIZE) {
+            return LandscapeBoardsLayout(boardSize = LABEL_SIZE + cell * SQUARES_COUNT, gap = cell * squares - LABEL_SIZE)
+        }
+    }
+    return LandscapeBoardsLayout(boardSize = 0.dp, gap = 0.dp)
+}
+
+internal data class PortraitBoardsLayout(val boardSize: Dp, val gap: Dp)
+
+// Two boards stacked, as wide as PORTRAIT_BOARD_WIDTH_FRACTION allows. The computer's grid
+// starts a whole number of notebook squares below the player's grid: at least enough squares
+// to hold its letter row, and otherwise close to an even share of the free height.
+internal fun portraitBoardsLayout(maxWidth: Dp, maxHeight: Dp): PortraitBoardsLayout {
+    val cellByWidth = (maxWidth * PORTRAIT_BOARD_WIDTH_FRACTION - LABEL_SIZE) / SQUARES_COUNT
+    val fit = (1..MAX_GAP_SQUARES).firstNotNullOfOrNull { squares ->
+        val cell = minOf(cellByWidth, (maxHeight - LABEL_SIZE) / (2 * SQUARES_COUNT + squares))
+        if (cell > 0.dp && cell * squares >= LABEL_SIZE) cell to squares else null
+    } ?: return PortraitBoardsLayout(boardSize = 0.dp, gap = 0.dp)
+    val (cell, minSquares) = fit
+    val boardSize = LABEL_SIZE + cell * SQUARES_COUNT
+    val freeHeight = maxHeight - boardSize * 2
+    var squares = ((freeHeight / 3 + LABEL_SIZE) / cell).roundToInt().coerceAtLeast(minSquares)
+    while (squares > minSquares && cell * squares - LABEL_SIZE > freeHeight) squares--
+    return PortraitBoardsLayout(boardSize = boardSize, gap = cell * squares - LABEL_SIZE)
+}
+
+// Beyond this, the screen is too small to draw the boards at all.
+private const val MAX_GAP_SQUARES = 40

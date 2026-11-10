@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Морский Бій</string>
+    <string name="app_name">Морський Бій</string>
     <string name="letter_a">А</string>
     <string name="letter_b">Б</string>
     <string name="letter_c">В</string>
@@ -18,8 +18,8 @@
     <string name="status_welcome_text">Ласкаво просимо!</string>
     <string name="status_generate_or_start_text">Згенеруйте кораблі знову або розпочніть гру</string>
     <string name="status_select_to_fire_text">Оберіть клітинку для пострілу</string>
-    <string name="status_game_over_you_win_text">Гра завершена ви перемогли!</string>
-    <string name="status_game_over_you_lose_text">Гра завершена ви програли</string>
+    <string name="status_game_over_you_win_text">Гра завершена, ви перемогли!</string>
+    <string name="status_game_over_you_lose_text">Гра завершена, ви програли</string>
     <string name="status_shot_ship_again_text">Оберіть клітинку та зробіть постріл знову</string>
     <string name="status_opponent_shot_text">Опонент робить постріл</string>
     <string name="status_opponent_shot_again_text">Опонент робить постріл знову</string>

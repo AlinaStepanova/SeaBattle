@@ -1,20 +1,21 @@
 apply plugin: 'com.android.application'
 
-apply plugin: 'kotlin-android'
+apply plugin: 'org.jetbrains.kotlin.plugin.compose'
 
-apply plugin: 'kotlin-kapt'
-
+// Release signing credentials stay out of git; builds without the file skip release signing.
 def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
-keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
 
 android {
-    compileSdk 34
+    compileSdk 37
     defaultConfig {
         applicationId "com.avs.sea.battle"
-        minSdkVersion 21
-        targetSdkVersion 34
-        versionCode 13
+        minSdkVersion 23
+        targetSdkVersion 36
+        versionCode 18
         versionName "1.0.$versionCode"
         vectorDrawables.useSupportLibrary = true
         resourceConfigurations += ['en', 'uk', 'ru']
@@ -22,10 +23,12 @@ android {
     }
     signingConfigs {
         release {
-            keyPassword keystoreProperties['keyPassword']
-            keyAlias keystoreProperties['keyAlias']
-            storeFile file(keystoreProperties['storeFile'])
-            storePassword keystoreProperties['storePassword']
+            if (keystorePropertiesFile.exists()) {
+                keyPassword keystoreProperties['keyPassword']
+                keyAlias keystoreProperties['keyAlias']
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+            }
         }
     }
     buildTypes {
@@ -35,42 +38,45 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    dataBinding {
-        enabled = true
-    }
     buildFeatures {
-        viewBinding = true
+        compose = true
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = '17'
     }
     namespace 'com.avs.sea.battle'
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.7.0'
-    implementation 'androidx.core:core-ktx:1.13.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.appcompat:appcompat:1.8.0'
+    implementation 'androidx.core:core-ktx:1.19.1'
 
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
-    testImplementation "org.mockito:mockito-core:3.3.0"
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.3.0'
+    testImplementation "org.mockito:mockito-core:5.24.0"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0"
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.7.0'
 
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3'
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.2"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0'
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.11.0"
 
-    kapt "com.android.databinding:compiler:3.1.4"
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    androidTestImplementation 'androidx.test:rules:1.6.1'
-    implementation 'com.google.android.play:review:2.0.1'
-    implementation 'com.google.android.play:review-ktx:2.0.1'
+    androidTestImplementation 'androidx.test:rules:1.7.0'
+    implementation 'com.google.android.play:review:2.0.2'
+    implementation 'com.google.android.play:review-ktx:2.0.2'
+
+    def composeBom = platform('androidx.compose:compose-bom:2026.09.00')
+    implementation composeBom
+    androidTestImplementation composeBom
+    implementation 'androidx.compose.ui:ui'
+    implementation 'androidx.compose.ui:ui-graphics'
+    implementation 'androidx.compose.ui:ui-tooling-preview'
+    implementation 'androidx.compose.material3:material3'
+    implementation 'androidx.activity:activity-compose:1.13.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-compose:2.11.0'
+    debugImplementation 'androidx.compose.ui:ui-tooling'
+    debugImplementation 'androidx.compose.ui:ui-test-manifest'
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
 }

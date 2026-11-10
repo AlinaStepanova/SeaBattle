@@ -9,6 +9,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import kotlin.random.Random
 
 class ShotManagerTest {
 
@@ -242,7 +243,22 @@ class ShotManagerTest {
     }
 
     @Test
+    fun shotManagersWithSameSeedPickSameRandomShots() {
+        val first = ShotManager(Random(SEED))
+        val second = ShotManager(Random(SEED))
+        repeat(10) {
+            val coordinate = first.getCoordinateToShot()
+            first.handleShot(false to ArrayList())
+            assertEquals(coordinate, second.getCoordinateToShot())
+            second.handleShot(false to ArrayList())
+        }
+    }
+
+    // Seeded so the scripted hits below never land on a cell whose neighbours are all
+    // already ruled out - a state a real game can't produce, which made this test flaky.
+    @Test
     fun getCoordinateToShot() {
+        shotManager = ShotManager(Random(SEED))
         val coordinate1 = shotManager.getCoordinateToShot()
         assertEquals(coordinate1, shotManager.getFirstCell().getCoordinate())
         shotManager.handleShot(true to ArrayList())
@@ -275,5 +291,23 @@ class ShotManagerTest {
         assertEquals(coordinate8, shotManager.getSecondCell().getCoordinate())
         shotManager.handleShot(true to ArrayList())
         assertFalse(shotManager.getBattleField().isCellFreeToBeSelected(coordinate8))
+    }
+
+    @Test
+    fun getRandomCoordinateResetsHuntState() {
+        shotManager.getCoordinateToShot()
+        shotManager.handleShot(true to ArrayList())
+        shotManager.getCoordinateToShot()
+        shotManager.handleShot(true to ArrayList())
+        assertTrue(shotManager.getSecondCell().isState(CellState.SHOT_SUCCESS))
+        shotManager.getRandomCoordinate()
+        assertTrue(shotManager.getFirstCell().isState(CellState.EMPTY))
+        assertTrue(shotManager.getSecondCell().isState(CellState.EMPTY))
+        assertTrue(shotManager.getThirdCell().isState(CellState.EMPTY))
+        assertTrue(shotManager.getFourthCell().isState(CellState.EMPTY))
+    }
+
+    private companion object {
+        const val SEED = 42
     }
 }
