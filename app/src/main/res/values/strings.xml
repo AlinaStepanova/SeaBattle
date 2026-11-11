@@ -24,8 +24,6 @@
     <string name="fire_text">Fire!</string>
     <string name="start_text">Start</string>
     <string name="new_game_text">New Game</string>
-    <string name="status_welcome_text">Welcome!</string>
-    <string name="status_generate_or_start_text">Generate ships again or start the game</string>
     <string name="status_select_to_fire_text">Select a cell to make a fire</string>
     <string name="status_game_over_you_win_text">Game over, you win!</string>
     <string name="status_game_over_you_lose_text">Game over, you lose</string>
@@ -42,4 +40,9 @@
     <string name="share_text">Share via</string>
     <string name="cannot_open_market_error_text">Unable to open Play Market app</string>
     <string name="more_settings">More</string>
+    <string name="status_place_ships_text">Tap a ship, then a cell to move it. Tap it again to rotate.</string>
+    <string name="new_game_dialog_title">Start a new game?</string>
+    <string name="new_game_dialog_message">The current game will be lost.</string>
+    <string name="dialog_yes">Yes</string>
+    <string name="dialog_no">No</string>
 </resources>

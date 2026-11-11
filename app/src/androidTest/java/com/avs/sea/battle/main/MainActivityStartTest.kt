@@ -21,7 +21,7 @@ class MainActivityStartTest {
     @Test
     fun mainActivityStartTest() {
         val activity = composeTestRule.activity
-        composeTestRule.onNodeWithText(activity.getString(R.string.status_welcome_text))
+        composeTestRule.onNodeWithText(activity.getString(R.string.status_place_ships_text))
             .assertIsDisplayed()
         composeTestRule.onNodeWithText(activity.getString(R.string.generate_ships_text))
             .assertIsDisplayed()

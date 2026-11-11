@@ -21,6 +21,7 @@ data class SeaBattleColors(
     val selected: Color,
     val shipHatch: Color,
     val hit: Color,
+    val rejected: Color,
     val pageLine: Color,
 )
 
@@ -35,6 +36,7 @@ internal val LightColors = SeaBattleColors(
     selected = BlueBallpoint.copy(alpha = 0.3f),
     shipHatch = BlueBallpoint.copy(alpha = 0.7f),
     hit = Color(0xFFB23A30),
+    rejected = Color(0xFFB23A30).copy(alpha = 0.35f),
     pageLine = Color(0xFF608CBE).copy(alpha = 0.3f),
 )
 
@@ -44,6 +46,7 @@ internal val DarkColors = SeaBattleColors(
     selected = LampLitPen.copy(alpha = 0.3f),
     shipHatch = LampLitPen.copy(alpha = 0.65f),
     hit = Color(0xFFE08A7E),
+    rejected = Color(0xFFE08A7E).copy(alpha = 0.35f),
     pageLine = Color(0xFFCDC3AA).copy(alpha = 0.13f),
 )
 

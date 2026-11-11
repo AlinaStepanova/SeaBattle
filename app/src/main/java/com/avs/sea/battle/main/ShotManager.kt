@@ -17,11 +17,7 @@ class ShotManager(private val random: Random = Random.Default) {
     private var thirdCell = Cell()
     private var fourthCell = Cell()
 
-    private var ships = mutableListOf(
-        FOUR_DECK_SHIP_SIZE, THREE_DECK_SHIP_SIZE, THREE_DECK_SHIP_SIZE,
-        TWO_DECK_SHIP_SIZE, TWO_DECK_SHIP_SIZE, TWO_DECK_SHIP_SIZE,
-        ONE_DECK_SHIP_SIZE, ONE_DECK_SHIP_SIZE, ONE_DECK_SHIP_SIZE, ONE_DECK_SHIP_SIZE
-    )
+    private var ships = FLEET.toMutableList()
 
     fun getShipsSize(): Int = ships.size
 

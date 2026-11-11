@@ -14,12 +14,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -79,6 +81,9 @@ fun GameScreen(
     onCellClick: (Coordinate) -> Unit,
     onFire: () -> Unit,
     onMenuAction: (MenuAction) -> Unit,
+    onPersonCellClick: (Coordinate) -> Unit = {},
+    onConfirmNewGame: () -> Unit = {},
+    onDismissNewGame: () -> Unit = {},
 ) {
     val isLandscape =
         LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -105,56 +110,14 @@ fun GameScreen(
                     end = MENU_BUTTON_SIZE,
                 )
             )
-            if (isLandscape) {
-                // Horizontal padding keeps the computer board clear of the overflow menu.
-                BoxWithConstraints(
-                    Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                        .padding(horizontal = MENU_BUTTON_SIZE, vertical = 4.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    val layout = landscapeBoardsLayout(maxWidth, maxHeight)
-                    Row(horizontalArrangement = Arrangement.spacedBy(layout.gap)) {
-                        PersonBoard(
-                            uiState,
-                            BoardStyle.Landscape,
-                            Modifier.size(layout.boardSize),
-                            onGridPlaced,
-                        )
-                        ComputerBoard(
-                            uiState,
-                            onCellClick,
-                            BoardStyle.Landscape,
-                            Modifier.size(layout.boardSize),
-                        )
-                    }
-                }
-            } else {
-                BoxWithConstraints(
-                    Modifier.weight(1f).fillMaxWidth(),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    val layout = portraitBoardsLayout(maxWidth, maxHeight)
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(layout.gap),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        PersonBoard(
-                            uiState,
-                            BoardStyle.Portrait,
-                            Modifier.size(layout.boardSize),
-                            onGridPlaced,
-                        )
-                        ComputerBoard(
-                            uiState,
-                            onCellClick,
-                            BoardStyle.Portrait,
-                            Modifier.size(layout.boardSize),
-                        )
-                    }
-                }
-            }
+            Boards(
+                uiState,
+                isLandscape,
+                onPersonCellClick,
+                onCellClick,
+                onGridPlaced,
+                Modifier.weight(1f).fillMaxWidth(),
+            )
             Box(
                 Modifier
                     .fillMaxWidth()
@@ -165,6 +128,52 @@ fun GameScreen(
             }
         }
         MoreMenu(onMenuAction, Modifier.align(Alignment.TopEnd))
+    }
+    if (uiState.showNewGameConfirmation) {
+        NewGameDialog(onConfirm = onConfirmNewGame, onDismiss = onDismissNewGame)
+    }
+}
+
+// While ships are placed only the player's board is shown, enlarged; the battle shows both.
+@Composable
+private fun Boards(
+    uiState: GameUiState,
+    isLandscape: Boolean,
+    onPersonCellClick: (Coordinate) -> Unit,
+    onComputerCellClick: (Coordinate) -> Unit,
+    onGridPlaced: (Rect) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val style = if (isLandscape) BoardStyle.Landscape else BoardStyle.Portrait
+    // Horizontal padding keeps the boards clear of the overflow menu in landscape.
+    val padding = if (isLandscape) Modifier.padding(horizontal = MENU_BUTTON_SIZE, vertical = 4.dp) else Modifier
+    BoxWithConstraints(modifier.then(padding), contentAlignment = Alignment.Center) {
+        when {
+            uiState.phase == GamePhase.PLACING -> PersonBoard(
+                uiState,
+                style,
+                Modifier.size(placementBoardSize(maxWidth, maxHeight)),
+                onGridPlaced,
+                onPersonCellClick,
+            )
+            isLandscape -> {
+                val layout = landscapeBoardsLayout(maxWidth, maxHeight)
+                Row(horizontalArrangement = Arrangement.spacedBy(layout.gap)) {
+                    PersonBoard(uiState, style, Modifier.size(layout.boardSize), onGridPlaced)
+                    ComputerBoard(uiState, onComputerCellClick, style, Modifier.size(layout.boardSize))
+                }
+            }
+            else -> {
+                val layout = portraitBoardsLayout(maxWidth, maxHeight)
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(layout.gap),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    PersonBoard(uiState, style, Modifier.size(layout.boardSize), onGridPlaced)
+                    ComputerBoard(uiState, onComputerCellClick, style, Modifier.size(layout.boardSize))
+                }
+            }
+        }
     }
 }
 
@@ -188,13 +197,15 @@ private fun PersonBoard(
     style: BoardStyle,
     modifier: Modifier = Modifier,
     onGridPlaced: (Rect) -> Unit = {},
+    onCellClick: ((Coordinate) -> Unit)? = null,
 ) {
     LabeledBoard(
         ships = uiState.personBoardShips,
         crosses = uiState.personBoardCrosses,
         dots = uiState.personBoardDots,
-        selected = null,
-        onCellTap = null,
+        highlighted = uiState.selectedShipCells,
+        rejected = uiState.rejectedCells,
+        onCellTap = onCellClick,
         modifier = modifier,
         style = style,
         onGridPlaced = onGridPlaced,
@@ -212,7 +223,7 @@ private fun ComputerBoard(
         ships = uiState.computerBoardShips,
         crosses = uiState.computerBoardCrosses,
         dots = uiState.computerBoardDots,
-        selected = uiState.selectedCoordinate,
+        highlighted = listOfNotNull(uiState.selectedCoordinate),
         onCellTap = if (uiState.phase == GamePhase.BATTLE) onCellClick else null,
         modifier = modifier,
         style = style,
@@ -269,6 +280,7 @@ private fun MoreMenu(onMenuAction: (MenuAction) -> Unit, modifier: Modifier = Mo
             )
         }
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            MenuEntry(R.string.new_game_text, MenuAction.NEW_GAME, onMenuAction) { expanded = false }
             MenuEntry(R.string.menu_share_text, MenuAction.SHARE, onMenuAction) { expanded = false }
             MenuEntry(R.string.menu_rate_on_play_market_text, MenuAction.RATE, onMenuAction) { expanded = false }
             MenuEntry(R.string.menu_more_apps_text, MenuAction.MORE_APPS, onMenuAction) { expanded = false }
@@ -294,6 +306,22 @@ private fun MenuEntry(
     )
 }
 
+@Composable
+private fun NewGameDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
+    val textStyle = TextStyle(fontFamily = NeuchaFontFamily, fontSize = 20.sp)
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.new_game_dialog_title), style = textStyle.copy(fontSize = 24.sp)) },
+        text = { Text(stringResource(R.string.new_game_dialog_message), style = textStyle) },
+        confirmButton = {
+            TextButton(onClick = onConfirm) { Text(stringResource(R.string.dialog_yes), style = textStyle) }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.dialog_no), style = textStyle) }
+        },
+    )
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun GameScreenPreview() {
@@ -304,6 +332,16 @@ private fun GameScreenPreview() {
             onCellClick = {}, onFire = {}, onMenuAction = {},
         )
     }
+}
+
+// The single board shown while placing ships: as wide as the portrait boards, but limited by
+// the height in landscape.
+internal fun placementBoardSize(maxWidth: Dp, maxHeight: Dp): Dp {
+    val cell = minOf(
+        (maxWidth * PORTRAIT_BOARD_WIDTH_FRACTION - LABEL_SIZE) / SQUARES_COUNT,
+        (maxHeight - LABEL_SIZE) / SQUARES_COUNT,
+    )
+    return if (cell > 0.dp) LABEL_SIZE + cell * SQUARES_COUNT else 0.dp
 }
 
 internal data class LandscapeBoardsLayout(val boardSize: Dp, val gap: Dp)

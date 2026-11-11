@@ -1,9 +1,11 @@
 package com.avs.sea.battle.ships
 
 import com.avs.sea.battle.FOUR_DECK_SHIP_SIZE
+import com.avs.sea.battle.ONE_DECK_SHIP_SIZE
+import com.avs.sea.battle.THREE_DECK_SHIP_SIZE
+import com.avs.sea.battle.TWO_DECK_SHIP_SIZE
 import com.avs.sea.battle.battle_field.Cell
 import com.avs.sea.battle.battle_field.Coordinate
-import java.util.*
 import kotlin.collections.ArrayList
 import com.avs.sea.battle.battle_field.CellState.*
 
@@ -12,10 +14,7 @@ abstract class Ship {
     private var cells: ArrayList<Cell> = ArrayList(FOUR_DECK_SHIP_SIZE)
     private lateinit var row: IntRange
     private lateinit var column: IntRange
-    private var orientation: Orientation = when (Random().nextBoolean()) {
-        true -> Orientation.VERTICAL
-        false -> Orientation.HORIZONTAL
-    }
+    private var orientation: Orientation = Orientation.HORIZONTAL
 
     protected fun initCells() {
         for (index in 0 until getLength()) {
@@ -38,6 +37,11 @@ abstract class Ship {
 
     fun getColumnCoordinates(): IntRange {
         return column
+    }
+
+    fun place(origin: Coordinate, orientation: Orientation) {
+        this.orientation = orientation
+        setCellsCoordinates(origin.x, origin.y)
     }
 
     fun setCellsCoordinates(i: Int, j: Int) {
@@ -84,5 +88,15 @@ abstract class Ship {
 
     override fun toString(): String {
         return getLength().toString() + " " + orientation + " " + cells.toString()
+    }
+
+    companion object {
+        fun ofSize(size: Int): Ship = when (size) {
+            FOUR_DECK_SHIP_SIZE -> FourDeckShip()
+            THREE_DECK_SHIP_SIZE -> ThreeDeckShip()
+            TWO_DECK_SHIP_SIZE -> TwoDeckShip()
+            ONE_DECK_SHIP_SIZE -> OneDeckShip()
+            else -> throw IllegalArgumentException("No ship of size $size")
+        }
     }
 }

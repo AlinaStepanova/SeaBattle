@@ -15,8 +15,6 @@
     <string name="fire_text">Огонь!</string>
     <string name="start_text">Старт</string>
     <string name="new_game_text">Новая игра</string>
-    <string name="status_welcome_text">Добро пожаловать!</string>
-    <string name="status_generate_or_start_text">Сгенерируйте корабли снова или начните игру</string>
     <string name="status_select_to_fire_text">Выберите клетку для выстрела</string>
     <string name="status_game_over_you_win_text">Игра окончена, вы победили!</string>
     <string name="status_game_over_you_lose_text">Игра окончена, вы проиграли</string>
@@ -33,4 +31,9 @@
     <string name="share_text">Завершить действие с помощью</string>
     <string name="cannot_open_market_error_text">Невозможно запустить приложение Play Market</string>
     <string name="more_settings">Больше</string>
+    <string name="status_place_ships_text">Нажмите на корабль, потом на клетку, чтобы переместить его. Нажмите на него ещё раз, чтобы повернуть.</string>
+    <string name="new_game_dialog_title">Начать новую игру?</string>
+    <string name="new_game_dialog_message">Текущая игра будет потеряна.</string>
+    <string name="dialog_yes">Да</string>
+    <string name="dialog_no">Нет</string>
 </resources>

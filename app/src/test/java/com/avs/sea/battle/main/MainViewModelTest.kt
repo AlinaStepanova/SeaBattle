@@ -3,6 +3,7 @@ package com.avs.sea.battle.main
 import com.avs.sea.battle.R
 import com.avs.sea.battle.SQUARES_COUNT
 import com.avs.sea.battle.battle_field.Coordinate
+import com.avs.sea.battle.battle_field.FleetLayout
 import com.avs.sea.battle.ui.GamePhase
 import com.avs.sea.battle.ui.UiEvent
 import kotlinx.coroutines.CoroutineScope
@@ -148,7 +149,7 @@ class MainViewModelTest {
         winGame()
         viewModel.startNewGame()
         assertEquals(GamePhase.PLACING, viewModel.uiState.value.phase)
-        assertEquals(emptyList<Coordinate>(), viewModel.uiState.value.personBoardShips)
+        assertEquals(FleetLayout.initial().cells(), viewModel.uiState.value.personBoardShips)
         assertEquals(emptyList<Coordinate>(), viewModel.uiState.value.computerBoardCrosses)
         assertNull(viewModel.uiState.value.winner)
     }

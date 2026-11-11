@@ -73,4 +73,12 @@ class SeaBattleThemeTest {
             assertTrue(it.pageLine.alpha < it.shipHatch.alpha)
         }
     }
+
+    @Test
+    fun refusedPlacementsFlashInAFaintRedPenInBothThemes() {
+        listOf(LightColors, DarkColors).forEach {
+            assertEquals(it.hit.copy(alpha = 0.35f), it.rejected)
+            assertNotEquals(it.selected, it.rejected)
+        }
+    }
 }
