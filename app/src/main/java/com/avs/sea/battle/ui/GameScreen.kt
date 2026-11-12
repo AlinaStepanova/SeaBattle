@@ -8,7 +8,11 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -43,6 +47,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.avs.sea.battle.R
@@ -57,6 +62,11 @@ private const val LANDSCAPE_GAP_SQUARES = 2
 private val ACTION_AREA_HEIGHT = 56.dp
 private val LANDSCAPE_ACTION_AREA_HEIGHT = 44.dp
 private val SPINNER_SIZE = 16.dp
+
+// Kept free above and below the placement board for the hint and the two stacked buttons.
+private val PLACEMENT_CONTROLS_HEIGHT = 140.dp
+private val PLACEMENT_BUTTON_MIN_WIDTH = 180.dp
+private val PORTRAIT_HINT_SIZE = 21.sp
 
 // The grid itself spans about 75% of the width, as in the original layout; the rest is labels.
 private const val PORTRAIT_BOARD_WIDTH_FRACTION = 0.8f
@@ -100,31 +110,39 @@ fun GameScreen(
             .drawBehind { playerGrid?.let { drawNotebookSquares(it, screenOrigin, colors.pageLine) } }
             .safeDrawingPadding()
     ) {
-        Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-            // Landscape is short on height, so it gets tighter vertical spacing.
-            StatusText(
-                uiState.statusResId,
-                Modifier.padding(
-                    top = if (isLandscape) 2.dp else 10.dp,
-                    start = MENU_BUTTON_SIZE,
-                    end = MENU_BUTTON_SIZE,
+        if (uiState.phase == GamePhase.PLACING) {
+            val buttons = @Composable { PlacementButtons(uiState, onGenerateShips, onStartGame) }
+            if (isLandscape) {
+                LandscapePlacement(uiState, onPersonCellClick, onGridPlaced, buttons)
+            } else {
+                PortraitPlacement(uiState, onPersonCellClick, onGridPlaced, buttons)
+            }
+        } else {
+            Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+                // Landscape is short on height, so it gets tighter vertical spacing.
+                StatusText(
+                    uiState.statusResId,
+                    Modifier.padding(
+                        top = if (isLandscape) 2.dp else 10.dp,
+                        start = MENU_BUTTON_SIZE,
+                        end = MENU_BUTTON_SIZE,
+                    )
                 )
-            )
-            Boards(
-                uiState,
-                isLandscape,
-                onPersonCellClick,
-                onCellClick,
-                onGridPlaced,
-                Modifier.weight(1f).fillMaxWidth(),
-            )
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = if (isLandscape) LANDSCAPE_ACTION_AREA_HEIGHT else ACTION_AREA_HEIGHT),
-                contentAlignment = Alignment.Center,
-            ) {
-                ActionArea(uiState, onGenerateShips, onStartGame, onNewGame, onFire)
+                Boards(
+                    uiState,
+                    isLandscape,
+                    onCellClick,
+                    onGridPlaced,
+                    Modifier.weight(1f).fillMaxWidth(),
+                )
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = if (isLandscape) LANDSCAPE_ACTION_AREA_HEIGHT else ACTION_AREA_HEIGHT),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    ActionArea(uiState, onNewGame, onFire)
+                }
             }
         }
         MoreMenu(onMenuAction, Modifier.align(Alignment.TopEnd))
@@ -134,12 +152,73 @@ fun GameScreen(
     }
 }
 
-// While ships are placed only the player's board is shown, enlarged; the battle shows both.
+// The board stays centred on the page, with the hint centred in the space above it and the
+// buttons in the space below it.
+@Composable
+private fun PortraitPlacement(
+    uiState: GameUiState,
+    onPersonCellClick: (Coordinate) -> Unit,
+    onGridPlaced: (Rect) -> Unit,
+    buttons: @Composable () -> Unit,
+) {
+    BoxWithConstraints(Modifier.fillMaxSize()) {
+        val boardSize = placementBoardSize(maxWidth, maxHeight - PLACEMENT_CONTROLS_HEIGHT * 2)
+        Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+            Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+                StatusText(uiState.statusResId, Modifier.padding(horizontal = MENU_BUTTON_SIZE), PORTRAIT_HINT_SIZE)
+            }
+            PersonBoard(uiState, BoardStyle.Portrait, Modifier.size(boardSize), onGridPlaced, onPersonCellClick)
+            Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) { buttons() }
+        }
+    }
+}
+
+// Landscape is short on height, so the board takes the left half and the buttons the right.
+@Composable
+private fun LandscapePlacement(
+    uiState: GameUiState,
+    onPersonCellClick: (Coordinate) -> Unit,
+    onGridPlaced: (Rect) -> Unit,
+    buttons: @Composable () -> Unit,
+) {
+    Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+        StatusText(uiState.statusResId, Modifier.padding(top = 2.dp, start = MENU_BUTTON_SIZE, end = MENU_BUTTON_SIZE))
+        Row(Modifier.weight(1f).fillMaxWidth().padding(horizontal = MENU_BUTTON_SIZE, vertical = 4.dp)) {
+            BoxWithConstraints(Modifier.weight(1f).fillMaxHeight(), contentAlignment = Alignment.Center) {
+                PersonBoard(
+                    uiState,
+                    BoardStyle.Landscape,
+                    Modifier.size(placementBoardSize(maxWidth, maxHeight)),
+                    onGridPlaced,
+                    onPersonCellClick,
+                )
+            }
+            Box(Modifier.weight(1f).fillMaxHeight(), contentAlignment = Alignment.Center) { buttons() }
+        }
+    }
+}
+
+@Composable
+private fun PlacementButtons(uiState: GameUiState, onGenerateShips: () -> Unit, onStartGame: () -> Unit) {
+    Column(
+        Modifier
+            .padding(horizontal = 16.dp)
+            .width(IntrinsicSize.Max)
+            .widthIn(min = PLACEMENT_BUTTON_MIN_WIDTH),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        val fullWidth = Modifier.fillMaxWidth()
+        GameButton(stringResource(R.string.shuffle_ships_text), onGenerateShips, fullWidth, 22.sp, 6.dp)
+        if (uiState.personBoardShips.isNotEmpty()) {
+            GameButton(stringResource(R.string.start_text), onStartGame, fullWidth, 22.sp, 6.dp)
+        }
+    }
+}
+
 @Composable
 private fun Boards(
     uiState: GameUiState,
     isLandscape: Boolean,
-    onPersonCellClick: (Coordinate) -> Unit,
     onComputerCellClick: (Coordinate) -> Unit,
     onGridPlaced: (Rect) -> Unit,
     modifier: Modifier = Modifier,
@@ -149,13 +228,6 @@ private fun Boards(
     val padding = if (isLandscape) Modifier.padding(horizontal = MENU_BUTTON_SIZE, vertical = 4.dp) else Modifier
     BoxWithConstraints(modifier.then(padding), contentAlignment = Alignment.Center) {
         when {
-            uiState.phase == GamePhase.PLACING -> PersonBoard(
-                uiState,
-                style,
-                Modifier.size(placementBoardSize(maxWidth, maxHeight)),
-                onGridPlaced,
-                onPersonCellClick,
-            )
             isLandscape -> {
                 val layout = landscapeBoardsLayout(maxWidth, maxHeight)
                 Row(horizontalArrangement = Arrangement.spacedBy(layout.gap)) {
@@ -178,13 +250,13 @@ private fun Boards(
 }
 
 @Composable
-private fun StatusText(statusResId: Int, modifier: Modifier = Modifier) {
+private fun StatusText(statusResId: Int, modifier: Modifier = Modifier, fontSize: TextUnit = 18.sp) {
     BasicText(
         text = stringResource(statusResId),
         style = TextStyle(
             color = SeaBattleTheme.colors.foreground,
             fontFamily = NeuchaFontFamily,
-            fontSize = 18.sp,
+            fontSize = fontSize,
             textAlign = TextAlign.Center,
         ),
         modifier = modifier,
@@ -233,8 +305,6 @@ private fun ComputerBoard(
 @Composable
 private fun ActionArea(
     uiState: GameUiState,
-    onGenerateShips: () -> Unit,
-    onStartGame: () -> Unit,
     onNewGame: () -> Unit,
     onFire: () -> Unit,
 ) {
@@ -243,16 +313,10 @@ private fun ActionArea(
         horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        // Long labels (e.g. the Russian "Generate ships") wrap within the width left over by the
-        // short buttons instead of pushing them off screen.
+        // Long labels wrap instead of pushing the button off screen.
         val wrapping = Modifier.weight(1f, fill = false)
         when (uiState.phase) {
-            GamePhase.PLACING -> {
-                GameButton(stringResource(R.string.generate_ships_text), onGenerateShips, wrapping)
-                if (uiState.personBoardShips.isNotEmpty()) {
-                    GameButton(stringResource(R.string.start_text), onStartGame)
-                }
-            }
+            GamePhase.PLACING -> Unit
             GamePhase.BATTLE -> {
                 if (uiState.selectedCoordinate != null) {
                     GameButton(stringResource(R.string.fire_text), onFire, wrapping)

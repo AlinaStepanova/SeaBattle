@@ -29,6 +29,8 @@ data class SeaBattleColors(
 // are crossed out with a red pen. Dark mode is the same page under a dim lamp.
 private val BlueBallpoint = Color(0xFF2A4DA8)
 private val LampLitPen = Color(0xFFE6DFCF)
+// The warm pen is too close to the ship hatching to mark a selection, so night uses blue ink.
+private val LampLitBlueInk = Color(0xFF8FB4FF)
 
 internal val LightColors = SeaBattleColors(
     background = Color(0xFFFCFBF6),
@@ -43,7 +45,7 @@ internal val LightColors = SeaBattleColors(
 internal val DarkColors = SeaBattleColors(
     background = Color(0xFF2C2924),
     foreground = LampLitPen,
-    selected = LampLitPen.copy(alpha = 0.3f),
+    selected = LampLitBlueInk.copy(alpha = 0.5f),
     shipHatch = LampLitPen.copy(alpha = 0.65f),
     hit = Color(0xFFE08A7E),
     rejected = Color(0xFFE08A7E).copy(alpha = 0.35f),
@@ -66,8 +68,9 @@ fun SeaBattleTheme(content: @Composable () -> Unit) {
     }
 }
 
-// Material components (the overflow DropdownMenu) read their colors from MaterialTheme,
-// so the game palette is mapped onto it to keep menus in sync with the day/night theme.
+// Material components (the overflow DropdownMenu, the new game AlertDialog) read their colors
+// from MaterialTheme, so the game palette is mapped onto it to keep them in sync with the
+// day/night theme instead of Material's default purple.
 internal fun materialColorSchemeFor(colors: SeaBattleColors, isDark: Boolean): ColorScheme {
     val base = if (isDark) darkColorScheme() else lightColorScheme()
     return base.copy(
@@ -76,5 +79,8 @@ internal fun materialColorSchemeFor(colors: SeaBattleColors, isDark: Boolean): C
         surface = colors.background,
         onSurface = colors.foreground,
         surfaceContainer = colors.background,
+        surfaceContainerHigh = colors.background,
+        onSurfaceVariant = colors.foreground,
+        primary = colors.foreground,
     )
 }

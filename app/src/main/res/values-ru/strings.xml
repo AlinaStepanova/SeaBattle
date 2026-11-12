@@ -11,9 +11,9 @@
     <string name="letter_h">З</string>
     <string name="letter_i">И</string>
     <string name="letter_j">К</string>
-    <string name="generate_ships_text">Расставить корабли случайно</string>
+    <string name="shuffle_ships_text">Перемешать</string>
     <string name="fire_text">Огонь!</string>
-    <string name="start_text">Старт</string>
+    <string name="start_text">Начать игру</string>
     <string name="new_game_text">Новая игра</string>
     <string name="status_select_to_fire_text">Выберите клетку для выстрела</string>
     <string name="status_game_over_you_win_text">Игра окончена, вы победили!</string>
