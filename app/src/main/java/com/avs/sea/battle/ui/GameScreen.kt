@@ -264,10 +264,12 @@ private fun Boards(
     }
 }
 
+// The battle has no status text, but an empty line keeps its slot, so the boards don't move when
+// the game-over text appears.
 @Composable
-private fun StatusText(statusResId: Int, modifier: Modifier = Modifier, fontSize: TextUnit = 18.sp) {
+private fun StatusText(statusResId: Int?, modifier: Modifier = Modifier, fontSize: TextUnit = 18.sp) {
     BasicText(
-        text = stringResource(statusResId),
+        text = statusResId?.let { stringResource(it) } ?: "",
         style = TextStyle(
             color = SeaBattleTheme.colors.foreground,
             fontFamily = NeuchaFontFamily,

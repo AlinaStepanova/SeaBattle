@@ -52,7 +52,18 @@ class MainViewModelTest {
     fun startedGameIsInBattlePhaseWithShipsPlaced() {
         assertEquals(GamePhase.BATTLE, viewModel.uiState.value.phase)
         assertEquals(20, viewModel.uiState.value.personBoardShips.size)
-        assertEquals(R.string.status_select_to_fire_text, viewModel.uiState.value.statusResId)
+        assertNull(viewModel.uiState.value.statusResId)
+    }
+
+    // The turn arrows replace the battle status text; only placement and game over show text.
+    @Test
+    fun battleShowsNoStatusText() {
+        viewModel.onComputerBoardTap(viewModel.getComputerBattleField().getShipsCoordinates().first())
+        assertNull(viewModel.uiState.value.statusResId)
+        viewModel.onComputerBoardTap(findFreeEmptyCell())
+        assertNull(viewModel.uiState.value.statusResId)
+        testDispatcher.scheduler.advanceUntilIdle()
+        assertNull(viewModel.uiState.value.statusResId)
     }
 
     @Test
@@ -128,7 +139,7 @@ class MainViewModelTest {
         viewModel.onComputerBoardTap(findFreeEmptyCell())
         testDispatcher.scheduler.advanceUntilIdle()
         assertEquals(GamePhase.BATTLE, viewModel.uiState.value.phase)
-        assertEquals(R.string.status_select_to_fire_text, viewModel.uiState.value.statusResId)
+        assertNull(viewModel.uiState.value.statusResId)
         assertTrue(viewModel.uiState.value.personBoardDots.isNotEmpty())
     }
 

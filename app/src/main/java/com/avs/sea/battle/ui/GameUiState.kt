@@ -7,7 +7,7 @@ import com.avs.sea.battle.main.Player
 enum class GamePhase { PLACING, BATTLE, COMPUTER_TURN, OVER }
 
 data class GameUiState(
-    val statusResId: Int = R.string.status_place_ships_text,
+    val statusResId: Int? = R.string.status_place_ships_text,
     val phase: GamePhase = GamePhase.PLACING,
     val personBoardShips: List<Coordinate> = emptyList(),
     val personBoardCrosses: List<Coordinate> = emptyList(),

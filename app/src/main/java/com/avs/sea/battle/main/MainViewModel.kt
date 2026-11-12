@@ -123,7 +123,7 @@ class MainViewModel : ViewModel() {
         _uiState.update {
             it.copy(
                 phase = GamePhase.BATTLE,
-                statusResId = R.string.status_select_to_fire_text,
+                statusResId = null,
                 personBoardShips = personBattleField.getShipsCoordinates(),
                 selectedShipCells = emptyList(),
                 rejectedCells = emptyList(),
@@ -173,7 +173,6 @@ class MainViewModel : ViewModel() {
                     } else {
                         it.computerBoardDots
                     },
-                    statusResId = R.string.status_shot_ship_again_text,
                 )
             }
             if (computerBattleField.isGameOver()) {
@@ -184,7 +183,6 @@ class MainViewModel : ViewModel() {
             _uiState.update {
                 it.copy(
                     computerBoardDots = computerBattleField.getDotsCoordinates(),
-                    statusResId = R.string.status_opponent_shot_text,
                     phase = GamePhase.COMPUTER_TURN,
                 )
             }
@@ -212,7 +210,6 @@ class MainViewModel : ViewModel() {
                 if (personBattleField.isGameOver()) {
                     endGame(isPersonWon = false)
                 } else {
-                    _uiState.update { it.copy(statusResId = R.string.status_opponent_shot_again_text) }
                     playAsComputer()
                 }
             } else {
@@ -221,7 +218,6 @@ class MainViewModel : ViewModel() {
                     it.copy(
                         personBoardDots = personBattleField.getDotsCoordinates(),
                         phase = GamePhase.BATTLE,
-                        statusResId = R.string.status_select_to_fire_text,
                     )
                 }
             }
