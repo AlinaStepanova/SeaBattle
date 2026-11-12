@@ -93,6 +93,20 @@ class TurnIndicatorTest {
     }
 
     @Test
+    fun portraitArrowsHaveRoomBetweenThem() {
+        setScreen(isLandscape = false, phase = GamePhase.BATTLE)
+        val space = arrowBounds(ArrowDirection.UP).left - arrowBounds(ArrowDirection.DOWN).right
+        assertTrue("space between the arrows was $space", space >= ARROW_SPACING)
+    }
+
+    @Test
+    fun landscapeArrowsHaveRoomBetweenThem() {
+        setScreen(isLandscape = true, phase = GamePhase.BATTLE)
+        val space = arrowBounds(ArrowDirection.LEFT).top - arrowBounds(ArrowDirection.RIGHT).bottom
+        assertTrue("space between the arrows was $space", space >= ARROW_SPACING)
+    }
+
+    @Test
     fun arrowsAreHiddenDuringPlacementAndAtGameOver() {
         val state = setScreen(isLandscape = false, phase = GamePhase.PLACING)
         assertNoArrows()
@@ -170,5 +184,6 @@ class TurnIndicatorTest {
         const val PERSON = 0
         const val COMPUTER = 1
         val CLEARANCE = 7.5.dp
+        val ARROW_SPACING = 13.5.dp
     }
 }
