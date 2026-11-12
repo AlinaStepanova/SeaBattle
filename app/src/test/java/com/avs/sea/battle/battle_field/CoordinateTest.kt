@@ -48,4 +48,16 @@ class CoordinateTest {
     fun testEquals() {
         assertFalse(coordinateFirst == coordinateSecond)
     }
+
+    @Test
+    fun cornersAndInnerCellsAreOnTheBoard() {
+        listOf(Coordinate(0, 0), Coordinate(0, 9), Coordinate(9, 0), Coordinate(9, 9), coordinateSecond)
+            .forEach { assertTrue("$it", it.isOnBoard()) }
+    }
+
+    @Test
+    fun cellsJustPastAnyEdgeAreOffTheBoard() {
+        listOf(Coordinate(-1, 0), Coordinate(0, -1), Coordinate(10, 0), Coordinate(0, 10), coordinateFirst)
+            .forEach { assertFalse("$it", it.isOnBoard()) }
+    }
 }

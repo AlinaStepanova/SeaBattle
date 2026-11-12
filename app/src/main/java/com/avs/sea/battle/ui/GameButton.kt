@@ -15,13 +15,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.avs.sea.battle.ui.theme.NeuchaFontFamily
 import com.avs.sea.battle.ui.theme.SeaBattleTheme
 
 @Composable
-fun GameButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun GameButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    fontSize: TextUnit = 20.sp,
+    verticalPadding: Dp = 4.dp,
+) {
     val interactionSource = remember { MutableInteractionSource() }
     val pressed by interactionSource.collectIsPressedAsState()
     val colors = SeaBattleTheme.colors
@@ -29,7 +37,7 @@ fun GameButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier)
         text = text,
         style = TextStyle(
             color = colors.foreground,
-            fontSize = 20.sp,
+            fontSize = fontSize,
             fontFamily = NeuchaFontFamily,
             textAlign = TextAlign.Center,
         ),
@@ -37,7 +45,7 @@ fun GameButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier)
             .background(if (pressed) colors.selected else Color.Transparent)
             .border(1.dp, colors.foreground)
             .clickable(interactionSource = interactionSource, indication = null, onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 4.dp)
+            .padding(horizontal = 16.dp, vertical = verticalPadding)
     )
 }
 

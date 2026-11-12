@@ -54,6 +54,9 @@ class MainActivity : ComponentActivity() {
                     onCellClick = viewModel::handlePCAreaClick,
                     onFire = viewModel::makeFireAsPerson,
                     onMenuAction = ::handleMenuAction,
+                    onPersonCellClick = viewModel::onPersonBoardTap,
+                    onConfirmNewGame = viewModel::startNewGame,
+                    onDismissNewGame = viewModel::dismissNewGame,
                 )
             }
         }
@@ -61,6 +64,7 @@ class MainActivity : ComponentActivity() {
 
     private fun handleMenuAction(action: MenuAction) {
         when (action) {
+            MenuAction.NEW_GAME -> viewModel.onNewGameRequested()
             MenuAction.SHARE -> startActivity(
                 Intent.createChooser(getShareIntent(this), getString(R.string.share_text))
             )

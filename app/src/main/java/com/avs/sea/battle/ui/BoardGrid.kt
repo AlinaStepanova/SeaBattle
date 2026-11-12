@@ -18,7 +18,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -59,9 +61,10 @@ fun LabeledBoard(
     ships: List<Coordinate>,
     crosses: List<Coordinate>,
     dots: List<Coordinate>,
-    selected: Coordinate?,
+    highlighted: List<Coordinate>,
     onCellTap: ((Coordinate) -> Unit)?,
     modifier: Modifier = Modifier,
+    rejected: List<Coordinate> = emptyList(),
     style: BoardStyle = BoardStyle.Portrait,
     onGridPlaced: (Rect) -> Unit = {},
 ) {
@@ -95,7 +98,8 @@ fun LabeledBoard(
                         ships = ships,
                         crosses = crosses,
                         dots = dots,
-                        selected = selected,
+                        highlighted = highlighted,
+                        rejected = rejected,
                         onCellTap = onCellTap,
                         modifier = Modifier
                             .size(boardSide)
@@ -113,9 +117,10 @@ fun BoardGrid(
     ships: List<Coordinate>,
     crosses: List<Coordinate>,
     dots: List<Coordinate>,
-    selected: Coordinate?,
+    highlighted: List<Coordinate>,
     onCellTap: ((Coordinate) -> Unit)?,
     modifier: Modifier = Modifier,
+    rejected: List<Coordinate> = emptyList(),
     style: BoardStyle = BoardStyle.Portrait,
 ) {
     val colors = SeaBattleTheme.colors
@@ -141,13 +146,8 @@ fun BoardGrid(
                 drawLine(colors.shipHatch, corner + start, corner + end, stroke * 2f, cap = StrokeCap.Round)
             }
         }
-        selected?.let { sel ->
-            drawRect(
-                color = colors.selected,
-                topLeft = Offset(sel.y * cell, sel.x * cell),
-                size = Size(cell, cell),
-            )
-        }
+        highlighted.forEach { fillCell(it, cell, colors.selected) }
+        rejected.forEach { fillCell(it, cell, colors.rejected) }
         for (i in 0..SQUARES_COUNT) {
             drawLine(colors.foreground, Offset(0f, i * cell), Offset(size.width, i * cell), stroke)
             drawLine(colors.foreground, Offset(i * cell, 0f), Offset(i * cell, size.height), stroke)
@@ -168,6 +168,10 @@ fun BoardGrid(
     }
 }
 
+private fun DrawScope.fillCell(coordinate: Coordinate, cell: Float, color: Color) {
+    drawRect(color = color, topLeft = Offset(coordinate.y * cell, coordinate.x * cell), size = Size(cell, cell))
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun LabeledBoardPreview() {
@@ -176,7 +180,7 @@ private fun LabeledBoardPreview() {
             ships = listOf(Coordinate(0, 0), Coordinate(0, 1), Coordinate(5, 5)),
             crosses = listOf(Coordinate(3, 3)),
             dots = listOf(Coordinate(7, 7)),
-            selected = Coordinate(9, 9),
+            highlighted = listOf(Coordinate(9, 9)),
             onCellTap = null,
         )
     }

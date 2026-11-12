@@ -4,12 +4,16 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.avs.sea.battle.R
+import com.avs.sea.battle.REJECTED_FLASH_MILLIS
 import com.avs.sea.battle.SECOND_IN_MILLIS
 import com.avs.sea.battle.battle_field.BattleField
 import com.avs.sea.battle.battle_field.Coordinate
+import com.avs.sea.battle.battle_field.FleetLayout
+import com.avs.sea.battle.battle_field.PlacementResult
 import com.avs.sea.battle.ui.GamePhase
 import com.avs.sea.battle.ui.GameUiState
 import com.avs.sea.battle.ui.UiEvent
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,35 +37,112 @@ class MainViewModel : ViewModel() {
     private val _events = MutableSharedFlow<UiEvent>(extraBufferCapacity = 1)
     val events: SharedFlow<UiEvent> = _events.asSharedFlow()
 
+    private lateinit var fleetLayout: FleetLayout
+    private var selectedShipIndex = 0
+    private var computerTurnJob: Job? = null
+    private var rejectedFlashJob: Job? = null
+
     init {
         initValues()
     }
 
     private fun initValues() {
+        computerTurnJob?.cancel()
+        rejectedFlashJob?.cancel()
         activePlayer = Player.NONE
         shotManager = ShotManager()
         personBattleField = BattleField()
         computerBattleField = BattleField()
         computerBattleField.randomizeShips()
         _uiState.value = GameUiState()
+        showLayout(FleetLayout.initial())
     }
 
     fun generateShips() {
-        personBattleField.initBattleShip()
-        personBattleField.randomizeShips()
+        if (_uiState.value.phase != GamePhase.PLACING) return
+        showLayout(FleetLayout.random())
+    }
+
+    // Tapping the selected ship rotates it, another ship selects it, and an empty cell moves the
+    // selected ship there.
+    fun onPersonBoardTap(coordinate: Coordinate) {
+        if (_uiState.value.phase != GamePhase.PLACING) return
+        val tappedShip = fleetLayout.shipIndexAt(coordinate)
+        when (tappedShip) {
+            selectedShipIndex -> applyPlacement(fleetLayout.rotate(selectedShipIndex))
+            null -> applyPlacement(fleetLayout.move(selectedShipIndex, coordinate))
+            else -> {
+                selectedShipIndex = tappedShip
+                publishLayout()
+            }
+        }
+    }
+
+    private fun showLayout(layout: FleetLayout) {
+        fleetLayout = layout
+        selectedShipIndex = 0
+        publishLayout()
+    }
+
+    private fun applyPlacement(result: PlacementResult) {
+        when (result) {
+            is PlacementResult.Placed -> {
+                fleetLayout = result.layout
+                publishLayout()
+            }
+            is PlacementResult.Rejected -> flashRejected(result.cells)
+        }
+    }
+
+    // A red flash belongs to the refused attempt, so any accepted change clears it.
+    private fun publishLayout() {
+        rejectedFlashJob?.cancel()
         _uiState.update {
             it.copy(
-                personBoardShips = personBattleField.getShipsCoordinates(),
-                statusResId = R.string.status_generate_or_start_text,
+                personBoardShips = fleetLayout.cells(),
+                selectedShipCells = fleetLayout.ships[selectedShipIndex].cells(),
+                rejectedCells = emptyList(),
             )
         }
     }
 
+    private fun flashRejected(cells: List<Coordinate>) {
+        rejectedFlashJob?.cancel()
+        _uiState.update { it.copy(rejectedCells = cells) }
+        rejectedFlashJob = viewModelScope.launch {
+            delay(REJECTED_FLASH_MILLIS)
+            _uiState.update { it.copy(rejectedCells = emptyList()) }
+        }
+    }
+
     fun startGame() {
+        if (_uiState.value.phase != GamePhase.PLACING) return
+        rejectedFlashJob?.cancel()
+        personBattleField.placeShips(fleetLayout)
         activePlayer = Player.PERSON
         _uiState.update {
-            it.copy(phase = GamePhase.BATTLE, statusResId = R.string.status_select_to_fire_text)
+            it.copy(
+                phase = GamePhase.BATTLE,
+                statusResId = R.string.status_select_to_fire_text,
+                personBoardShips = personBattleField.getShipsCoordinates(),
+                selectedShipCells = emptyList(),
+                rejectedCells = emptyList(),
+            )
         }
+    }
+
+    // Restarting mid-battle throws away progress, so it is confirmed first.
+    fun onNewGameRequested() {
+        val phase = _uiState.value.phase
+        if (phase == GamePhase.BATTLE || phase == GamePhase.COMPUTER_TURN) {
+            _uiState.update { it.copy(showNewGameConfirmation = true) }
+        } else {
+            startNewGame()
+        }
+    }
+
+    fun dismissNewGame() {
+        _uiState.update { it.copy(showNewGameConfirmation = false) }
     }
 
     fun startNewGame() {
@@ -117,7 +198,7 @@ class MainViewModel : ViewModel() {
         val coordinate = shotManager.getCoordinateToShot()
         val shipState = personBattleField.handleShot(coordinate)
         shotManager.handleShot(shipState)
-        viewModelScope.launch {
+        computerTurnJob = viewModelScope.launch {
             delay(SECOND_IN_MILLIS)
             if (shipState.first) {
                 _uiState.update {
@@ -154,6 +235,8 @@ class MainViewModel : ViewModel() {
         _uiState.update {
             it.copy(
                 phase = GamePhase.OVER,
+                // The computer keeps playing behind an open "New game?" dialog and may win.
+                showNewGameConfirmation = false,
                 winner = if (isPersonWon) Player.PERSON else Player.COMPUTER,
                 computerBoardShips = computerBattleField.getShipsCoordinates(),
                 statusResId = if (isPersonWon) {

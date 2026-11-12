@@ -114,4 +114,50 @@ class BattleFieldTest {
         }
         fail("Cells never occupied by any ship after 500 random fleets: $uncovered")
     }
+
+    @Test
+    fun placeShipsPutsShipsExactlyOnTheLayoutCells() {
+        val layout = FleetLayout.initial()
+        val battleField = BattleField()
+        battleField.placeShips(layout)
+        assertEquals(layout.cells().map { it.x to it.y }.toSet(), getShipCells(battleField))
+    }
+
+    @Test
+    fun placeShipsReplacesThePreviousFleet() {
+        val battleField = placeRandomFleet()
+        battleField.placeShips(FleetLayout.initial())
+        assertEquals(FleetLayout.initial().cells().size, getShipCells(battleField).size)
+        assertEquals(expectedFleetSizes, getShips(getShipCells(battleField)).map { it.size }.sorted())
+    }
+
+    @Test
+    fun manuallyPlacedShipSinksWhenAllItsCellsAreHit() {
+        val battleField = BattleField()
+        battleField.placeShips(FleetLayout.initial())
+        // The 3-deck at A3-A5 is vertical.
+        assertEquals(true to arrayListOf<Coordinate>(), battleField.handleShot(Coordinate(2, 0)))
+        battleField.handleShot(Coordinate(3, 0))
+        val (hit, sunk) = battleField.handleShot(Coordinate(4, 0))
+        assertTrue(hit)
+        assertEquals(listOf(Coordinate(2, 0), Coordinate(3, 0), Coordinate(4, 0)), sunk)
+    }
+
+    @Test
+    fun missOnAManuallyPlacedFleetIsNotAHit() {
+        val battleField = BattleField()
+        battleField.placeShips(FleetLayout.initial())
+        assertFalse(battleField.handleShot(Coordinate(5, 5)).first)
+    }
+
+    @Test
+    fun manuallyPlacedFleetIsOverOnlyWhenEveryShipSinks() {
+        val battleField = BattleField()
+        val layout = FleetLayout.initial()
+        battleField.placeShips(layout)
+        layout.cells().dropLast(1).forEach { battleField.handleShot(it) }
+        assertFalse(battleField.isGameOver())
+        battleField.handleShot(layout.cells().last())
+        assertTrue(battleField.isGameOver())
+    }
 }

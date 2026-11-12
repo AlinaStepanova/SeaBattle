@@ -3,6 +3,7 @@ package com.avs.sea.battle.main
 import com.avs.sea.battle.R
 import com.avs.sea.battle.SQUARES_COUNT
 import com.avs.sea.battle.battle_field.Coordinate
+import com.avs.sea.battle.battle_field.FleetLayout
 import com.avs.sea.battle.ui.GamePhase
 import com.avs.sea.battle.ui.UiEvent
 import kotlinx.coroutines.CoroutineScope
@@ -15,6 +16,7 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -109,6 +111,19 @@ class MainViewModelTest {
     }
 
     @Test
+    fun newGameDialogClosesWhenTheComputerWinsBehindIt() {
+        while (viewModel.uiState.value.phase != GamePhase.OVER) {
+            viewModel.handlePCAreaClick(findFreeEmptyCell())
+            viewModel.makeFireAsPerson()
+            viewModel.onNewGameRequested()
+            assertTrue(viewModel.uiState.value.showNewGameConfirmation)
+            testDispatcher.scheduler.advanceUntilIdle()
+        }
+        assertEquals(Player.COMPUTER, viewModel.uiState.value.winner)
+        assertFalse(viewModel.uiState.value.showNewGameConfirmation)
+    }
+
+    @Test
     fun winningGameEndsGameWithAllComputerShipsSunk() {
         winGame()
         assertEquals(GamePhase.OVER, viewModel.uiState.value.phase)
@@ -148,7 +163,7 @@ class MainViewModelTest {
         winGame()
         viewModel.startNewGame()
         assertEquals(GamePhase.PLACING, viewModel.uiState.value.phase)
-        assertEquals(emptyList<Coordinate>(), viewModel.uiState.value.personBoardShips)
+        assertEquals(FleetLayout.initial().cells(), viewModel.uiState.value.personBoardShips)
         assertEquals(emptyList<Coordinate>(), viewModel.uiState.value.computerBoardCrosses)
         assertNull(viewModel.uiState.value.winner)
     }

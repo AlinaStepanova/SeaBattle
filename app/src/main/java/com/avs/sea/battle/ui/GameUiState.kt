@@ -7,7 +7,7 @@ import com.avs.sea.battle.main.Player
 enum class GamePhase { PLACING, BATTLE, COMPUTER_TURN, OVER }
 
 data class GameUiState(
-    val statusResId: Int = R.string.status_welcome_text,
+    val statusResId: Int = R.string.status_place_ships_text,
     val phase: GamePhase = GamePhase.PLACING,
     val personBoardShips: List<Coordinate> = emptyList(),
     val personBoardCrosses: List<Coordinate> = emptyList(),
@@ -17,10 +17,13 @@ data class GameUiState(
     val computerBoardDots: List<Coordinate> = emptyList(),
     val selectedCoordinate: Coordinate? = null,
     val winner: Player? = null,
+    val selectedShipCells: List<Coordinate> = emptyList(),
+    val rejectedCells: List<Coordinate> = emptyList(),
+    val showNewGameConfirmation: Boolean = false,
 )
 
 sealed interface UiEvent {
     data object RequestReview : UiEvent
 }
 
-enum class MenuAction { SHARE, RATE, MORE_APPS, WRITE_TO_AUTHOR, PRIVACY_POLICY }
+enum class MenuAction { NEW_GAME, SHARE, RATE, MORE_APPS, WRITE_TO_AUTHOR, PRIVACY_POLICY }

@@ -28,14 +28,13 @@ open class BaseBattleField {
     }
 
     fun setCellState(coordinate: Coordinate, cellState: CellState) {
-        if (coordinate.x in 0 until SQUARES_COUNT && coordinate.y in 0 until SQUARES_COUNT) {
+        if (coordinate.isOnBoard()) {
             battleField[coordinate.x][coordinate.y]?.setCellState(cellState)
         }
     }
 
     fun isCellFreeToBeSelected(coordinate: Coordinate): Boolean {
-        return (coordinate.x in 0 until SQUARES_COUNT
-                && coordinate.y in 0 until SQUARES_COUNT
+        return (coordinate.isOnBoard()
                 && (battleField[coordinate.x][coordinate.y]?.getCellState() == EMPTY
                 || battleField[coordinate.x][coordinate.y]?.getCellState() == SHIP))
     }

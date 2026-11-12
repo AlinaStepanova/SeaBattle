@@ -95,8 +95,8 @@ def kt(cs):
 
 
 STATES = {
-    "placing": dict(phase="PLACING", status="status_generate_or_start_text",
-                    personBoardShips=sorted(all_person)),
+    "placing": dict(phase="PLACING", status="status_place_ships_text",
+                    personBoardShips=sorted(all_person), selectedShipCells=sorted(PERSON[0])),
     "battle": dict(phase="BATTLE", status="status_select_to_fire_text",
                    personBoardShips=sorted(all_person), personBoardCrosses=person_mid[0], personBoardDots=person_mid[1],
                    computerBoardCrosses=computer_mid[0], computerBoardDots=computer_mid[1], selected=selected),
@@ -114,7 +114,8 @@ STATES = {
 
 def state_kt(s):
     parts = [f"phase = GamePhase.{s['phase']}", f"statusResId = R.string.{s['status']}"]
-    for key in ("personBoardShips", "personBoardCrosses", "personBoardDots", "computerBoardShips", "computerBoardCrosses", "computerBoardDots"):
+    for key in ("personBoardShips", "selectedShipCells", "personBoardCrosses", "personBoardDots",
+                "computerBoardShips", "computerBoardCrosses", "computerBoardDots"):
         if key in s:
             parts.append(f"{key} = {kt(s[key])}")
     if "selected" in s:
@@ -158,7 +159,18 @@ class StoreScreenshots {{
         rule.runOnUiThread {{ rule.activity.enableEdgeToEdge() }}
         rule.setContent {{
             SeaBattleTheme {{
-                GameScreen(state, {{}}, {{}}, {{}}, {{}}, {{}}, {{}})
+                GameScreen(
+                    uiState = state,
+                    onGenerateShips = {{}},
+                    onStartGame = {{}},
+                    onNewGame = {{}},
+                    onCellClick = {{}},
+                    onFire = {{}},
+                    onMenuAction = {{}},
+                    onPersonCellClick = {{}},
+                    onConfirmNewGame = {{}},
+                    onDismissNewGame = {{}},
+                )
             }}
         }}
         rule.waitForIdle()

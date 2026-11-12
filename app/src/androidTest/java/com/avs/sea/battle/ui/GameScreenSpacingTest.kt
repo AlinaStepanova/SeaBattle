@@ -2,13 +2,15 @@ package com.avs.sea.battle.ui
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
-import com.avs.sea.battle.battle_field.Coordinate
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.onAllNodesWithText
@@ -47,7 +49,7 @@ class GameScreenSpacingTest {
     @Test
     fun portraitActionButtonSitsCloseBelowComputerBoard() {
         setGameScreen(isLandscape = false)
-        val gap = generateButton().top - grid(COMPUTER).bottom
+        val gap = newGameButton().top - grid(COMPUTER).bottom
         assertTrue("gap below computer board was $gap", gap <= 48.dp)
     }
 
@@ -93,7 +95,7 @@ class GameScreenSpacingTest {
     @Test
     fun landscapeBoardsStartRightBelowStatus() {
         setGameScreen(isLandscape = true)
-        val status = composeTestRule.onNodeWithText(string(R.string.status_welcome_text)).getBoundsInRoot()
+        val status = composeTestRule.onNodeWithText(string(BATTLE_STATE.statusResId)).getBoundsInRoot()
         val gap = grid(PERSON).top - status.bottom
         assertTrue("gap between status and board was $gap", gap <= 26.dp)
     }
@@ -101,7 +103,7 @@ class GameScreenSpacingTest {
     @Test
     fun landscapeButtonsSitRightBelowBoards() {
         setGameScreen(isLandscape = true)
-        val gap = generateButton().bottom - grid(PERSON).bottom
+        val gap = newGameButton().bottom - grid(PERSON).bottom
         assertTrue("space from board to button bottom was $gap", gap <= 48.dp)
     }
 
@@ -109,7 +111,7 @@ class GameScreenSpacingTest {
     fun actionButtonsFitNarrowScreenWithLargeFont() {
         setGameScreen(
             isLandscape = false,
-            uiState = GameUiState(personBoardShips = listOf(Coordinate(0, 0))),
+            uiState = PLACING_STATE,
             width = NARROW_PHONE_SHORT_SIDE,
             height = NARROW_PHONE_LONG_SIDE,
             fontScale = 2f,
@@ -119,11 +121,11 @@ class GameScreenSpacingTest {
         val start = composeTestRule.onNodeWithText(string(R.string.start_text)).getBoundsInRoot()
         listOf("generate" to generate, "start" to start).forEach { (name, button) ->
             assertTrue("$name button leaves the screen sideways", button.left >= screen.left && button.right <= screen.right)
-            assertTrue("$name button overlaps the computer board", button.top >= grid(COMPUTER).bottom)
+            assertTrue("$name button overlaps the board", button.top >= grid(PERSON).bottom)
             assertTrue("$name button leaves the screen at the bottom", button.bottom <= screen.bottom)
         }
-        assertTrue("buttons overlap", generate.right <= start.left || start.right <= generate.left)
-        assertFalse("generate text is cut off", textIsCutOff(string(R.string.generate_ships_text)))
+        assertTrue("buttons overlap", generate.bottom <= start.top)
+        assertFalse("generate text is cut off", textIsCutOff(string(R.string.shuffle_ships_text)))
         assertFalse("start text is cut off", textIsCutOff(string(R.string.start_text)))
     }
 
@@ -156,8 +158,121 @@ class GameScreenSpacingTest {
         setGameScreen(isLandscape = false)
         composeTestRule.onNodeWithContentDescription(string(R.string.more_settings)).performClick()
         val menuItem = textLayout(string(R.string.menu_share_text)).layoutInput.style.fontSize
-        val status = textLayout(string(R.string.status_welcome_text)).layoutInput.style.fontSize
+        val status = textLayout(string(BATTLE_STATE.statusResId)).layoutInput.style.fontSize
         assertTrue("menu item is $menuItem, status is $status", menuItem.value >= status.value)
+    }
+
+    @Test
+    fun placementShowsOnlyThePlayersBoard() {
+        setGameScreen(isLandscape = false, uiState = GameUiState())
+        assertEquals(1, composeTestRule.onAllNodesWithTag(BOARD_GRID_TAG).fetchSemanticsNodes().size)
+    }
+
+    @Test
+    fun portraitPlacementBoardIsAsWideAsTheBattleBoards() {
+        setGameScreen(isLandscape = false, uiState = GameUiState())
+        val width = grid(PERSON).width
+        assertTrue("board width was $width", width >= PHONE_SHORT_SIDE * 0.75f - 1.dp)
+    }
+
+    @Test
+    fun landscapePlacementBoardAndButtonsFitOnScreen() {
+        setGameScreen(isLandscape = true, uiState = PLACING_STATE, width = SMALL_PHONE_LONG_SIDE, height = SMALL_PHONE_SHORT_SIDE)
+        val screen = composeTestRule.onNodeWithTag(SCREEN_TAG).getBoundsInRoot()
+        val start = composeTestRule.onNodeWithText(string(R.string.start_text)).getBoundsInRoot()
+        assertTrue("board leaves the screen", grid(PERSON).bottom <= screen.bottom)
+        assertTrue("start button leaves the screen", start.bottom <= screen.bottom && start.right <= screen.right)
+        assertTrue("generate button overlaps the board", generateButton().left >= grid(PERSON).right)
+    }
+
+    @Test
+    fun portraitPlacementBoardIsCentredOnTheScreen() {
+        // The test phone's status and navigation bars differ in height and would shift the centre.
+        setGameScreen(isLandscape = false, uiState = PLACING_STATE, ignoreSystemBars = true)
+        val screen = composeTestRule.onNodeWithTag(SCREEN_TAG).getBoundsInRoot()
+        val offCentre = (labeledBoardTop() - screen.top) - (screen.bottom - grid(PERSON).bottom)
+        assertTrue("board is off centre by $offCentre", kotlin.math.abs(offCentre.value) <= 1f)
+    }
+
+    @Test
+    fun portraitPlacementHintIsCentredBetweenScreenTopAndBoard() {
+        setGameScreen(isLandscape = false, uiState = PLACING_STATE, ignoreSystemBars = true)
+        val screen = composeTestRule.onNodeWithTag(SCREEN_TAG).getBoundsInRoot()
+        val hint = composeTestRule.onNodeWithText(string(PLACING_STATE.statusResId)).getBoundsInRoot()
+        val offCentre = (hint.top - screen.top) - (labeledBoardTop() - hint.bottom)
+        assertTrue("hint is off centre by $offCentre", kotlin.math.abs(offCentre.value) <= 1f)
+    }
+
+    @Test
+    fun portraitPlacementHintIsLargerThanTheStatusText() {
+        setGameScreen(isLandscape = false, uiState = PLACING_STATE)
+        val portrait = labelFontSize(string(PLACING_STATE.statusResId))
+        assertTrue("portrait hint was $portrait", portrait.value > 18f)
+    }
+
+    @Test
+    fun landscapePlacementHintKeepsTheStatusSize() {
+        setGameScreen(isLandscape = true, uiState = PLACING_STATE)
+        assertEquals(18f, labelFontSize(string(PLACING_STATE.statusResId)).value, 0.01f)
+    }
+
+    @Test
+    fun portraitPlacementHintFitsAboveTheBoardWithLargeFont() {
+        setGameScreen(
+            isLandscape = false,
+            uiState = PLACING_STATE,
+            width = NARROW_PHONE_SHORT_SIDE,
+            height = NARROW_PHONE_LONG_SIDE,
+            fontScale = 2f,
+            ignoreSystemBars = true,
+        )
+        val screen = composeTestRule.onNodeWithTag(SCREEN_TAG).getBoundsInRoot()
+        val hint = composeTestRule.onNodeWithText(string(PLACING_STATE.statusResId)).getBoundsInRoot()
+        assertTrue("hint starts above the screen", hint.top >= screen.top)
+        assertTrue("hint runs into the board", hint.bottom <= labeledBoardTop())
+        assertFalse("hint text is cut off", textIsCutOff(string(PLACING_STATE.statusResId)))
+    }
+
+    @Test
+    fun landscapePlacementButtonsAreStackedRightOfTheBoard() {
+        setGameScreen(isLandscape = true, uiState = PLACING_STATE)
+        val generate = generateButton()
+        val start = composeTestRule.onNodeWithText(string(R.string.start_text)).getBoundsInRoot()
+        assertTrue("generate button overlaps the board", generate.left > grid(PERSON).right)
+        assertTrue("start is not below generate", start.top >= generate.bottom)
+        assertEquals(generate.width.value, start.width.value, 1f)
+    }
+
+    @Test
+    fun portraitPlacementButtonsAreStackedAndEquallyWideBelowTheBoard() {
+        setGameScreen(isLandscape = false, uiState = PLACING_STATE)
+        val generate = generateButton()
+        val start = composeTestRule.onNodeWithText(string(R.string.start_text)).getBoundsInRoot()
+        assertTrue("generate button overlaps the board", generate.top > grid(PERSON).bottom)
+        assertTrue("start is not below generate", start.top >= generate.bottom)
+        assertEquals(generate.width.value, start.width.value, 1f)
+        assertEquals(generate.left.value, start.left.value, 1f)
+    }
+
+    @Test
+    fun portraitPlacementButtonsAreLargerThanBattleButtons() {
+        setGameScreen(isLandscape = false, uiState = PLACING_STATE)
+        assertTrue(labelFontSize(string(R.string.start_text)).value > 20f)
+    }
+
+    @Test
+    fun newGameConfirmationShowsBothChoices() {
+        setGameScreen(isLandscape = false, uiState = GameUiState(phase = GamePhase.BATTLE, showNewGameConfirmation = true))
+        composeTestRule.onNodeWithText(string(R.string.new_game_dialog_title)).assertExists()
+        composeTestRule.onNodeWithText(string(R.string.dialog_yes)).assertExists()
+        composeTestRule.onNodeWithText(string(R.string.dialog_no)).assertExists()
+    }
+
+    @Test
+    fun menuOffersNewGame() {
+        setGameScreen(isLandscape = false, uiState = GameUiState(phase = GamePhase.BATTLE))
+        composeTestRule.onNodeWithContentDescription(string(R.string.more_settings)).performClick()
+        composeTestRule.onNodeWithText(string(R.string.new_game_text)).assertExists()
     }
 
     @Test
@@ -187,10 +302,11 @@ class GameScreenSpacingTest {
 
     private fun setGameScreen(
         isLandscape: Boolean,
-        uiState: GameUiState = GameUiState(),
+        uiState: GameUiState = BATTLE_STATE,
         width: Dp = if (isLandscape) PHONE_LONG_SIDE else PHONE_SHORT_SIDE,
         height: Dp = if (isLandscape) PHONE_SHORT_SIDE else PHONE_LONG_SIDE,
         fontScale: Float = 1f,
+        ignoreSystemBars: Boolean = false,
     ) {
         composeTestRule.setContent {
             val configuration = Configuration(LocalConfiguration.current).apply {
@@ -203,7 +319,12 @@ class GameScreenSpacingTest {
             val density = Density(LocalDensity.current.density, fontScale)
             CompositionLocalProvider(LocalConfiguration provides configuration, LocalDensity provides density) {
                 SeaBattleTheme {
-                    Box(Modifier.requiredSize(width = width, height = height).testTag(SCREEN_TAG)) {
+                    val systemBars = if (ignoreSystemBars) {
+                        Modifier.consumeWindowInsets(WindowInsets.safeDrawing)
+                    } else {
+                        Modifier
+                    }
+                    Box(Modifier.requiredSize(width = width, height = height).then(systemBars).testTag(SCREEN_TAG)) {
                         GameScreen(
                             uiState = uiState,
                             onGenerateShips = {},
@@ -212,6 +333,9 @@ class GameScreenSpacingTest {
                             onCellClick = {},
                             onFire = {},
                             onMenuAction = {},
+                            onPersonCellClick = {},
+                            onConfirmNewGame = {},
+                            onDismissNewGame = {},
                         )
                     }
                 }
@@ -222,8 +346,14 @@ class GameScreenSpacingTest {
     private fun grid(index: Int): DpRect =
         composeTestRule.onAllNodesWithTag(BOARD_GRID_TAG)[index].getBoundsInRoot()
 
+    // The letter row above the grid belongs to the board.
+    private fun labeledBoardTop(): Dp = grid(PERSON).top - LABEL_SIZE
+
+    private fun newGameButton(): DpRect =
+        composeTestRule.onAllNodesWithText(string(R.string.new_game_text))[0].getBoundsInRoot()
+
     private fun generateButton(): DpRect =
-        composeTestRule.onNodeWithText(string(R.string.generate_ships_text)).getBoundsInRoot()
+        composeTestRule.onNodeWithText(string(R.string.shuffle_ships_text)).getBoundsInRoot()
 
     private fun labelFontSize(text: String): TextUnit = textLayout(text).layoutInput.style.fontSize
 
@@ -252,6 +382,11 @@ class GameScreenSpacingTest {
         const val PERSON = 0
         const val COMPUTER = 1
         const val SCREEN_TAG = "screen"
+
+        // Game over shows both boards with a single action button below them.
+        val BATTLE_STATE = GameUiState(phase = GamePhase.OVER, statusResId = R.string.status_game_over_you_win_text)
+
+        val PLACING_STATE = GameUiState()
 
         // Pixel 8a window size
         val PHONE_SHORT_SIDE = 411.dp
