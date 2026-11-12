@@ -154,20 +154,19 @@ class MainViewModel : ViewModel() {
         initValues()
     }
 
-    fun handlePCAreaClick(coordinate: Coordinate) {
+    // One tap fires. Cells already shot at, the computer's turn and game over ignore taps, so a
+    // fast double tap fires only once.
+    fun onComputerBoardTap(coordinate: Coordinate) {
         if (activePlayer == Player.PERSON && computerBattleField.isCellFreeToBeSelected(coordinate)) {
-            _uiState.update { it.copy(selectedCoordinate = coordinate) }
+            fireAt(coordinate)
         }
     }
 
-    fun makeFireAsPerson() {
-        val target = _uiState.value.selectedCoordinate
-        if (activePlayer != Player.PERSON || target == null) return
-        val shipState = computerBattleField.handleShot(target)
+    private fun fireAt(coordinate: Coordinate) {
+        val shipState = computerBattleField.handleShot(coordinate)
         if (shipState.first) {
             _uiState.update {
                 it.copy(
-                    selectedCoordinate = null,
                     computerBoardCrosses = computerBattleField.getCrossesCoordinates(),
                     computerBoardDots = if (shipState.second.isNotEmpty()) {
                         computerBattleField.getDotsCoordinates()
@@ -184,7 +183,6 @@ class MainViewModel : ViewModel() {
             activePlayer = Player.COMPUTER
             _uiState.update {
                 it.copy(
-                    selectedCoordinate = null,
                     computerBoardDots = computerBattleField.getDotsCoordinates(),
                     statusResId = R.string.status_opponent_shot_text,
                     phase = GamePhase.COMPUTER_TURN,

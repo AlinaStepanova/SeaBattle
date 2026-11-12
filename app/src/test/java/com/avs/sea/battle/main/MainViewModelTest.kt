@@ -56,43 +56,76 @@ class MainViewModelTest {
     }
 
     @Test
-    fun makeFireAsPersonWithoutSelectionKeepsPersonTurn() {
-        viewModel.makeFireAsPerson()
-        assertEquals(GamePhase.BATTLE, viewModel.uiState.value.phase)
-        assertEquals(R.string.status_select_to_fire_text, viewModel.uiState.value.statusResId)
-    }
-
-    @Test
-    fun makeFireAsPersonAtEmptyCellPassesTurnToComputer() {
-        viewModel.handlePCAreaClick(findFreeEmptyCell())
-        viewModel.makeFireAsPerson()
+    fun tappingAFreeEmptyCellFiresAndPassesTheTurn() {
+        val miss = findFreeEmptyCell()
+        viewModel.onComputerBoardTap(miss)
         assertEquals(GamePhase.COMPUTER_TURN, viewModel.uiState.value.phase)
-        assertEquals(R.string.status_opponent_shot_text, viewModel.uiState.value.statusResId)
-        assertNull(viewModel.uiState.value.selectedCoordinate)
+        assertTrue(miss in viewModel.uiState.value.computerBoardDots)
     }
 
     @Test
-    fun hittingComputerShipKeepsPersonTurn() {
-        viewModel.handlePCAreaClick(viewModel.getComputerBattleField().getShipsCoordinates().first())
-        viewModel.makeFireAsPerson()
+    fun tappingAShipCellHitsAndKeepsTheTurn() {
+        val shipCell = viewModel.getComputerBattleField().getShipsCoordinates().first()
+        viewModel.onComputerBoardTap(shipCell)
         assertEquals(GamePhase.BATTLE, viewModel.uiState.value.phase)
-        assertEquals(R.string.status_shot_ship_again_text, viewModel.uiState.value.statusResId)
-        assertEquals(1, viewModel.uiState.value.computerBoardCrosses.size)
-        assertNull(viewModel.uiState.value.selectedCoordinate)
+        assertEquals(listOf(shipCell), viewModel.uiState.value.computerBoardCrosses)
     }
 
     @Test
-    fun cellCannotBeSelectedDuringComputerTurn() {
-        viewModel.handlePCAreaClick(findFreeEmptyCell())
-        viewModel.makeFireAsPerson()
-        viewModel.handlePCAreaClick(findFreeEmptyCell())
-        assertNull(viewModel.uiState.value.selectedCoordinate)
+    fun tappingAnAlreadyHitCellIsIgnored() {
+        val shipCell = viewModel.getComputerBattleField().getShipsCoordinates().first()
+        viewModel.onComputerBoardTap(shipCell)
+        val afterFirstTap = viewModel.uiState.value
+        viewModel.onComputerBoardTap(shipCell)
+        assertEquals(afterFirstTap, viewModel.uiState.value)
+    }
+
+    // The dots around a sunk ship are cells already shot at, so tapping one must not count as a miss.
+    @Test
+    fun tappingAMarkedCellAroundASunkShipIsIgnored() {
+        val computerField = viewModel.getComputerBattleField()
+        while (viewModel.uiState.value.computerBoardDots.isEmpty()) {
+            viewModel.onComputerBoardTap(computerField.getShipsCoordinates().first())
+        }
+        val afterSinking = viewModel.uiState.value
+        viewModel.onComputerBoardTap(afterSinking.computerBoardDots.first())
+        assertEquals(afterSinking, viewModel.uiState.value)
+        assertEquals(GamePhase.BATTLE, viewModel.uiState.value.phase)
+    }
+
+    @Test
+    fun aDoubleTapOnAMissFiresOnce() {
+        val miss = findFreeEmptyCell()
+        viewModel.onComputerBoardTap(miss)
+        val dotsAfterFirstTap = viewModel.uiState.value.computerBoardDots
+        viewModel.onComputerBoardTap(miss)
+        viewModel.onComputerBoardTap(findFreeEmptyCell())
+        assertEquals(dotsAfterFirstTap, viewModel.uiState.value.computerBoardDots)
+        assertEquals(GamePhase.COMPUTER_TURN, viewModel.uiState.value.phase)
+    }
+
+    @Test
+    fun tapsDuringTheComputersTurnAreIgnored() {
+        viewModel.onComputerBoardTap(findFreeEmptyCell())
+        viewModel.onComputerBoardTap(viewModel.getComputerBattleField().getShipsCoordinates().first())
+        assertEquals(emptyList<Coordinate>(), viewModel.uiState.value.computerBoardCrosses)
+    }
+
+    @Test
+    fun tapsAfterGameOverAreIgnored() {
+        winGame()
+        val atGameOver = viewModel.uiState.value
+        for (x in 0 until SQUARES_COUNT) {
+            for (y in 0 until SQUARES_COUNT) {
+                viewModel.onComputerBoardTap(Coordinate(x, y))
+            }
+        }
+        assertEquals(atGameOver, viewModel.uiState.value)
     }
 
     @Test
     fun computerTurnEndsWithMissAndReturnsTurnToPerson() {
-        viewModel.handlePCAreaClick(findFreeEmptyCell())
-        viewModel.makeFireAsPerson()
+        viewModel.onComputerBoardTap(findFreeEmptyCell())
         testDispatcher.scheduler.advanceUntilIdle()
         assertEquals(GamePhase.BATTLE, viewModel.uiState.value.phase)
         assertEquals(R.string.status_select_to_fire_text, viewModel.uiState.value.statusResId)
@@ -113,8 +146,7 @@ class MainViewModelTest {
     @Test
     fun newGameDialogClosesWhenTheComputerWinsBehindIt() {
         while (viewModel.uiState.value.phase != GamePhase.OVER) {
-            viewModel.handlePCAreaClick(findFreeEmptyCell())
-            viewModel.makeFireAsPerson()
+            viewModel.onComputerBoardTap(findFreeEmptyCell())
             viewModel.onNewGameRequested()
             assertTrue(viewModel.uiState.value.showNewGameConfirmation)
             testDispatcher.scheduler.advanceUntilIdle()
@@ -185,15 +217,13 @@ class MainViewModelTest {
     private fun winGame() {
         val computerField = viewModel.getComputerBattleField()
         while (!computerField.isGameOver()) {
-            viewModel.handlePCAreaClick(computerField.getShipsCoordinates().first())
-            viewModel.makeFireAsPerson()
+            viewModel.onComputerBoardTap(computerField.getShipsCoordinates().first())
         }
     }
 
     private fun loseGame() {
         while (viewModel.uiState.value.phase != GamePhase.OVER) {
-            viewModel.handlePCAreaClick(findFreeEmptyCell())
-            viewModel.makeFireAsPerson()
+            viewModel.onComputerBoardTap(findFreeEmptyCell())
             testDispatcher.scheduler.advanceUntilIdle()
         }
     }

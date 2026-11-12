@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -63,7 +62,6 @@ private val MENU_BUTTON_SIZE = 48.dp
 private const val LANDSCAPE_GAP_SQUARES = 2
 private val ACTION_AREA_HEIGHT = 56.dp
 private val LANDSCAPE_ACTION_AREA_HEIGHT = 44.dp
-private val SPINNER_SIZE = 16.dp
 
 // Kept clear above and below the hint and the stacked buttons while placing in portrait.
 private val PLACEMENT_CONTROLS_MARGIN = 16.dp
@@ -90,8 +88,7 @@ fun GameScreen(
     onGenerateShips: () -> Unit,
     onStartGame: () -> Unit,
     onNewGame: () -> Unit,
-    onCellClick: (Coordinate) -> Unit,
-    onFire: () -> Unit,
+    onComputerCellClick: (Coordinate) -> Unit,
     onMenuAction: (MenuAction) -> Unit,
     onPersonCellClick: (Coordinate) -> Unit,
     onConfirmNewGame: () -> Unit,
@@ -133,7 +130,7 @@ fun GameScreen(
                 Boards(
                     uiState,
                     isLandscape,
-                    onCellClick,
+                    onComputerCellClick,
                     onGridPlaced,
                     Modifier.weight(1f).fillMaxWidth(),
                 )
@@ -143,7 +140,7 @@ fun GameScreen(
                         .heightIn(min = if (isLandscape) LANDSCAPE_ACTION_AREA_HEIGHT else ACTION_AREA_HEIGHT),
                     contentAlignment = Alignment.Center,
                 ) {
-                    ActionArea(uiState, onNewGame, onFire)
+                    ActionArea(uiState, onNewGame)
                 }
             }
         }
@@ -313,7 +310,7 @@ private fun ComputerBoard(
         ships = uiState.computerBoardShips,
         crosses = uiState.computerBoardCrosses,
         dots = uiState.computerBoardDots,
-        highlighted = listOfNotNull(uiState.selectedCoordinate),
+        highlighted = emptyList(),
         onCellTap = if (uiState.phase == GamePhase.BATTLE) onCellClick else null,
         modifier = modifier,
         style = style,
@@ -321,32 +318,14 @@ private fun ComputerBoard(
 }
 
 @Composable
-private fun ActionArea(
-    uiState: GameUiState,
-    onNewGame: () -> Unit,
-    onFire: () -> Unit,
-) {
+private fun ActionArea(uiState: GameUiState, onNewGame: () -> Unit) {
+    if (uiState.phase != GamePhase.OVER) return
     Row(
         Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
-        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
     ) {
-        // Long labels wrap instead of pushing the button off screen.
-        val wrapping = Modifier.weight(1f, fill = false)
-        when (uiState.phase) {
-            GamePhase.PLACING -> Unit
-            GamePhase.BATTLE -> {
-                if (uiState.selectedCoordinate != null) {
-                    GameButton(stringResource(R.string.fire_text), onFire, wrapping)
-                }
-            }
-            GamePhase.COMPUTER_TURN -> CircularProgressIndicator(
-                color = SeaBattleTheme.colors.foreground,
-                strokeWidth = 2.dp,
-                modifier = Modifier.size(SPINNER_SIZE),
-            )
-            GamePhase.OVER -> GameButton(stringResource(R.string.new_game_text), onNewGame, wrapping)
-        }
+        // A long label wraps instead of pushing the button off screen.
+        GameButton(stringResource(R.string.new_game_text), onNewGame, Modifier.weight(1f, fill = false))
     }
 }
 
@@ -411,7 +390,7 @@ private fun GameScreenPreview() {
         GameScreen(
             uiState = GameUiState(personBoardShips = listOf(Coordinate(1, 1))),
             onGenerateShips = {}, onStartGame = {}, onNewGame = {},
-            onCellClick = {}, onFire = {}, onMenuAction = {},
+            onComputerCellClick = {}, onMenuAction = {},
             onPersonCellClick = {}, onConfirmNewGame = {}, onDismissNewGame = {},
         )
     }

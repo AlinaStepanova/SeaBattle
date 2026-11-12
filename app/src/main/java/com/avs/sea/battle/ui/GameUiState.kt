@@ -15,7 +15,6 @@ data class GameUiState(
     val computerBoardShips: List<Coordinate> = emptyList(),
     val computerBoardCrosses: List<Coordinate> = emptyList(),
     val computerBoardDots: List<Coordinate> = emptyList(),
-    val selectedCoordinate: Coordinate? = null,
     val winner: Player? = null,
     val selectedShipCells: List<Coordinate> = emptyList(),
     val rejectedCells: List<Coordinate> = emptyList(),

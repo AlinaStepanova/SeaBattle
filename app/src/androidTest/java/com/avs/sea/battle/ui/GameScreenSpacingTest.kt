@@ -11,13 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
-import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.test.getBoundsInRoot
-import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
@@ -275,15 +273,6 @@ class GameScreenSpacingTest {
         composeTestRule.onNodeWithText(string(R.string.new_game_text)).assertExists()
     }
 
-    @Test
-    fun computerTurnSpinnerIsSmall() {
-        setGameScreen(isLandscape = false, uiState = GameUiState(phase = GamePhase.COMPUTER_TURN))
-        val spinner = composeTestRule
-            .onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate))
-            .getBoundsInRoot()
-        assertTrue("spinner size was ${spinner.width}", spinner.width <= 20.dp)
-    }
-
     // One notebook square is one board cell; allow a pixel of rounding.
     private fun assertWholeSquares(distance: Dp) {
         val cell = grid(PERSON).width / SQUARES_COUNT
@@ -330,8 +319,7 @@ class GameScreenSpacingTest {
                             onGenerateShips = {},
                             onStartGame = {},
                             onNewGame = {},
-                            onCellClick = {},
-                            onFire = {},
+                            onComputerCellClick = {},
                             onMenuAction = {},
                             onPersonCellClick = {},
                             onConfirmNewGame = {},

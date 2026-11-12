@@ -21,7 +21,6 @@
     <string name="number_9" translatable="false">9</string>
     <string name="number_10" translatable="false">10</string>
     <string name="shuffle_ships_text">Shuffle</string>
-    <string name="fire_text">Fire!</string>
     <string name="start_text">Start Game</string>
     <string name="new_game_text">New Game</string>
     <string name="status_select_to_fire_text">Select a cell to make a fire</string>
