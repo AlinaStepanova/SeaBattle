@@ -27,6 +27,8 @@
     <string name="cannot_open_market_error_text">Неможливо запустити додаток Play Market</string>
     <string name="more_settings">Більше</string>
     <string name="status_place_ships_text">Торкніться корабля, потім клітинки, щоб перемістити його. Торкніться його ще раз, щоб повернути.</string>
+    <string name="turn_yours_text">Ваш хід</string>
+    <string name="turn_opponent_text">Хід опонента</string>
     <string name="new_game_dialog_title">Почати нову гру?</string>
     <string name="new_game_dialog_message">Поточну гру буде втрачено.</string>
     <string name="dialog_yes">Так</string>

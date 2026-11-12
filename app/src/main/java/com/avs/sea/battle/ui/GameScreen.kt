@@ -245,18 +245,27 @@ private fun Boards(
         when {
             isLandscape -> {
                 val layout = landscapeBoardsLayout(maxWidth, maxHeight)
-                Row(horizontalArrangement = Arrangement.spacedBy(layout.gap)) {
+                Row {
                     PersonBoard(uiState, style, Modifier.size(layout.boardSize), onGridPlaced)
+                    // Padded past the letter row, so the arrows centre on the grids.
+                    TurnIndicator(
+                        uiState.phase,
+                        isLandscape = true,
+                        Modifier.size(width = layout.gap, height = layout.boardSize).padding(top = LABEL_SIZE),
+                    )
                     ComputerBoard(uiState, onComputerCellClick, style, Modifier.size(layout.boardSize))
                 }
             }
             else -> {
                 val layout = portraitBoardsLayout(maxWidth, maxHeight)
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(layout.gap),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     PersonBoard(uiState, style, Modifier.size(layout.boardSize), onGridPlaced)
+                    // Padded past the number column, so the arrows centre on the grids.
+                    TurnIndicator(
+                        uiState.phase,
+                        isLandscape = false,
+                        Modifier.size(width = layout.boardSize, height = layout.gap).padding(start = LABEL_SIZE),
+                    )
                     ComputerBoard(uiState, onComputerCellClick, style, Modifier.size(layout.boardSize))
                 }
             }

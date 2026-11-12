@@ -27,6 +27,8 @@
     <string name="cannot_open_market_error_text">Невозможно запустить приложение Play Market</string>
     <string name="more_settings">Больше</string>
     <string name="status_place_ships_text">Нажмите на корабль, потом на клетку, чтобы переместить его. Нажмите на него ещё раз, чтобы повернуть.</string>
+    <string name="turn_yours_text">Ваш ход</string>
+    <string name="turn_opponent_text">Ход оппонента</string>
     <string name="new_game_dialog_title">Начать новую игру?</string>
     <string name="new_game_dialog_message">Текущая игра будет потеряна.</string>
     <string name="dialog_yes">Да</string>
