@@ -425,15 +425,16 @@ internal fun portraitPlacementBoardSize(maxWidth: Dp, maxHeight: Dp, controlsHei
 internal data class LandscapeBoardsLayout(val boardSize: Dp, val gap: Dp)
 
 // Two square boards side by side, sized together from the available space so they keep the
-// same proportions on every screen. The grids are LANDSCAPE_GAP_SQUARES notebook squares
-// apart, so both sit on the page's lines; the gap also holds the computer board's number
-// column and the turn arrows, so on narrow screens, where two squares are too few, more are used.
+// same proportions on every screen. The grids are a whole number of notebook squares apart, at
+// least LANDSCAPE_GAP_SQUARES, so both sit on the page's lines; the gap also holds the computer
+// board's number column and the turn arrows with room around them, which on phones takes a third
+// square.
 internal fun landscapeBoardsLayout(maxWidth: Dp, maxHeight: Dp): LandscapeBoardsLayout {
     val cellByHeight = (maxHeight - LABEL_SIZE) / SQUARES_COUNT
     for (squares in LANDSCAPE_GAP_SQUARES..MAX_GAP_SQUARES) {
         val cell = minOf(cellByHeight, (maxWidth - LABEL_SIZE) / (2 * SQUARES_COUNT + squares))
         if (cell <= 0.dp) break
-        if (cell * squares - LABEL_SIZE >= TURN_INDICATOR_MIN_GAP) {
+        if (cell * squares - LABEL_SIZE >= LANDSCAPE_TURN_INDICATOR_MIN_GAP) {
             return LandscapeBoardsLayout(boardSize = LABEL_SIZE + cell * SQUARES_COUNT, gap = cell * squares - LABEL_SIZE)
         }
     }
@@ -450,7 +451,7 @@ internal fun portraitBoardsLayout(maxWidth: Dp, maxHeight: Dp): PortraitBoardsLa
     val cellByWidth = (maxWidth * PORTRAIT_BOARD_WIDTH_FRACTION - LABEL_SIZE) / SQUARES_COUNT
     val fit = (1..MAX_GAP_SQUARES).firstNotNullOfOrNull { squares ->
         val cell = minOf(cellByWidth, (maxHeight - LABEL_SIZE) / (2 * SQUARES_COUNT + squares))
-        if (cell > 0.dp && cell * squares - LABEL_SIZE >= TURN_INDICATOR_MIN_GAP) cell to squares else null
+        if (cell > 0.dp && cell * squares - LABEL_SIZE >= PORTRAIT_TURN_INDICATOR_MIN_GAP) cell to squares else null
     } ?: return PortraitBoardsLayout(boardSize = 0.dp, gap = 0.dp)
     val (cell, minSquares) = fit
     val boardSize = LABEL_SIZE + cell * SQUARES_COUNT

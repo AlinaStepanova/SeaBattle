@@ -28,11 +28,11 @@ import kotlin.math.sqrt
 
 internal val TURN_ARROW_SIZE = 24.dp
 
-// Clear space kept between the arrows and the boards on either side.
-private val TURN_ARROW_MARGIN = 8.dp
-
-// The board layouts keep at least this much room between the grids for the arrows.
-internal val TURN_INDICATOR_MIN_GAP = TURN_ARROW_SIZE + TURN_ARROW_MARGIN * 2
+// The board layouts keep at least this much room between the grids for the arrows, with clear
+// space on both sides. Landscape gets more, as the arrows sit right next to the row numbers;
+// portrait keeps it small so common phones don't need an extra notebook square for it.
+internal val PORTRAIT_TURN_INDICATOR_MIN_GAP = TURN_ARROW_SIZE + 4.dp * 2
+internal val LANDSCAPE_TURN_INDICATOR_MIN_GAP = TURN_ARROW_SIZE + 8.dp * 2
 
 internal enum class ArrowDirection { UP, DOWN, LEFT, RIGHT }
 

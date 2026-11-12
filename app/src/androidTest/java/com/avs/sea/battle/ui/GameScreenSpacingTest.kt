@@ -333,7 +333,7 @@ class GameScreenSpacingTest {
         val cell = gridWidth / SQUARES_COUNT
         val gap = grid(COMPUTER).left - grid(PERSON).right
         assertTrue("gap $gap too small for grid $gridWidth", gap >= gridWidth * 0.15f)
-        assertTrue("gap $gap wastes a square on grid $gridWidth", gap - LABEL_SIZE < TURN_INDICATOR_MIN_GAP + cell)
+        assertTrue("gap $gap wastes a square on grid $gridWidth", gap - LABEL_SIZE < LANDSCAPE_TURN_INDICATOR_MIN_GAP + cell)
     }
 
     private fun setGameScreen(

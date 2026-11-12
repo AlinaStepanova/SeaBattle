@@ -77,8 +77,8 @@ class TurnIndicatorTest {
         setScreen(isLandscape = false, phase = GamePhase.BATTLE)
         listOf(ArrowDirection.DOWN, ArrowDirection.UP).forEach { direction ->
             val arrow = arrowBounds(direction)
-            assertTrue("$direction arrow is too close to your grid", arrow.top - grid(PERSON).bottom >= CLEARANCE)
-            assertTrue("$direction arrow is too close to the computer's board", grid(COMPUTER).top - LABEL_SIZE - arrow.bottom >= CLEARANCE)
+            assertTrue("$direction arrow is too close to your grid", arrow.top - grid(PERSON).bottom >= PORTRAIT_CLEARANCE)
+            assertTrue("$direction arrow is too close to the computer's board", grid(COMPUTER).top - LABEL_SIZE - arrow.bottom >= PORTRAIT_CLEARANCE)
         }
     }
 
@@ -87,8 +87,8 @@ class TurnIndicatorTest {
         setScreen(isLandscape = true, phase = GamePhase.BATTLE)
         listOf(ArrowDirection.RIGHT, ArrowDirection.LEFT).forEach { direction ->
             val arrow = arrowBounds(direction)
-            assertTrue("$direction arrow is too close to your grid", arrow.left - grid(PERSON).right >= CLEARANCE)
-            assertTrue("$direction arrow is too close to the computer's board", grid(COMPUTER).left - LABEL_SIZE - arrow.right >= CLEARANCE)
+            assertTrue("$direction arrow is too close to your grid", arrow.left - grid(PERSON).right >= LANDSCAPE_CLEARANCE)
+            assertTrue("$direction arrow is too close to the computer's board", grid(COMPUTER).left - LABEL_SIZE - arrow.right >= LANDSCAPE_CLEARANCE)
         }
     }
 
@@ -183,7 +183,8 @@ class TurnIndicatorTest {
     private companion object {
         const val PERSON = 0
         const val COMPUTER = 1
-        val CLEARANCE = 7.5.dp
+        val PORTRAIT_CLEARANCE = 3.5.dp
+        val LANDSCAPE_CLEARANCE = 7.5.dp
         val ARROW_SPACING = 13.5.dp
     }
 }

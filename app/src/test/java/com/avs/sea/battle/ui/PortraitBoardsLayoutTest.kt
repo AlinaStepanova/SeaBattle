@@ -20,6 +20,16 @@ class PortraitBoardsLayoutTest {
         assertEquals(411f * 0.8f, layout.boardSize.value, 0.01f)
     }
 
+    // Board areas left on real phones once the status line and action area are taken, e.g. a
+    // 360 x 780 dp Galaxy with 3-button navigation leaves about 617 dp.
+    @Test
+    fun commonPhonesKeepBoardsAtEightyPercentOfTheWidth() {
+        listOf(360.dp to 617.dp, 393.dp to 712.dp, 411.dp to 750.dp, 412.dp to 800.dp).forEach { (width, height) ->
+            val layout = portraitBoardsLayout(width, height)
+            assertEquals("screen $width x $height", width.value * 0.8f, layout.boardSize.value, 0.01f)
+        }
+    }
+
     @Test
     fun computerGridStartsAWholeNumberOfSquaresBelowThePlayersGrid() {
         screens.forEach { (width, height) ->
@@ -43,8 +53,8 @@ class PortraitBoardsLayoutTest {
     fun gapHoldsTheTurnArrowsWithClearSpaceAroundThem() {
         screens.forEach { (width, height) ->
             val layout = portraitBoardsLayout(width, height)
-            // 8 dp clear above and below the arrows.
-            val needed = TURN_ARROW_SIZE + 16.dp
+            // 4 dp clear above and below the arrows.
+            val needed = TURN_ARROW_SIZE + 8.dp
             assertTrue("screen $width x $height: gap ${layout.gap}", layout.boardSize == 0.dp || layout.gap >= needed)
         }
     }
