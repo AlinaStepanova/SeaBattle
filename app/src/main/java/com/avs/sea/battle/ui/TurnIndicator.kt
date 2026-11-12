@@ -26,8 +26,13 @@ import com.avs.sea.battle.R
 import com.avs.sea.battle.ui.theme.SeaBattleTheme
 import kotlin.math.sqrt
 
-// The board layouts keep at least this much room between the grids for an arrow.
-internal val TURN_ARROW_SIZE = 28.dp
+internal val TURN_ARROW_SIZE = 24.dp
+
+// Clear space kept between the arrows and the boards on either side.
+private val TURN_ARROW_MARGIN = 8.dp
+
+// The board layouts keep at least this much room between the grids for the arrows.
+internal val TURN_INDICATOR_MIN_GAP = TURN_ARROW_SIZE + TURN_ARROW_MARGIN * 2
 
 internal enum class ArrowDirection { UP, DOWN, LEFT, RIGHT }
 

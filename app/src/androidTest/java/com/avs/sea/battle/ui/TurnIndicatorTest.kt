@@ -71,23 +71,24 @@ class TurnIndicatorTest {
         composeTestRule.onNodeWithTag(TURN_INDICATOR_TAG).assertContentDescriptionEquals(string(R.string.turn_opponent_text))
     }
 
+    // The computer's board starts at its letter row (portrait) or number column (landscape).
     @Test
-    fun portraitArrowsSitBetweenTheGrids() {
+    fun portraitArrowsKeepClearOfBothBoards() {
         setScreen(isLandscape = false, phase = GamePhase.BATTLE)
         listOf(ArrowDirection.DOWN, ArrowDirection.UP).forEach { direction ->
             val arrow = arrowBounds(direction)
-            assertTrue("$direction arrow overlaps your grid", arrow.top >= grid(PERSON).bottom)
-            assertTrue("$direction arrow overlaps the computer's grid", arrow.bottom <= grid(COMPUTER).top)
+            assertTrue("$direction arrow is too close to your grid", arrow.top - grid(PERSON).bottom >= CLEARANCE)
+            assertTrue("$direction arrow is too close to the computer's board", grid(COMPUTER).top - LABEL_SIZE - arrow.bottom >= CLEARANCE)
         }
     }
 
     @Test
-    fun landscapeArrowsSitBetweenTheGrids() {
+    fun landscapeArrowsKeepClearOfBothBoards() {
         setScreen(isLandscape = true, phase = GamePhase.BATTLE)
         listOf(ArrowDirection.RIGHT, ArrowDirection.LEFT).forEach { direction ->
             val arrow = arrowBounds(direction)
-            assertTrue("$direction arrow overlaps your grid", arrow.left >= grid(PERSON).right)
-            assertTrue("$direction arrow overlaps the computer's grid", arrow.right <= grid(COMPUTER).left)
+            assertTrue("$direction arrow is too close to your grid", arrow.left - grid(PERSON).right >= CLEARANCE)
+            assertTrue("$direction arrow is too close to the computer's board", grid(COMPUTER).left - LABEL_SIZE - arrow.right >= CLEARANCE)
         }
     }
 
@@ -168,5 +169,6 @@ class TurnIndicatorTest {
     private companion object {
         const val PERSON = 0
         const val COMPUTER = 1
+        val CLEARANCE = 7.5.dp
     }
 }

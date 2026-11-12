@@ -34,17 +34,12 @@ class LandscapeBoardsLayoutTest {
     }
 
     @Test
-    fun wideScreensKeepTheGridsTwoSquaresApart() {
-        val layout = landscapeBoardsLayout(maxWidth = 800.dp, maxHeight = 280.dp)
-        val cell = (layout.boardSize - LABEL_SIZE) / SQUARES_COUNT
-        assertEquals(2 * cell.value, (layout.gap + LABEL_SIZE).value, 0.01f)
-    }
-
-    @Test
-    fun gapAlwaysHoldsTheTurnArrows() {
+    fun gapHoldsTheTurnArrowsWithClearSpaceAroundThem() {
         (regularScreens + compactScreens).forEach { (width, height) ->
             val layout = landscapeBoardsLayout(width, height)
-            assertTrue("screen $width x $height: gap ${layout.gap}", layout.boardSize == 0.dp || layout.gap >= TURN_ARROW_SIZE)
+            // 8 dp clear between the arrows and each board.
+            val needed = TURN_ARROW_SIZE + 16.dp
+            assertTrue("screen $width x $height: gap ${layout.gap}", layout.boardSize == 0.dp || layout.gap >= needed)
         }
     }
 

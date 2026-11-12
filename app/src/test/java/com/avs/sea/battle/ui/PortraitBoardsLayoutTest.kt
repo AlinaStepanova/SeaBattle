@@ -40,10 +40,12 @@ class PortraitBoardsLayoutTest {
     }
 
     @Test
-    fun gapAlwaysHoldsTheTurnArrows() {
+    fun gapHoldsTheTurnArrowsWithClearSpaceAroundThem() {
         screens.forEach { (width, height) ->
             val layout = portraitBoardsLayout(width, height)
-            assertTrue("screen $width x $height: gap ${layout.gap}", layout.boardSize == 0.dp || layout.gap >= TURN_ARROW_SIZE)
+            // 8 dp clear above and below the arrows.
+            val needed = TURN_ARROW_SIZE + 16.dp
+            assertTrue("screen $width x $height: gap ${layout.gap}", layout.boardSize == 0.dp || layout.gap >= needed)
         }
     }
 

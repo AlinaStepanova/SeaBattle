@@ -326,12 +326,14 @@ class GameScreenSpacingTest {
         assertTrue("grids are $squares squares apart", offBy <= 1.dp)
     }
 
-    // The gap between grids also holds the computer board's number column.
+    // The gap between grids holds the computer board's number column and the turn arrows with
+    // room around them, using no more notebook squares than that needs.
     private fun assertGapIsProportional() {
         val gridWidth = grid(PERSON).width
+        val cell = gridWidth / SQUARES_COUNT
         val gap = grid(COMPUTER).left - grid(PERSON).right
         assertTrue("gap $gap too small for grid $gridWidth", gap >= gridWidth * 0.15f)
-        assertTrue("gap $gap too large for grid $gridWidth", gap <= gridWidth * 0.35f)
+        assertTrue("gap $gap wastes a square on grid $gridWidth", gap - LABEL_SIZE < TURN_INDICATOR_MIN_GAP + cell)
     }
 
     private fun setGameScreen(

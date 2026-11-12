@@ -433,7 +433,7 @@ internal fun landscapeBoardsLayout(maxWidth: Dp, maxHeight: Dp): LandscapeBoards
     for (squares in LANDSCAPE_GAP_SQUARES..MAX_GAP_SQUARES) {
         val cell = minOf(cellByHeight, (maxWidth - LABEL_SIZE) / (2 * SQUARES_COUNT + squares))
         if (cell <= 0.dp) break
-        if (cell * squares - LABEL_SIZE >= TURN_ARROW_SIZE) {
+        if (cell * squares - LABEL_SIZE >= TURN_INDICATOR_MIN_GAP) {
             return LandscapeBoardsLayout(boardSize = LABEL_SIZE + cell * SQUARES_COUNT, gap = cell * squares - LABEL_SIZE)
         }
     }
@@ -450,7 +450,7 @@ internal fun portraitBoardsLayout(maxWidth: Dp, maxHeight: Dp): PortraitBoardsLa
     val cellByWidth = (maxWidth * PORTRAIT_BOARD_WIDTH_FRACTION - LABEL_SIZE) / SQUARES_COUNT
     val fit = (1..MAX_GAP_SQUARES).firstNotNullOfOrNull { squares ->
         val cell = minOf(cellByWidth, (maxHeight - LABEL_SIZE) / (2 * SQUARES_COUNT + squares))
-        if (cell > 0.dp && cell * squares - LABEL_SIZE >= TURN_ARROW_SIZE) cell to squares else null
+        if (cell > 0.dp && cell * squares - LABEL_SIZE >= TURN_INDICATOR_MIN_GAP) cell to squares else null
     } ?: return PortraitBoardsLayout(boardSize = 0.dp, gap = 0.dp)
     val (cell, minSquares) = fit
     val boardSize = LABEL_SIZE + cell * SQUARES_COUNT
