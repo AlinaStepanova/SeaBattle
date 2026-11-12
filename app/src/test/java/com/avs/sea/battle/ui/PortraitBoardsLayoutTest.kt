@@ -40,6 +40,14 @@ class PortraitBoardsLayoutTest {
     }
 
     @Test
+    fun gapAlwaysHoldsTheTurnArrows() {
+        screens.forEach { (width, height) ->
+            val layout = portraitBoardsLayout(width, height)
+            assertTrue("screen $width x $height: gap ${layout.gap}", layout.boardSize == 0.dp || layout.gap >= TURN_ARROW_SIZE)
+        }
+    }
+
+    @Test
     fun gapIsNeverNegative() {
         screens.forEach { (width, height) ->
             assertTrue("screen $width x $height", portraitBoardsLayout(width, height).gap >= 0.dp)

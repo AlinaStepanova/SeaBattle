@@ -418,13 +418,13 @@ internal data class LandscapeBoardsLayout(val boardSize: Dp, val gap: Dp)
 // Two square boards side by side, sized together from the available space so they keep the
 // same proportions on every screen. The grids are LANDSCAPE_GAP_SQUARES notebook squares
 // apart, so both sit on the page's lines; the gap also holds the computer board's number
-// column, so on tiny screens, where those squares are narrower than it, more squares are used.
+// column and the turn arrows, so on narrow screens, where two squares are too few, more are used.
 internal fun landscapeBoardsLayout(maxWidth: Dp, maxHeight: Dp): LandscapeBoardsLayout {
     val cellByHeight = (maxHeight - LABEL_SIZE) / SQUARES_COUNT
     for (squares in LANDSCAPE_GAP_SQUARES..MAX_GAP_SQUARES) {
         val cell = minOf(cellByHeight, (maxWidth - LABEL_SIZE) / (2 * SQUARES_COUNT + squares))
         if (cell <= 0.dp) break
-        if (cell * squares >= LABEL_SIZE) {
+        if (cell * squares - LABEL_SIZE >= TURN_ARROW_SIZE) {
             return LandscapeBoardsLayout(boardSize = LABEL_SIZE + cell * SQUARES_COUNT, gap = cell * squares - LABEL_SIZE)
         }
     }
@@ -435,12 +435,13 @@ internal data class PortraitBoardsLayout(val boardSize: Dp, val gap: Dp)
 
 // Two boards stacked, as wide as PORTRAIT_BOARD_WIDTH_FRACTION allows. The computer's grid
 // starts a whole number of notebook squares below the player's grid: at least enough squares
-// to hold its letter row, and otherwise close to an even share of the free height.
+// to hold its letter row and the turn arrows, and otherwise close to an even share of the free
+// height.
 internal fun portraitBoardsLayout(maxWidth: Dp, maxHeight: Dp): PortraitBoardsLayout {
     val cellByWidth = (maxWidth * PORTRAIT_BOARD_WIDTH_FRACTION - LABEL_SIZE) / SQUARES_COUNT
     val fit = (1..MAX_GAP_SQUARES).firstNotNullOfOrNull { squares ->
         val cell = minOf(cellByWidth, (maxHeight - LABEL_SIZE) / (2 * SQUARES_COUNT + squares))
-        if (cell > 0.dp && cell * squares >= LABEL_SIZE) cell to squares else null
+        if (cell > 0.dp && cell * squares - LABEL_SIZE >= TURN_ARROW_SIZE) cell to squares else null
     } ?: return PortraitBoardsLayout(boardSize = 0.dp, gap = 0.dp)
     val (cell, minSquares) = fit
     val boardSize = LABEL_SIZE + cell * SQUARES_COUNT
