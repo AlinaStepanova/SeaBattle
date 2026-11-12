@@ -37,7 +37,7 @@ class MainViewModel : ViewModel() {
     private val _events = MutableSharedFlow<UiEvent>(extraBufferCapacity = 1)
     val events: SharedFlow<UiEvent> = _events.asSharedFlow()
 
-    private var fleetLayout = FleetLayout.initial()
+    private lateinit var fleetLayout: FleetLayout
     private var selectedShipIndex = 0
     private var computerTurnJob: Job? = null
     private var rejectedFlashJob: Job? = null
@@ -59,6 +59,7 @@ class MainViewModel : ViewModel() {
     }
 
     fun generateShips() {
+        if (_uiState.value.phase != GamePhase.PLACING) return
         showLayout(FleetLayout.random())
     }
 
@@ -93,11 +94,14 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    // A red flash belongs to the refused attempt, so any accepted change clears it.
     private fun publishLayout() {
+        rejectedFlashJob?.cancel()
         _uiState.update {
             it.copy(
                 personBoardShips = fleetLayout.cells(),
                 selectedShipCells = fleetLayout.ships[selectedShipIndex].cells(),
+                rejectedCells = emptyList(),
             )
         }
     }
@@ -112,6 +116,7 @@ class MainViewModel : ViewModel() {
     }
 
     fun startGame() {
+        if (_uiState.value.phase != GamePhase.PLACING) return
         rejectedFlashJob?.cancel()
         personBattleField.placeShips(fleetLayout)
         activePlayer = Player.PERSON
@@ -134,10 +139,6 @@ class MainViewModel : ViewModel() {
         } else {
             startNewGame()
         }
-    }
-
-    fun confirmNewGame() {
-        startNewGame()
     }
 
     fun dismissNewGame() {
@@ -234,6 +235,8 @@ class MainViewModel : ViewModel() {
         _uiState.update {
             it.copy(
                 phase = GamePhase.OVER,
+                // The computer keeps playing behind an open "New game?" dialog and may win.
+                showNewGameConfirmation = false,
                 winner = if (isPersonWon) Player.PERSON else Player.COMPUTER,
                 computerBoardShips = computerBattleField.getShipsCoordinates(),
                 statusResId = if (isPersonWon) {

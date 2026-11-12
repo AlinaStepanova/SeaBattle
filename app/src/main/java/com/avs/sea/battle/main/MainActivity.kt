@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
                     onFire = viewModel::makeFireAsPerson,
                     onMenuAction = ::handleMenuAction,
                     onPersonCellClick = viewModel::onPersonBoardTap,
-                    onConfirmNewGame = viewModel::confirmNewGame,
+                    onConfirmNewGame = viewModel::startNewGame,
                     onDismissNewGame = viewModel::dismissNewGame,
                 )
             }

@@ -19,7 +19,6 @@ import com.avs.sea.battle.ships.Orientation
 import com.avs.sea.battle.ui.BOARD_GRID_TAG
 import com.avs.sea.battle.ui.GamePhase
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -43,11 +42,12 @@ class ManualPlacementTest {
         assertEquals(ShipPlacement(4, Coordinate(4, 3), Orientation.VERTICAL).cells(), state.selectedShipCells)
     }
 
+    // The red flash runs on a real-time timer here, so its timing is covered by MainViewModelPlacementTest.
     @Test
     fun blockedMoveIsRefused() {
         tapCell(Coordinate(5, 8))
         assertEquals(FleetLayout.initial().cells(), state.personBoardShips)
-        assertTrue(state.rejectedCells.isNotEmpty())
+        assertEquals(FleetLayout.initial().ships[0].cells(), state.selectedShipCells)
     }
 
     @Test

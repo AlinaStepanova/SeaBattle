@@ -1,6 +1,5 @@
 package com.avs.sea.battle.battle_field
 
-import com.avs.sea.battle.SQUARES_COUNT
 import com.avs.sea.battle.ships.Orientation
 
 // Where one ship lies: its top/left end and the direction it extends in.
@@ -20,5 +19,5 @@ data class ShipPlacement(val size: Int, val origin: Coordinate, val orientation:
         orientation = if (orientation == Orientation.VERTICAL) Orientation.HORIZONTAL else Orientation.VERTICAL
     )
 
-    fun isInsideBoard(): Boolean = cells().all { it.x in 0 until SQUARES_COUNT && it.y in 0 until SQUARES_COUNT }
+    fun isInsideBoard(): Boolean = cells().all { it.isOnBoard() }
 }

@@ -1,6 +1,5 @@
 package com.avs.sea.battle.battle_field
 
-import com.avs.sea.battle.SQUARES_COUNT
 import com.avs.sea.battle.ships.*
 import kotlin.random.Random
 
@@ -23,7 +22,7 @@ class BattleField : BaseBattleField() {
     fun handleShot(coordinate: Coordinate?): Pair<Boolean, ArrayList<Coordinate>> {
         var isShipHit = false
         var killedShipCoordinates: ArrayList<Coordinate> = ArrayList()
-        if (coordinate != null && coordinate.x in 0 until SQUARES_COUNT && coordinate.y in 0 until SQUARES_COUNT) {
+        if (coordinate != null && coordinate.isOnBoard()) {
             if (battleField[coordinate.x][coordinate.y]?.getCellState() == CellState.EMPTY) {
                 battleField[coordinate.x][coordinate.y]?.setCellState(CellState.SHOT_FAILURE)
             } else {

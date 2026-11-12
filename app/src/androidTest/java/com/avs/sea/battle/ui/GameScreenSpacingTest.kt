@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
-import com.avs.sea.battle.battle_field.Coordinate
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.onAllNodesWithText
@@ -112,7 +111,7 @@ class GameScreenSpacingTest {
     fun actionButtonsFitNarrowScreenWithLargeFont() {
         setGameScreen(
             isLandscape = false,
-            uiState = GameUiState(personBoardShips = listOf(Coordinate(0, 0))),
+            uiState = PLACING_STATE,
             width = NARROW_PHONE_SHORT_SIDE,
             height = NARROW_PHONE_LONG_SIDE,
             fontScale = 2f,
@@ -218,6 +217,23 @@ class GameScreenSpacingTest {
     }
 
     @Test
+    fun portraitPlacementHintFitsAboveTheBoardWithLargeFont() {
+        setGameScreen(
+            isLandscape = false,
+            uiState = PLACING_STATE,
+            width = NARROW_PHONE_SHORT_SIDE,
+            height = NARROW_PHONE_LONG_SIDE,
+            fontScale = 2f,
+            ignoreSystemBars = true,
+        )
+        val screen = composeTestRule.onNodeWithTag(SCREEN_TAG).getBoundsInRoot()
+        val hint = composeTestRule.onNodeWithText(string(PLACING_STATE.statusResId)).getBoundsInRoot()
+        assertTrue("hint starts above the screen", hint.top >= screen.top)
+        assertTrue("hint runs into the board", hint.bottom <= labeledBoardTop())
+        assertFalse("hint text is cut off", textIsCutOff(string(PLACING_STATE.statusResId)))
+    }
+
+    @Test
     fun landscapePlacementButtonsAreStackedRightOfTheBoard() {
         setGameScreen(isLandscape = true, uiState = PLACING_STATE)
         val generate = generateButton()
@@ -317,6 +333,9 @@ class GameScreenSpacingTest {
                             onCellClick = {},
                             onFire = {},
                             onMenuAction = {},
+                            onPersonCellClick = {},
+                            onConfirmNewGame = {},
+                            onDismissNewGame = {},
                         )
                     }
                 }
@@ -367,7 +386,7 @@ class GameScreenSpacingTest {
         // Game over shows both boards with a single action button below them.
         val BATTLE_STATE = GameUiState(phase = GamePhase.OVER, statusResId = R.string.status_game_over_you_win_text)
 
-        val PLACING_STATE = GameUiState(personBoardShips = listOf(Coordinate(0, 0)))
+        val PLACING_STATE = GameUiState()
 
         // Pixel 8a window size
         val PHONE_SHORT_SIDE = 411.dp

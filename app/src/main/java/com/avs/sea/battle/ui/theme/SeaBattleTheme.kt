@@ -28,7 +28,9 @@ data class SeaBattleColors(
 // A squared school-notebook page: everything is drawn in one pen on faint squares, and hits
 // are crossed out with a red pen. Dark mode is the same page under a dim lamp.
 private val BlueBallpoint = Color(0xFF2A4DA8)
+private val RedPen = Color(0xFFB23A30)
 private val LampLitPen = Color(0xFFE6DFCF)
+private val LampLitRedPen = Color(0xFFE08A7E)
 // The warm pen is too close to the ship hatching to mark a selection, so night uses blue ink.
 private val LampLitBlueInk = Color(0xFF8FB4FF)
 
@@ -37,8 +39,8 @@ internal val LightColors = SeaBattleColors(
     foreground = BlueBallpoint,
     selected = BlueBallpoint.copy(alpha = 0.3f),
     shipHatch = BlueBallpoint.copy(alpha = 0.7f),
-    hit = Color(0xFFB23A30),
-    rejected = Color(0xFFB23A30).copy(alpha = 0.35f),
+    hit = RedPen,
+    rejected = RedPen.copy(alpha = 0.35f),
     pageLine = Color(0xFF608CBE).copy(alpha = 0.3f),
 )
 
@@ -47,8 +49,8 @@ internal val DarkColors = SeaBattleColors(
     foreground = LampLitPen,
     selected = LampLitBlueInk.copy(alpha = 0.5f),
     shipHatch = LampLitPen.copy(alpha = 0.65f),
-    hit = Color(0xFFE08A7E),
-    rejected = Color(0xFFE08A7E).copy(alpha = 0.35f),
+    hit = LampLitRedPen,
+    rejected = LampLitRedPen.copy(alpha = 0.35f),
     pageLine = Color(0xFFCDC3AA).copy(alpha = 0.13f),
 )
 

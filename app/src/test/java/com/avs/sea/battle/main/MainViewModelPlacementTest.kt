@@ -126,6 +126,20 @@ class MainViewModelPlacementTest {
     }
 
     @Test
+    fun aValidMoveClearsTheFlashOfARefusedOne() {
+        viewModel.onPersonBoardTap(Coordinate(5, 8))
+        viewModel.onPersonBoardTap(Coordinate(4, 3))
+        assertTrue(state.rejectedCells.isEmpty())
+    }
+
+    @Test
+    fun shufflingClearsTheFlashOfARefusedMove() {
+        viewModel.onPersonBoardTap(Coordinate(5, 8))
+        viewModel.generateShips()
+        assertTrue(state.rejectedCells.isEmpty())
+    }
+
+    @Test
     fun generateShipsShufflesAndSelectsTheFourDeckAgain() {
         viewModel.onPersonBoardTap(Coordinate(3, 0))
         viewModel.generateShips()
@@ -153,6 +167,25 @@ class MainViewModelPlacementTest {
         viewModel.onPersonBoardTap(Coordinate(4, 3))
         assertEquals(ships, state.personBoardShips)
         assertTrue(state.selectedShipCells.isEmpty())
+    }
+
+    @Test
+    fun shufflingIsIgnoredOnceTheBattleStarts() {
+        viewModel.startGame()
+        val ships = state.personBoardShips
+        viewModel.generateShips()
+        assertEquals(ships, state.personBoardShips)
+        assertTrue(state.selectedShipCells.isEmpty())
+    }
+
+    @Test
+    fun aLateStartDuringTheComputersTurnIsIgnored() {
+        viewModel.startGame()
+        missOnce()
+        viewModel.startGame()
+        assertEquals(GamePhase.COMPUTER_TURN, state.phase)
+        testDispatcher.scheduler.advanceUntilIdle()
+        assertTrue(state.personBoardDots.isNotEmpty() || state.personBoardCrosses.isNotEmpty())
     }
 
     @Test
@@ -184,7 +217,7 @@ class MainViewModelPlacementTest {
     fun confirmingReturnsToPlacementWithTheInitialLayout() {
         viewModel.startGame()
         viewModel.onNewGameRequested()
-        viewModel.confirmNewGame()
+        viewModel.startNewGame()
         assertFalse(state.showNewGameConfirmation)
         assertEquals(GamePhase.PLACING, state.phase)
         assertEquals(fourDeckCells, state.selectedShipCells)
@@ -199,7 +232,7 @@ class MainViewModelPlacementTest {
         assertEquals(GamePhase.COMPUTER_TURN, state.phase)
         viewModel.onNewGameRequested()
         assertTrue(state.showNewGameConfirmation)
-        viewModel.confirmNewGame()
+        viewModel.startNewGame()
         testDispatcher.scheduler.advanceUntilIdle()
         assertEquals(GamePhase.PLACING, state.phase)
         assertTrue(state.personBoardDots.isEmpty())

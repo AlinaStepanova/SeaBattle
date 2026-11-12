@@ -16,6 +16,7 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -107,6 +108,19 @@ class MainViewModelTest {
         assertEquals(20, viewModel.uiState.value.computerBoardShips.size)
         assertEquals(R.string.status_game_over_you_lose_text, viewModel.uiState.value.statusResId)
         assertEquals(emptyList<UiEvent>(), events)
+    }
+
+    @Test
+    fun newGameDialogClosesWhenTheComputerWinsBehindIt() {
+        while (viewModel.uiState.value.phase != GamePhase.OVER) {
+            viewModel.handlePCAreaClick(findFreeEmptyCell())
+            viewModel.makeFireAsPerson()
+            viewModel.onNewGameRequested()
+            assertTrue(viewModel.uiState.value.showNewGameConfirmation)
+            testDispatcher.scheduler.advanceUntilIdle()
+        }
+        assertEquals(Player.COMPUTER, viewModel.uiState.value.winner)
+        assertFalse(viewModel.uiState.value.showNewGameConfirmation)
     }
 
     @Test

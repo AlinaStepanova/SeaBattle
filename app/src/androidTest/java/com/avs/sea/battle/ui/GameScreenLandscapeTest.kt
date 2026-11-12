@@ -48,6 +48,9 @@ class GameScreenLandscapeTest {
                             onCellClick = {},
                             onFire = {},
                             onMenuAction = {},
+                            onPersonCellClick = {},
+                            onConfirmNewGame = {},
+                            onDismissNewGame = {},
                         )
                     }
                 }

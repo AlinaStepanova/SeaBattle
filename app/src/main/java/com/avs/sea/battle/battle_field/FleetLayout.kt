@@ -29,7 +29,7 @@ data class FleetLayout(val ships: List<ShipPlacement>) {
         return if (PlacementRules.canPlace(candidate, others)) {
             PlacementResult.Placed(FleetLayout(ships.toMutableList().apply { set(index, candidate) }))
         } else {
-            PlacementResult.Rejected(candidate.cells().filter { it.x in 0 until SQUARES_COUNT && it.y in 0 until SQUARES_COUNT })
+            PlacementResult.Rejected(candidate.cells().filter { it.isOnBoard() })
         }
     }
 

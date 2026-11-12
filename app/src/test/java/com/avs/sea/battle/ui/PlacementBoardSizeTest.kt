@@ -27,6 +27,25 @@ class PlacementBoardSizeTest {
     }
 
     @Test
+    fun portraitBoardKeepsTheBattleBoardWidthWhenTheControlsAreShort() {
+        val size = portraitPlacementBoardSize(maxWidth = 411.dp, maxHeight = 840.dp, controlsHeight = 110.dp)
+        assertEquals(placementBoardSize(411.dp, 840.dp).value, size.value, 0.01f)
+    }
+
+    @Test
+    fun tallControlsShrinkThePortraitBoardSoBothFitAboveAndBelowIt() {
+        val controls = 200.dp
+        val size = portraitPlacementBoardSize(maxWidth = 320.dp, maxHeight = 568.dp, controlsHeight = controls)
+        assertTrue("board $size", size < placementBoardSize(320.dp, 568.dp))
+        assertTrue("board $size leaves no room for the controls", size + (controls + 32.dp) * 2 <= 568.dp)
+    }
+
+    @Test
+    fun portraitBoardIsNotDrawnWhenTheControlsFillTheScreen() {
+        assertEquals(0f, portraitPlacementBoardSize(maxWidth = 411.dp, maxHeight = 400.dp, controlsHeight = 200.dp).value, 0.01f)
+    }
+
+    @Test
     fun boardIsNotDrawnWhenThereIsNoRoomForTheGrid() {
         assertEquals(0f, placementBoardSize(maxWidth = 20.dp, maxHeight = 400.dp).value, 0.01f)
     }

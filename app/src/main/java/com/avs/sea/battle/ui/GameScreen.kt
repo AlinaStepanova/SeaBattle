@@ -33,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -46,6 +47,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -63,8 +65,8 @@ private val ACTION_AREA_HEIGHT = 56.dp
 private val LANDSCAPE_ACTION_AREA_HEIGHT = 44.dp
 private val SPINNER_SIZE = 16.dp
 
-// Kept free above and below the placement board for the hint and the two stacked buttons.
-private val PLACEMENT_CONTROLS_HEIGHT = 140.dp
+// Kept clear above and below the hint and the stacked buttons while placing in portrait.
+private val PLACEMENT_CONTROLS_MARGIN = 16.dp
 private val PLACEMENT_BUTTON_MIN_WIDTH = 180.dp
 private val PORTRAIT_HINT_SIZE = 21.sp
 
@@ -91,9 +93,9 @@ fun GameScreen(
     onCellClick: (Coordinate) -> Unit,
     onFire: () -> Unit,
     onMenuAction: (MenuAction) -> Unit,
-    onPersonCellClick: (Coordinate) -> Unit = {},
-    onConfirmNewGame: () -> Unit = {},
-    onDismissNewGame: () -> Unit = {},
+    onPersonCellClick: (Coordinate) -> Unit,
+    onConfirmNewGame: () -> Unit,
+    onDismissNewGame: () -> Unit,
 ) {
     val isLandscape =
         LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -111,7 +113,7 @@ fun GameScreen(
             .safeDrawingPadding()
     ) {
         if (uiState.phase == GamePhase.PLACING) {
-            val buttons = @Composable { PlacementButtons(uiState, onGenerateShips, onStartGame) }
+            val buttons = @Composable { PlacementButtons(onGenerateShips, onStartGame) }
             if (isLandscape) {
                 LandscapePlacement(uiState, onPersonCellClick, onGridPlaced, buttons)
             } else {
@@ -153,7 +155,8 @@ fun GameScreen(
 }
 
 // The board stays centred on the page, with the hint centred in the space above it and the
-// buttons in the space below it.
+// buttons in the space below it. The hint and buttons are measured first, so a long translation
+// or a large font shrinks the board instead of running into it.
 @Composable
 private fun PortraitPlacement(
     uiState: GameUiState,
@@ -161,14 +164,31 @@ private fun PortraitPlacement(
     onGridPlaced: (Rect) -> Unit,
     buttons: @Composable () -> Unit,
 ) {
-    BoxWithConstraints(Modifier.fillMaxSize()) {
-        val boardSize = placementBoardSize(maxWidth, maxHeight - PLACEMENT_CONTROLS_HEIGHT * 2)
-        Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-            Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-                StatusText(uiState.statusResId, Modifier.padding(horizontal = MENU_BUTTON_SIZE), PORTRAIT_HINT_SIZE)
-            }
-            PersonBoard(uiState, BoardStyle.Portrait, Modifier.size(boardSize), onGridPlaced, onPersonCellClick)
-            Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) { buttons() }
+    Layout(
+        contents = listOf(
+            { StatusText(uiState.statusResId, Modifier.padding(horizontal = MENU_BUTTON_SIZE), PORTRAIT_HINT_SIZE) },
+            { PersonBoard(uiState, BoardStyle.Portrait, onGridPlaced = onGridPlaced, onCellClick = onPersonCellClick) },
+            buttons,
+        ),
+        modifier = Modifier.fillMaxSize(),
+    ) { (hintMeasurables, boardMeasurables, buttonsMeasurables), constraints ->
+        val loose = constraints.copy(minWidth = 0, minHeight = 0)
+        val hint = hintMeasurables.single().measure(loose)
+        val buttonStack = buttonsMeasurables.single().measure(loose)
+        val boardSide = portraitPlacementBoardSize(
+            maxWidth = constraints.maxWidth.toDp(),
+            maxHeight = constraints.maxHeight.toDp(),
+            controlsHeight = maxOf(hint.height, buttonStack.height).toDp(),
+        ).roundToPx()
+        val board = boardMeasurables.single().measure(Constraints.fixed(boardSide, boardSide))
+        val width = constraints.maxWidth
+        val height = constraints.maxHeight
+        val boardTop = (height - boardSide) / 2
+        val boardBottom = boardTop + boardSide
+        layout(width, height) {
+            hint.place((width - hint.width) / 2, (boardTop - hint.height) / 2)
+            board.place((width - boardSide) / 2, boardTop)
+            buttonStack.place((width - buttonStack.width) / 2, boardBottom + (height - boardBottom - buttonStack.height) / 2)
         }
     }
 }
@@ -199,7 +219,7 @@ private fun LandscapePlacement(
 }
 
 @Composable
-private fun PlacementButtons(uiState: GameUiState, onGenerateShips: () -> Unit, onStartGame: () -> Unit) {
+private fun PlacementButtons(onGenerateShips: () -> Unit, onStartGame: () -> Unit) {
     Column(
         Modifier
             .padding(horizontal = 16.dp)
@@ -209,9 +229,7 @@ private fun PlacementButtons(uiState: GameUiState, onGenerateShips: () -> Unit, 
     ) {
         val fullWidth = Modifier.fillMaxWidth()
         GameButton(stringResource(R.string.shuffle_ships_text), onGenerateShips, fullWidth, 22.sp, 6.dp)
-        if (uiState.personBoardShips.isNotEmpty()) {
-            GameButton(stringResource(R.string.start_text), onStartGame, fullWidth, 22.sp, 6.dp)
-        }
+        GameButton(stringResource(R.string.start_text), onStartGame, fullWidth, 22.sp, 6.dp)
     }
 }
 
@@ -394,6 +412,7 @@ private fun GameScreenPreview() {
             uiState = GameUiState(personBoardShips = listOf(Coordinate(1, 1))),
             onGenerateShips = {}, onStartGame = {}, onNewGame = {},
             onCellClick = {}, onFire = {}, onMenuAction = {},
+            onPersonCellClick = {}, onConfirmNewGame = {}, onDismissNewGame = {},
         )
     }
 }
@@ -407,6 +426,11 @@ internal fun placementBoardSize(maxWidth: Dp, maxHeight: Dp): Dp {
     )
     return if (cell > 0.dp) LABEL_SIZE + cell * SQUARES_COUNT else 0.dp
 }
+
+// The portrait placement board leaves the same height above and below it, enough for the hint or
+// the button stack, whichever is taller, plus a margin on both sides of it.
+internal fun portraitPlacementBoardSize(maxWidth: Dp, maxHeight: Dp, controlsHeight: Dp): Dp =
+    placementBoardSize(maxWidth, maxHeight - (controlsHeight + PLACEMENT_CONTROLS_MARGIN * 2) * 2)
 
 internal data class LandscapeBoardsLayout(val boardSize: Dp, val gap: Dp)
 
