@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -63,7 +62,6 @@ private val MENU_BUTTON_SIZE = 48.dp
 private const val LANDSCAPE_GAP_SQUARES = 2
 private val ACTION_AREA_HEIGHT = 56.dp
 private val LANDSCAPE_ACTION_AREA_HEIGHT = 44.dp
-private val SPINNER_SIZE = 16.dp
 
 // Kept clear above and below the hint and the stacked buttons while placing in portrait.
 private val PLACEMENT_CONTROLS_MARGIN = 16.dp
@@ -90,8 +88,7 @@ fun GameScreen(
     onGenerateShips: () -> Unit,
     onStartGame: () -> Unit,
     onNewGame: () -> Unit,
-    onCellClick: (Coordinate) -> Unit,
-    onFire: () -> Unit,
+    onComputerCellClick: (Coordinate) -> Unit,
     onMenuAction: (MenuAction) -> Unit,
     onPersonCellClick: (Coordinate) -> Unit,
     onConfirmNewGame: () -> Unit,
@@ -133,7 +130,7 @@ fun GameScreen(
                 Boards(
                     uiState,
                     isLandscape,
-                    onCellClick,
+                    onComputerCellClick,
                     onGridPlaced,
                     Modifier.weight(1f).fillMaxWidth(),
                 )
@@ -143,7 +140,7 @@ fun GameScreen(
                         .heightIn(min = if (isLandscape) LANDSCAPE_ACTION_AREA_HEIGHT else ACTION_AREA_HEIGHT),
                     contentAlignment = Alignment.Center,
                 ) {
-                    ActionArea(uiState, onNewGame, onFire)
+                    ActionArea(uiState, onNewGame)
                 }
             }
         }
@@ -248,18 +245,27 @@ private fun Boards(
         when {
             isLandscape -> {
                 val layout = landscapeBoardsLayout(maxWidth, maxHeight)
-                Row(horizontalArrangement = Arrangement.spacedBy(layout.gap)) {
+                Row {
                     PersonBoard(uiState, style, Modifier.size(layout.boardSize), onGridPlaced)
+                    // Padded past the letter row, so the arrows centre on the grids.
+                    TurnIndicator(
+                        uiState.phase,
+                        isLandscape = true,
+                        Modifier.size(width = layout.gap, height = layout.boardSize).padding(top = LABEL_SIZE),
+                    )
                     ComputerBoard(uiState, onComputerCellClick, style, Modifier.size(layout.boardSize))
                 }
             }
             else -> {
                 val layout = portraitBoardsLayout(maxWidth, maxHeight)
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(layout.gap),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     PersonBoard(uiState, style, Modifier.size(layout.boardSize), onGridPlaced)
+                    // Padded past the number column, so the arrows centre on the grids.
+                    TurnIndicator(
+                        uiState.phase,
+                        isLandscape = false,
+                        Modifier.size(width = layout.boardSize, height = layout.gap).padding(start = LABEL_SIZE),
+                    )
                     ComputerBoard(uiState, onComputerCellClick, style, Modifier.size(layout.boardSize))
                 }
             }
@@ -267,10 +273,12 @@ private fun Boards(
     }
 }
 
+// The battle has no status text, but an empty line keeps its slot, so the boards don't move when
+// the game-over text appears.
 @Composable
-private fun StatusText(statusResId: Int, modifier: Modifier = Modifier, fontSize: TextUnit = 18.sp) {
+private fun StatusText(statusResId: Int?, modifier: Modifier = Modifier, fontSize: TextUnit = 18.sp) {
     BasicText(
-        text = stringResource(statusResId),
+        text = statusResId?.let { stringResource(it) } ?: "",
         style = TextStyle(
             color = SeaBattleTheme.colors.foreground,
             fontFamily = NeuchaFontFamily,
@@ -313,7 +321,7 @@ private fun ComputerBoard(
         ships = uiState.computerBoardShips,
         crosses = uiState.computerBoardCrosses,
         dots = uiState.computerBoardDots,
-        highlighted = listOfNotNull(uiState.selectedCoordinate),
+        highlighted = emptyList(),
         onCellTap = if (uiState.phase == GamePhase.BATTLE) onCellClick else null,
         modifier = modifier,
         style = style,
@@ -321,32 +329,14 @@ private fun ComputerBoard(
 }
 
 @Composable
-private fun ActionArea(
-    uiState: GameUiState,
-    onNewGame: () -> Unit,
-    onFire: () -> Unit,
-) {
+private fun ActionArea(uiState: GameUiState, onNewGame: () -> Unit) {
+    if (uiState.phase != GamePhase.OVER) return
     Row(
         Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
-        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
     ) {
-        // Long labels wrap instead of pushing the button off screen.
-        val wrapping = Modifier.weight(1f, fill = false)
-        when (uiState.phase) {
-            GamePhase.PLACING -> Unit
-            GamePhase.BATTLE -> {
-                if (uiState.selectedCoordinate != null) {
-                    GameButton(stringResource(R.string.fire_text), onFire, wrapping)
-                }
-            }
-            GamePhase.COMPUTER_TURN -> CircularProgressIndicator(
-                color = SeaBattleTheme.colors.foreground,
-                strokeWidth = 2.dp,
-                modifier = Modifier.size(SPINNER_SIZE),
-            )
-            GamePhase.OVER -> GameButton(stringResource(R.string.new_game_text), onNewGame, wrapping)
-        }
+        // A long label wraps instead of pushing the button off screen.
+        GameButton(stringResource(R.string.new_game_text), onNewGame, Modifier.weight(1f, fill = false))
     }
 }
 
@@ -411,7 +401,7 @@ private fun GameScreenPreview() {
         GameScreen(
             uiState = GameUiState(personBoardShips = listOf(Coordinate(1, 1))),
             onGenerateShips = {}, onStartGame = {}, onNewGame = {},
-            onCellClick = {}, onFire = {}, onMenuAction = {},
+            onComputerCellClick = {}, onMenuAction = {},
             onPersonCellClick = {}, onConfirmNewGame = {}, onDismissNewGame = {},
         )
     }
@@ -435,15 +425,16 @@ internal fun portraitPlacementBoardSize(maxWidth: Dp, maxHeight: Dp, controlsHei
 internal data class LandscapeBoardsLayout(val boardSize: Dp, val gap: Dp)
 
 // Two square boards side by side, sized together from the available space so they keep the
-// same proportions on every screen. The grids are LANDSCAPE_GAP_SQUARES notebook squares
-// apart, so both sit on the page's lines; the gap also holds the computer board's number
-// column, so on tiny screens, where those squares are narrower than it, more squares are used.
+// same proportions on every screen. The grids are a whole number of notebook squares apart, at
+// least LANDSCAPE_GAP_SQUARES, so both sit on the page's lines; the gap also holds the computer
+// board's number column and the turn arrows with room around them, which on phones takes a third
+// square.
 internal fun landscapeBoardsLayout(maxWidth: Dp, maxHeight: Dp): LandscapeBoardsLayout {
     val cellByHeight = (maxHeight - LABEL_SIZE) / SQUARES_COUNT
     for (squares in LANDSCAPE_GAP_SQUARES..MAX_GAP_SQUARES) {
         val cell = minOf(cellByHeight, (maxWidth - LABEL_SIZE) / (2 * SQUARES_COUNT + squares))
         if (cell <= 0.dp) break
-        if (cell * squares >= LABEL_SIZE) {
+        if (cell * squares - LABEL_SIZE >= LANDSCAPE_TURN_INDICATOR_MIN_GAP) {
             return LandscapeBoardsLayout(boardSize = LABEL_SIZE + cell * SQUARES_COUNT, gap = cell * squares - LABEL_SIZE)
         }
     }
@@ -454,12 +445,13 @@ internal data class PortraitBoardsLayout(val boardSize: Dp, val gap: Dp)
 
 // Two boards stacked, as wide as PORTRAIT_BOARD_WIDTH_FRACTION allows. The computer's grid
 // starts a whole number of notebook squares below the player's grid: at least enough squares
-// to hold its letter row, and otherwise close to an even share of the free height.
+// to hold its letter row and the turn arrows, and otherwise close to an even share of the free
+// height.
 internal fun portraitBoardsLayout(maxWidth: Dp, maxHeight: Dp): PortraitBoardsLayout {
     val cellByWidth = (maxWidth * PORTRAIT_BOARD_WIDTH_FRACTION - LABEL_SIZE) / SQUARES_COUNT
     val fit = (1..MAX_GAP_SQUARES).firstNotNullOfOrNull { squares ->
         val cell = minOf(cellByWidth, (maxHeight - LABEL_SIZE) / (2 * SQUARES_COUNT + squares))
-        if (cell > 0.dp && cell * squares >= LABEL_SIZE) cell to squares else null
+        if (cell > 0.dp && cell * squares - LABEL_SIZE >= PORTRAIT_TURN_INDICATOR_MIN_GAP) cell to squares else null
     } ?: return PortraitBoardsLayout(boardSize = 0.dp, gap = 0.dp)
     val (cell, minSquares) = fit
     val boardSize = LABEL_SIZE + cell * SQUARES_COUNT
