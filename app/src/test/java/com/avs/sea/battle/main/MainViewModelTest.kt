@@ -19,6 +19,7 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -193,6 +194,16 @@ class MainViewModelTest {
         viewModel.onComputerBoardTap(partOfALongerShip)
         assertTrue(viewModel.uiState.value.computerBoardDots.isEmpty())
         assertEquals(ALL_AFLOAT, viewModel.uiState.value.computerFleet)
+    }
+
+    // Only a sinking hit changes a fleet, so other hits keep the same list and the row isn't redrawn.
+    @Test
+    fun aHitThatDoesNotSinkKeepsTheSameFleetList() {
+        val ships = viewModel.getComputerBattleField().getShipsCoordinates()
+        val partOfALongerShip = ships.first { cell -> ships.any { abs(it.x - cell.x) + abs(it.y - cell.y) == 1 } }
+        val before = viewModel.uiState.value.computerFleet
+        viewModel.onComputerBoardTap(partOfALongerShip)
+        assertSame(before, viewModel.uiState.value.computerFleet)
     }
 
     @Test

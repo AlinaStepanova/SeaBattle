@@ -21,6 +21,7 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -196,6 +197,7 @@ class MainViewModelPlacementTest {
         viewModel.startGame()
         val ships = viewModel.getComputerBattleField().getShipsCoordinates()
         val water = (0 until 10).flatMap { x -> (0 until 10).map { y -> Coordinate(x, y) } }.filter { it !in ships }.iterator()
+        var previousFleet = state.personFleet
         while (state.phase != GamePhase.OVER) {
             if (state.phase == GamePhase.BATTLE) {
                 viewModel.onComputerBoardTap(water.next())
@@ -206,6 +208,11 @@ class MainViewModelPlacementTest {
             val sunk = FleetLayout.initial().ships.filter { ship -> ship.cells().all { it in state.personBoardCrosses } }
             assertEquals(sunk.map { it.size }.sorted(), state.personFleet.filter { it.sunk }.map { it.size }.sorted())
             assertTrue("a computer ship is struck though you only missed", state.computerFleet.none { it.sunk })
+            // Only a sinking hit builds a new list.
+            if (state.personFleet.count { it.sunk } == previousFleet.count { it.sunk }) {
+                assertSame(previousFleet, state.personFleet)
+            }
+            previousFleet = state.personFleet
         }
     }
 
