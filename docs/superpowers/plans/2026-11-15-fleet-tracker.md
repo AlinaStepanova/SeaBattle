@@ -4,13 +4,13 @@
 
 **Goal:** During the battle, each player's 10 ships are shown as a row of small pencil ships next to their board, and a ship is struck through in red the moment it sinks.
 
-**Architecture:** `BattleField.sunkShipSizes()` reads sunk ships from the model, a pure `fleetShips(sunkSizes)` turns them into `GameUiState.personFleet` / `computerFleet`, and a stateless `FleetTracker` composable draws them. `Boards` reserves room for the rows: in portrait one row above your board and one below the opponent's, with the game-over text moved into the gap between the boards; in landscape a strip under the boards holds both rows (outer-aligned) and the New game button between them.
+**Architecture:** `BattleField.sunkShipSizes()` reads sunk ships from the model, a pure `fleetShips(sunkSizes)` turns them into `GameUiState.personFleet` / `computerFleet`, and a stateless `FleetTracker` composable draws them. `Boards` reserves room for the rows: in portrait one row above your board and one below the opponent's, with the game-over text moved into the gap between the boards; in landscape one fleet column beside each board's outer edge, with the New game button under the boards as before.
 
 **Tech Stack:** Kotlin, Jetpack Compose (Canvas), JUnit 4, kotlinx-coroutines-test, Compose UI tests.
 
 **Spec:** GitHub issue #30, "Remaining-fleet tracker under each board" (`gh issue view 30`). Decisions made with the user on top of it:
 - **Portrait:** your row goes above your board and the opponent's below theirs. At game over the result text moves into the gap between the boards.
-- **Landscape:** each row goes under its board in the bottom strip: yours aligned left, the opponent's aligned right. At game over New game sits between them, and the mini ships shrink on small phones.
+- **Landscape:** each fleet is a column with one ship per line beside its board's outer edge: yours left of your board, the opponent's right of theirs. New game stays under the boards, and the mini ships shrink on small phones. (The plan first put both rows in a strip under the boards; the user moved them beside the boards in review, so the strip and its New-game spacing were dropped.)
 - **Sunk ships:** one red strike-through (the hit colour) across the whole ship. Afloat ships are hatched cells, like ships on the board.
 
 ## Global Constraints
@@ -29,7 +29,7 @@
 - A hit that doesn't sink must leave the row unchanged, on either side (test in Task 2).
 - When a ship of a repeated size sinks, the leftmost afloat ship of that size is crossed out, so two sunk 2-decks always show as the first two (test in Task 2).
 - At game over the loser's row shows all ten struck through and stays visible (tests in Tasks 2 and 4).
-- Landscape on a 640×360 dp phone: New game at game over must not overlap either row (test in Task 4).
+- Landscape on a 640×360 dp phone: the columns fit beside the boards and New game at game over doesn't overlap either of them (test in Task 4).
 - Portrait game-over text in the gap at font scale 1.3 must not run into the grids (test in Task 4).
 
 ---
@@ -127,13 +127,12 @@
 **Interfaces:**
 - Consumes: `FleetTracker`, `fleetTrackerTag`, `fleetTrackerCell` (Task 3); `personFleet` / `computerFleet` (Task 2).
 - Produces:
-  - `internal fun portraitBattleBoardsLayout(maxWidth: Dp, maxHeight: Dp): PortraitBoardsLayout` = `portraitBoardsLayout(maxWidth, maxHeight - FLEET_ROW_SLOT * 2)`, with `FLEET_ROW_SLOT = 18.dp` (a 10 dp row plus 8 dp to its board).
-  - `internal fun landscapeFleetRowWidth(gridWidth: Dp): Dp` = `gridWidth * 0.65f`.
-  - `LANDSCAPE_STRIP_HEIGHT = 44.dp`, which replaces `LANDSCAPE_ACTION_AREA_HEIGHT`.
+  - `internal fun portraitBattleBoardsLayout(maxWidth: Dp, maxHeight: Dp): PortraitBoardsLayout` = `portraitBoardsLayout(maxWidth, maxHeight - FLEET_ROW_SLOT * 2)`, with `FLEET_ROW_SLOT = 20.dp` (a 12 dp row plus 8 dp to its board).
+  - `internal fun landscapeFleetColumnCell(sideSpace: Dp, gridHeight: Dp): Dp` = the smallest of 14 dp, `(sideSpace - FLEET_COLUMN_MARGIN * 2) / FLEET.max()` and `gridHeight / 14.5` (10 ships plus 9 half-cell gaps), with `FLEET_COLUMN_MARGIN = 8.dp`.
 
 - [ ] **Step 1: Write the failing tests.**
   - `PortraitBoardsLayoutTest.commonPhonesKeepFullWidthBoardsWithFleetRows`: `portraitBattleBoardsLayout` keeps `boardSize == width * 0.8` for 360×652, 393×747, 411×785 and 412×835 dp. These are today's board areas plus the status line portrait no longer uses.
-  - `LandscapeBoardsLayoutTest.fleetRowsLeaveRoomForNewGameBetweenThem`: take the `Boards` areas of a 640×360 and a 914×411 dp landscape phone, 544×289 and 818×340 dp, and compute `landscapeBoardsLayout(width, height - LANDSCAPE_STRIP_HEIGHT)` and its grid (`boardSize - LABEL_SIZE`). The space between the two outer-aligned rows, `LABEL_SIZE + gap + 2 * (grid - landscapeFleetRowWidth(grid))`, is ≥ 140 dp, which is room for New game in en/uk/ru.
+  - `FleetTrackerLayoutTest`: `landscapeFleetColumnCell` is capped at 14 dp in wide margins, shrinks to 8.75 dp in the 51 dp side space of a 640×360 dp phone, and a column (`cell * 14.5` tall, `cell * 4 + 16 dp` wide) always fits beside the grid.
   - UI, portrait battle:
     - your tracker's bottom is ≤ the top of your grid's letter row and within 12 dp of it;
     - the opponent tracker's top is ≥ the computer grid's bottom and within 12 dp;
@@ -142,16 +141,17 @@
     - the status text node sits between the person grid's bottom and the computer grid's top;
     - at font scale 1.3 it still does;
     - New game doesn't overlap the opponent tracker.
-  - UI, landscape battle:
-    - your tracker's left edge equals your grid's left edge (±1 dp) and its top is below your grid's bottom;
-    - the opponent tracker's right edge equals the computer grid's right edge.
-  - UI, landscape game over on 640×360: New game's bounds don't intersect either tracker.
+  - UI, landscape battle (914×411 and 640×360 dp):
+    - your column ends left of your board's number column, within 16 dp of it; the opponent's starts right of the computer grid, within 16 dp;
+    - both columns lie within the screen and within the grids' height;
+    - the opponent's column stays below the overflow menu.
+  - UI, landscape game over on 640×360: New game's bounds don't intersect either column, and at font scale 1.6 New game isn't cut off.
   - UI: no tracker nodes in `PLACING`.
   - `boardsStayPutWhenTheGameEnds` (both orientations) must keep passing, with fleets set in both states.
 - [ ] **Step 2: Run** the unit tests (compile failure expected), then the instrumented tests (the new UI checks fail).
 - [ ] **Step 3: Implement.**
   - **Portrait:** the battle `Column` drops the top `StatusText`. `Boards` stacks: your `FleetTracker` (start-padded `LABEL_SIZE`, grid width, bottom-aligned in an `FLEET_ROW_SLOT` box); your board; the gap; the computer's board; the opponent's `FleetTracker` (top-aligned in an `FLEET_ROW_SLOT` box). The gap shows `TurnIndicator` during the battle and, at `OVER`, the centred `StatusText(uiState.statusResId)` in the same box. The outer `ActionArea` box stays below.
-  - **Landscape:** the battle `Column` keeps the top `StatusText` and drops the outer `ActionArea` box. `Boards` uses `landscapeBoardsLayout(maxWidth, maxHeight - LANDSCAPE_STRIP_HEIGHT)` and puts a strip `2 * boardSize + gap` wide and `LANDSCAPE_STRIP_HEIGHT` tall under the boards row. In the strip, your tracker is top-start (start-padded `LABEL_SIZE`, width `landscapeFleetRowWidth(grid)`, `Alignment.Start`), the opponent's is top-end (width `landscapeFleetRowWidth(grid)`, `Alignment.End`), and `ActionArea` is centred.
+  - **Landscape:** the battle `Column` keeps the top `StatusText` and the outer `ActionArea` box (`LANDSCAPE_ACTION_AREA_HEIGHT`, scaled with the font). `Boards` sizes the boards with `landscapeBoardsLayout(maxWidth - MENU_BUTTON_SIZE * 2, maxHeight)`, so they keep clear of the menu, and gives each side the rest of the width, `sideSpace = (maxWidth - 2 * boardSize - gap) / 2`. The `Row` is: your column, your board, the arrows, the computer's board, the opponent's column. Each column is a vertical `FleetTracker` with `cell = landscapeFleetColumnCell(sideSpace, boardSize - LABEL_SIZE)`, in a `sideSpace × boardSize` box padded `LABEL_SIZE` from the top: yours centre-end with `FLEET_COLUMN_MARGIN` before your board, the opponent's centre-start with `FLEET_COLUMN_MARGIN` after theirs.
   - Update the comments on the layout functions you change. Rule on any existing spacing test that assumed the old top status line in portrait (`portraitActionButtonSitsCloseBelowComputerBoard` may need its distance re-measured to the opponent tracker).
 - [ ] **Step 4: Run** `./gradlew testDebugUnitTest lintDebug` and the full `connectedDebugAndroidTest`. Expected: PASS.
 - [ ] **Step 5: Commit** `git commit -m "show both fleets around the boards and move the portrait result into the gap"`
