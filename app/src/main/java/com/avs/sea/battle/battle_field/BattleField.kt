@@ -116,6 +116,8 @@ class BattleField : BaseBattleField() {
         return null
     }
 
+    fun sunkShipSizes(): List<Int> = ships.filter { it.isDead() }.map { it.getLength() }
+
     fun isGameOver(): Boolean {
         var result = true
         for (ship in ships) {
