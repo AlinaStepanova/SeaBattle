@@ -74,8 +74,6 @@ validate_fleet(COMPUTER, "computer")
 # the player has sunk two computer ships and wounded the four-deck one.
 person_mid = board(PERSON, [(9, 2), (0, 2), (0, 3)], [(1, 5), (3, 3), (6, 6), (8, 1), (2, 9), (1, 1), (5, 5)])
 computer_mid = board(COMPUTER, [(0, 3), (6, 5), (4, 3), (4, 4)], [(1, 6), (5, 8), (9, 0), (2, 6), (7, 3)])
-selected = (4, 5)
-assert selected not in set(computer_mid[0]) | set(computer_mid[1])
 
 # The player wins: every computer ship sunk.
 all_computer = [c for s in COMPUTER for c in s]
@@ -97,10 +95,11 @@ def kt(cs):
 STATES = {
     "placing": dict(phase="PLACING", status="status_place_ships_text",
                     personBoardShips=sorted(all_person), selectedShipCells=sorted(PERSON[0])),
-    "battle": dict(phase="BATTLE", status="status_select_to_fire_text",
+    # The battle has no status text; the turn arrows show whose turn it is.
+    "battle": dict(phase="BATTLE",
                    personBoardShips=sorted(all_person), personBoardCrosses=person_mid[0], personBoardDots=person_mid[1],
-                   computerBoardCrosses=computer_mid[0], computerBoardDots=computer_mid[1], selected=selected),
-    "computer_turn": dict(phase="COMPUTER_TURN", status="status_opponent_shot_text",
+                   computerBoardCrosses=computer_mid[0], computerBoardDots=computer_mid[1]),
+    "computer_turn": dict(phase="COMPUTER_TURN",
                           personBoardShips=sorted(all_person), personBoardCrosses=person_mid[0], personBoardDots=person_mid[1],
                           computerBoardCrosses=computer_mid[0], computerBoardDots=computer_mid[1]),
     "win": dict(phase="OVER", status="status_game_over_you_win_text", winner="PERSON",
@@ -113,13 +112,12 @@ STATES = {
 
 
 def state_kt(s):
-    parts = [f"phase = GamePhase.{s['phase']}", f"statusResId = R.string.{s['status']}"]
+    status = f"R.string.{s['status']}" if "status" in s else "null"
+    parts = [f"phase = GamePhase.{s['phase']}", f"statusResId = {status}"]
     for key in ("personBoardShips", "selectedShipCells", "personBoardCrosses", "personBoardDots",
                 "computerBoardShips", "computerBoardCrosses", "computerBoardDots"):
         if key in s:
             parts.append(f"{key} = {kt(s[key])}")
-    if "selected" in s:
-        parts.append(f"selectedCoordinate = Coordinate{tuple(s['selected'])}")
     if "winner" in s:
         parts.append(f"winner = Player.{s['winner']}")
     return "GameUiState(\n            " + ",\n            ".join(parts) + ",\n        )"
@@ -164,8 +162,7 @@ class StoreScreenshots {{
                     onGenerateShips = {{}},
                     onStartGame = {{}},
                     onNewGame = {{}},
-                    onCellClick = {{}},
-                    onFire = {{}},
+                    onComputerCellClick = {{}},
                     onMenuAction = {{}},
                     onPersonCellClick = {{}},
                     onConfirmNewGame = {{}},

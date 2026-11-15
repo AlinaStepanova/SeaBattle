@@ -22,15 +22,28 @@ class LandscapeBoardsLayoutTest {
     }
 
     @Test
-    fun gridsAreExactlyTwoSquaresApartOnAnyScreen() {
-        val screens = listOf(800.dp to 280.dp, 440.dp to 280.dp, 560.dp to 200.dp, 1200.dp to 600.dp)
-        screens.forEach { (width, height) ->
+    fun gridsAreAWholeNumberOfSquaresApartAndAtLeastTwo() {
+        regularScreens.forEach { (width, height) ->
             val layout = landscapeBoardsLayout(width, height)
             val cell = (layout.boardSize - LABEL_SIZE) / SQUARES_COUNT
             // The computer board's number column sits between the grids, inside the gap.
-            assertEquals(2 * cell.value, (layout.gap + LABEL_SIZE).value, 0.01f)
+            val squares = (layout.gap + LABEL_SIZE) / cell
+            assertEquals("screen $width x $height", Math.round(squares).toFloat(), squares, 0.01f)
+            assertTrue("screen $width x $height", squares >= 2f - 0.01f)
         }
     }
+
+    @Test
+    fun gapHoldsTheTurnArrowsWithClearSpaceAroundThem() {
+        (regularScreens + compactScreens).forEach { (width, height) ->
+            val layout = landscapeBoardsLayout(width, height)
+            // 8 dp clear between the arrows and each board.
+            val needed = TURN_ARROW_SIZE + 16.dp
+            assertTrue("screen $width x $height: gap ${layout.gap}", layout.boardSize == 0.dp || layout.gap >= needed)
+        }
+    }
+
+    private val regularScreens = listOf(800.dp to 280.dp, 440.dp to 280.dp, 560.dp to 200.dp, 1200.dp to 600.dp)
 
     @Test
     fun boardsAndGapNeverOverflowTheAvailableSpace() {

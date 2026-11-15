@@ -244,8 +244,7 @@ class MainViewModelPlacementTest {
         viewModel.startGame()
         val computerField = viewModel.getComputerBattleField()
         while (!computerField.isGameOver()) {
-            viewModel.handlePCAreaClick(computerField.getShipsCoordinates().first())
-            viewModel.makeFireAsPerson()
+            viewModel.onComputerBoardTap(computerField.getShipsCoordinates().first())
         }
         viewModel.onNewGameRequested()
         assertFalse(state.showNewGameConfirmation)
@@ -258,8 +257,7 @@ class MainViewModelPlacementTest {
         val computerField = viewModel.getComputerBattleField()
         val ships = computerField.getShipsCoordinates()
         val miss = (0 until 10).flatMap { x -> (0 until 10).map { y -> Coordinate(x, y) } }.first { it !in ships }
-        viewModel.handlePCAreaClick(miss)
-        viewModel.makeFireAsPerson()
+        viewModel.onComputerBoardTap(miss)
         assertNotEquals(GamePhase.BATTLE, state.phase)
     }
 }
