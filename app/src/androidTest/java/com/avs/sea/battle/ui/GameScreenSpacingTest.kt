@@ -21,6 +21,7 @@ import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.hasClickAction
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
@@ -33,6 +34,7 @@ import androidx.compose.ui.unit.DpRect
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import com.avs.sea.battle.FLEET
 import com.avs.sea.battle.R
 import com.avs.sea.battle.SQUARES_COUNT
 import com.avs.sea.battle.ui.theme.SeaBattleTheme
@@ -50,10 +52,10 @@ class GameScreenSpacingTest {
     val composeTestRule = createComposeRule()
 
     @Test
-    fun portraitActionButtonSitsCloseBelowComputerBoard() {
-        setGameScreen(isLandscape = false)
-        val gap = newGameButton().top - grid(COMPUTER).bottom
-        assertTrue("gap below computer board was $gap", gap <= 48.dp)
+    fun portraitActionButtonSitsCloseBelowTheOpponentsFleet() {
+        setGameScreen(isLandscape = false, uiState = OVER_WITH_FLEETS)
+        val gap = newGameButton().top - fleetRow(isOpponent = true).bottom
+        assertTrue("gap below the opponent's fleet was $gap", gap <= 48.dp)
     }
 
     @Test
@@ -164,6 +166,68 @@ class GameScreenSpacingTest {
         screenState.value = GameUiState(phase = GamePhase.COMPUTER_TURN, statusResId = null)
         composeTestRule.waitForIdle()
         assertNoTextButtons()
+    }
+
+    @Test
+    fun portraitFleetRowsSitAtTheOuterEdgesOfTheBoards() {
+        setGameScreen(isLandscape = false, uiState = BATTLE_WITH_FLEETS)
+        val screen = composeTestRule.onNodeWithTag(SCREEN_TAG).getBoundsInRoot()
+        val yours = fleetRow(isOpponent = false)
+        val opponents = fleetRow(isOpponent = true)
+        val yourBoardTop = grid(PERSON).top - LABEL_SIZE
+        assertTrue("your row runs into your board", yours.bottom <= yourBoardTop + 0.5.dp)
+        assertTrue("your row is far from your board", yourBoardTop - yours.bottom <= 12.dp)
+        assertTrue("opponent's row runs into their board", opponents.top >= grid(COMPUTER).bottom - 0.5.dp)
+        assertTrue("opponent's row is far from their board", opponents.top - grid(COMPUTER).bottom <= 12.dp)
+        assertTrue("a row leaves the screen", yours.top >= screen.top && opponents.bottom <= screen.bottom)
+    }
+
+    @Test
+    fun portraitGameOverTextSitsBetweenTheBoards() {
+        setGameScreen(isLandscape = false, uiState = OVER_WITH_FLEETS)
+        assertGameOverTextIsBetweenTheBoards()
+    }
+
+    @Test
+    fun portraitGameOverTextFitsBetweenTheBoardsWithALargerFont() {
+        setGameScreen(isLandscape = false, uiState = OVER_WITH_FLEETS, fontScale = 1.3f)
+        assertGameOverTextIsBetweenTheBoards()
+    }
+
+    @Test
+    fun portraitNewGameSitsBelowTheOpponentsFleet() {
+        setGameScreen(isLandscape = false, uiState = OVER_WITH_FLEETS)
+        assertTrue("New game overlaps the opponent's row", newGameButton().top >= fleetRow(isOpponent = true).bottom)
+    }
+
+    @Test
+    fun landscapeFleetRowsAlignWithTheOuterGridEdges() {
+        setGameScreen(isLandscape = true, uiState = BATTLE_WITH_FLEETS)
+        val yours = fleetRow(isOpponent = false)
+        val opponents = fleetRow(isOpponent = true)
+        assertEquals(grid(PERSON).left.value, yours.left.value, 1f)
+        assertEquals(grid(COMPUTER).right.value, opponents.right.value, 1f)
+        assertTrue("your row overlaps your grid", yours.top >= grid(PERSON).bottom)
+        assertTrue("opponent's row overlaps their grid", opponents.top >= grid(COMPUTER).bottom)
+    }
+
+    @Test
+    fun smallPhoneLandscapeNewGameClearsBothFleetRows() {
+        setGameScreen(isLandscape = true, uiState = OVER_WITH_FLEETS, width = SMALL_PHONE_LONG_SIDE, height = SMALL_PHONE_SHORT_SIDE)
+        val button = newGameButton()
+        listOf(false, true).forEach { isOpponent ->
+            val row = fleetRow(isOpponent)
+            val overlaps = button.left < row.right && row.left < button.right && button.top < row.bottom && row.top < button.bottom
+            assertFalse("New game overlaps the ${if (isOpponent) "opponent's" else "your"} row", overlaps)
+        }
+    }
+
+    @Test
+    fun placementShowsNoFleetRows() {
+        setGameScreen(isLandscape = false, uiState = PLACING_STATE.copy(personFleet = fleetShips(emptyList())))
+        listOf(false, true).forEach { isOpponent ->
+            assertEquals(0, composeTestRule.onAllNodes(hasTestTag(fleetTrackerTag(isOpponent))).fetchSemanticsNodes().size)
+        }
     }
 
     @Test
@@ -303,10 +367,10 @@ class GameScreenSpacingTest {
 
     // The game-over text and the New game button appear in slots the battle keeps free.
     private fun assertBoardsStayPutWhenTheGameEnds(isLandscape: Boolean) {
-        val screenState = mutableStateOf(GameUiState(phase = GamePhase.BATTLE, statusResId = null))
+        val screenState = mutableStateOf(BATTLE_WITH_FLEETS)
         setGameScreen(isLandscape, screenState = screenState)
         val duringBattle = listOf(grid(PERSON), grid(COMPUTER))
-        screenState.value = BATTLE_STATE
+        screenState.value = OVER_WITH_FLEETS
         composeTestRule.waitForIdle()
         listOf(grid(PERSON), grid(COMPUTER)).zip(duringBattle).forEach { (atGameOver, before) ->
             listOf(
@@ -380,6 +444,15 @@ class GameScreenSpacingTest {
         }
     }
 
+    private fun assertGameOverTextIsBetweenTheBoards() {
+        val text = composeTestRule.onNodeWithText(string(GAME_OVER_STATUS)).getBoundsInRoot()
+        assertTrue("result text overlaps your grid", text.top >= grid(PERSON).bottom)
+        assertTrue("result text overlaps the computer's board", text.bottom <= grid(COMPUTER).top - LABEL_SIZE)
+    }
+
+    private fun fleetRow(isOpponent: Boolean): DpRect =
+        composeTestRule.onNodeWithTag(fleetTrackerTag(isOpponent)).getBoundsInRoot()
+
     private fun grid(index: Int): DpRect =
         composeTestRule.onAllNodesWithTag(BOARD_GRID_TAG)[index].getBoundsInRoot()
 
@@ -424,6 +497,13 @@ class GameScreenSpacingTest {
         const val GAME_OVER_STATUS = R.string.status_game_over_you_win_text
         const val PLACEMENT_HINT = R.string.status_place_ships_text
         val BATTLE_STATE = GameUiState(phase = GamePhase.OVER, statusResId = GAME_OVER_STATUS)
+        val BATTLE_WITH_FLEETS = GameUiState(
+            phase = GamePhase.BATTLE,
+            statusResId = null,
+            personFleet = fleetShips(emptyList()),
+            computerFleet = fleetShips(listOf(4)),
+        )
+        val OVER_WITH_FLEETS = BATTLE_STATE.copy(personFleet = fleetShips(emptyList()), computerFleet = fleetShips(FLEET))
 
         val PLACING_STATE = GameUiState()
 

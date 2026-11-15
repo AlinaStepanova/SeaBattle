@@ -8,6 +8,18 @@ import org.junit.Test
 
 class LandscapeBoardsLayoutTest {
 
+    // The Boards areas of a 640 x 360 and a 914 x 411 dp landscape phone. Each fleet row is
+    // aligned to its board's outer edge, so New game goes in the space between them.
+    @Test
+    fun fleetRowsLeaveRoomForNewGameBetweenThem() {
+        listOf(544.dp to 289.dp, 818.dp to 340.dp).forEach { (width, height) ->
+            val layout = landscapeBoardsLayout(width, height - LANDSCAPE_STRIP_HEIGHT)
+            val grid = layout.boardSize - LABEL_SIZE
+            val between = LABEL_SIZE + layout.gap + (grid - landscapeFleetRowWidth(grid)) * 2
+            assertTrue("area $width x $height leaves $between", between >= 140.dp)
+        }
+    }
+
     @Test
     fun boardsFillTheHeightOnAWideScreen() {
         val layout = landscapeBoardsLayout(maxWidth = 800.dp, maxHeight = 280.dp)

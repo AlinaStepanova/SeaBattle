@@ -61,7 +61,16 @@ import com.avs.sea.battle.ui.theme.SeaBattleTheme
 private val MENU_BUTTON_SIZE = 48.dp
 private const val LANDSCAPE_GAP_SQUARES = 2
 private val ACTION_AREA_HEIGHT = 56.dp
-private val LANDSCAPE_ACTION_AREA_HEIGHT = 44.dp
+
+// In landscape the strip under the boards holds both fleet rows and, at game over, New game.
+internal val LANDSCAPE_STRIP_HEIGHT = 44.dp
+
+// A portrait fleet row and its space to the board.
+private val FLEET_ROW_SLOT = 18.dp
+private val FLEET_ROW_SPACING = 8.dp
+
+// Landscape fleet rows stay this share of the grid width, so New game fits between them.
+private const val LANDSCAPE_FLEET_ROW_FRACTION = 0.65f
 
 // Kept clear above and below the hint and the stacked buttons while placing in portrait.
 private val PLACEMENT_CONTROLS_MARGIN = 16.dp
@@ -118,29 +127,25 @@ fun GameScreen(
             }
         } else {
             Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-                // Landscape is short on height, so it gets tighter vertical spacing.
-                StatusText(
-                    uiState.statusResId,
-                    Modifier.padding(
-                        top = if (isLandscape) 2.dp else 10.dp,
-                        start = MENU_BUTTON_SIZE,
-                        end = MENU_BUTTON_SIZE,
-                    )
-                )
+                // Landscape shows the result above the boards; portrait shows it between them.
+                if (isLandscape) {
+                    StatusText(uiState.statusResId, Modifier.padding(top = 2.dp, start = MENU_BUTTON_SIZE, end = MENU_BUTTON_SIZE))
+                }
                 Boards(
                     uiState,
                     isLandscape,
                     onComputerCellClick,
                     onGridPlaced,
+                    onNewGame,
                     Modifier.weight(1f).fillMaxWidth(),
                 )
-                Box(
-                    Modifier
-                        .fillMaxWidth()
-                        .heightIn(min = if (isLandscape) LANDSCAPE_ACTION_AREA_HEIGHT else ACTION_AREA_HEIGHT),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    ActionArea(uiState, onNewGame)
+                if (!isLandscape) {
+                    Box(
+                        Modifier.fillMaxWidth().heightIn(min = ACTION_AREA_HEIGHT),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        ActionArea(uiState, onNewGame)
+                    }
                 }
             }
         }
@@ -236,6 +241,7 @@ private fun Boards(
     isLandscape: Boolean,
     onComputerCellClick: (Coordinate) -> Unit,
     onGridPlaced: (Rect) -> Unit,
+    onNewGame: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val style = if (isLandscape) BoardStyle.Landscape else BoardStyle.Portrait
@@ -244,29 +250,56 @@ private fun Boards(
     BoxWithConstraints(modifier.then(padding), contentAlignment = Alignment.Center) {
         when {
             isLandscape -> {
-                val layout = landscapeBoardsLayout(maxWidth, maxHeight)
-                Row {
-                    PersonBoard(uiState, style, Modifier.size(layout.boardSize), onGridPlaced)
-                    // Padded past the letter row, so the arrows centre on the grids.
-                    TurnIndicator(
-                        uiState.phase,
-                        isLandscape = true,
-                        Modifier.size(width = layout.gap, height = layout.boardSize).padding(top = LABEL_SIZE),
-                    )
-                    ComputerBoard(uiState, onComputerCellClick, style, Modifier.size(layout.boardSize))
+                val layout = landscapeBoardsLayout(maxWidth, maxHeight - LANDSCAPE_STRIP_HEIGHT)
+                val rowWidth = landscapeFleetRowWidth(layout.boardSize - LABEL_SIZE)
+                Column {
+                    Row {
+                        PersonBoard(uiState, style, Modifier.size(layout.boardSize), onGridPlaced)
+                        // Padded past the letter row, so the arrows centre on the grids.
+                        TurnIndicator(
+                            uiState.phase,
+                            isLandscape = true,
+                            Modifier.size(width = layout.gap, height = layout.boardSize).padding(top = LABEL_SIZE),
+                        )
+                        ComputerBoard(uiState, onComputerCellClick, style, Modifier.size(layout.boardSize))
+                    }
+                    // Each fleet row hangs from its grid's outer edge, leaving the middle for New game.
+                    Box(Modifier.size(width = layout.boardSize * 2 + layout.gap, height = LANDSCAPE_STRIP_HEIGHT)) {
+                        FleetTracker(
+                            uiState.personFleet,
+                            isOpponent = false,
+                            Alignment.Start,
+                            Modifier.align(Alignment.TopStart).padding(start = LABEL_SIZE, top = FLEET_ROW_SPACING).width(rowWidth),
+                        )
+                        FleetTracker(
+                            uiState.computerFleet,
+                            isOpponent = true,
+                            Alignment.End,
+                            Modifier.align(Alignment.TopEnd).padding(top = FLEET_ROW_SPACING).width(rowWidth),
+                        )
+                        Box(Modifier.align(Alignment.Center)) { ActionArea(uiState, onNewGame) }
+                    }
                 }
             }
             else -> {
-                val layout = portraitBoardsLayout(maxWidth, maxHeight)
+                val layout = portraitBattleBoardsLayout(maxWidth, maxHeight)
+                // Rows, arrows and the result are padded past the number column to line up with the grids.
+                val rowSlot = Modifier.size(width = layout.boardSize, height = FLEET_ROW_SLOT)
+                val gapSlot = Modifier.size(width = layout.boardSize, height = layout.gap).padding(start = LABEL_SIZE)
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Box(rowSlot.padding(start = LABEL_SIZE, bottom = FLEET_ROW_SPACING), contentAlignment = Alignment.BottomStart) {
+                        FleetTracker(uiState.personFleet, isOpponent = false, Alignment.Start)
+                    }
                     PersonBoard(uiState, style, Modifier.size(layout.boardSize), onGridPlaced)
-                    // Padded past the number column, so the arrows centre on the grids.
-                    TurnIndicator(
-                        uiState.phase,
-                        isLandscape = false,
-                        Modifier.size(width = layout.boardSize, height = layout.gap).padding(start = LABEL_SIZE),
-                    )
+                    if (uiState.phase == GamePhase.OVER) {
+                        Box(gapSlot, contentAlignment = Alignment.Center) { StatusText(uiState.statusResId) }
+                    } else {
+                        TurnIndicator(uiState.phase, isLandscape = false, gapSlot)
+                    }
                     ComputerBoard(uiState, onComputerCellClick, style, Modifier.size(layout.boardSize))
+                    Box(rowSlot.padding(start = LABEL_SIZE, top = FLEET_ROW_SPACING), contentAlignment = Alignment.TopStart) {
+                        FleetTracker(uiState.computerFleet, isOpponent = true, Alignment.Start)
+                    }
                 }
             }
         }
@@ -442,6 +475,12 @@ internal fun landscapeBoardsLayout(maxWidth: Dp, maxHeight: Dp): LandscapeBoards
 }
 
 internal data class PortraitBoardsLayout(val boardSize: Dp, val gap: Dp)
+
+// The battle's portrait boards with a fleet row above your board and one below the opponent's.
+internal fun portraitBattleBoardsLayout(maxWidth: Dp, maxHeight: Dp): PortraitBoardsLayout =
+    portraitBoardsLayout(maxWidth, maxHeight - FLEET_ROW_SLOT * 2)
+
+internal fun landscapeFleetRowWidth(gridWidth: Dp): Dp = gridWidth * LANDSCAPE_FLEET_ROW_FRACTION
 
 // Two boards stacked, as wide as PORTRAIT_BOARD_WIDTH_FRACTION allows. The computer's grid
 // starts a whole number of notebook squares below the player's grid: at least enough squares
