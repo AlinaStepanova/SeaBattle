@@ -106,22 +106,23 @@
   - `internal enum class ArrowDirection { UP, DOWN, LEFT, RIGHT }`
   - `internal fun activeArrowDirection(phase: GamePhase, isLandscape: Boolean): ArrowDirection?`: `BATTLE` → `DOWN` (portrait) / `RIGHT` (landscape); `COMPUTER_TURN` → `UP` / `LEFT`; `PLACING`, `OVER` → `null`.
   - `internal fun turnArrowStrokes(size: Float, direction: ArrowDirection): List<Pair<Offset, Offset>>`: `[shaft, headLeft, headRight]` in a `size × size` box. The shaft is centred and spans 80% of the box (10%–90%) and ends at the tip; both head strokes start at the tip and run back at 45°, each `0.3 * size` long.
-  - `internal val TURN_ARROW_SIZE = 28.dp`
-- Layout contract: `portraitBoardsLayout(...).gap >= TURN_ARROW_SIZE` and `landscapeBoardsLayout(...).gap >= TURN_ARROW_SIZE` whenever `boardSize > 0`.
+  - `internal val TURN_ARROW_SIZE = 24.dp`, plus `PORTRAIT_TURN_INDICATOR_MIN_GAP` (arrow + 2 × 4 dp) and `LANDSCAPE_TURN_INDICATOR_MIN_GAP` (arrow + 2 × 8 dp)
+- Layout contract: `portraitBoardsLayout(...).gap >= PORTRAIT_TURN_INDICATOR_MIN_GAP` and `landscapeBoardsLayout(...).gap >= LANDSCAPE_TURN_INDICATOR_MIN_GAP` whenever `boardSize > 0`.
+- Changed after review with the user: the plan first had a 28 dp arrow and a gap of just the arrow; the user asked for smaller arrows, more space around them in landscape and between them, and common portrait phones must keep their board size.
 
 - [ ] **Step 1: Write the failing tests.**
   - `TurnArrowsTest.activeArrowPointsAtTheBoardBeingShotAt`: the six mappings above, plus `null` for `PLACING` and `OVER` in both orientations.
   - `TurnArrowsTest.shaftIsCentredAndSpansEightyPercent`: `DOWN` with size 100 → shaft `(50,10)` to `(50,90)`; `RIGHT` → `(10,50)` to `(90,50)`.
   - `TurnArrowsTest.headMeetsAtTheTipOnTheSideTheArrowPoints`: the tip is `(50,90)` for `DOWN`, `(50,10)` for `UP`, `(90,50)` for `RIGHT` and `(10,50)` for `LEFT`; both head strokes start there.
   - `TurnArrowsTest.headStrokesAreMirroredAt45Degrees`: each head stroke is 30 long, its |dx| equals |dy|, and the two end points are mirrored across the shaft.
-  - `PortraitBoardsLayoutTest.gapAlwaysHoldsTheTurnArrows` over the existing `screens`: `boardSize == 0.dp || gap >= TURN_ARROW_SIZE`.
-  - `LandscapeBoardsLayoutTest.gapAlwaysHoldsTheTurnArrows` over the regular and compact screens, with the same assertion. Rename `gridsAreExactlyTwoSquaresApartOnAnyScreen` to `gridsAreAWholeNumberOfSquaresApartAndAtLeastTwo`: narrow screens now need a third square. `boardsUseEightyPercentOfTheWidthOnATallScreen` and `boardsFillTheHeightOnAWideScreen` must keep passing; they pin "boards no smaller than today" on phone-sized screens.
+  - `PortraitBoardsLayoutTest.gapHoldsTheTurnArrowsWithClearSpaceAroundThem` over the existing `screens`: `boardSize == 0.dp || gap >= TURN_ARROW_SIZE + 8.dp`; `commonPhonesKeepBoardsAtEightyPercentOfTheWidth` for 360×617, 393×712, 411×750 and 412×800 dp.
+  - `LandscapeBoardsLayoutTest.gapHoldsTheTurnArrowsWithClearSpaceAroundThem` over the regular and compact screens: `boardSize == 0.dp || gap >= TURN_ARROW_SIZE + 16.dp`. Rename `gridsAreExactlyTwoSquaresApartOnAnyScreen` to `gridsAreAWholeNumberOfSquaresApartAndAtLeastTwo`: narrow screens now need a third square. `boardsUseEightyPercentOfTheWidthOnATallScreen` and `boardsFillTheHeightOnAWideScreen` must keep passing; they pin "boards no smaller than today" on phone-sized screens.
 
 - [ ] **Step 2: Run them to see them fail**
   Run: `./gradlew testDebugUnitTest --tests "com.avs.sea.battle.ui.*"`
   Expected: compile failure (`TurnIndicator.kt` symbols), then gap assertions fail on narrow screens.
 
-- [ ] **Step 3: Implement.** In both layout functions the "fits" condition for a number of squares becomes `cell * squares - LABEL_SIZE >= TURN_ARROW_SIZE` (it was `>= 0` for portrait and `cell * squares >= LABEL_SIZE` for landscape). Portrait's even-share rounding stays and is clamped to that minimum. Only very compact windows get slightly smaller boards; phones keep theirs.
+- [ ] **Step 3: Implement.** In both layout functions the "fits" condition for a number of squares becomes `cell * squares - LABEL_SIZE >= <orientation>_TURN_INDICATOR_MIN_GAP` (it was `>= 0` for portrait and `cell * squares >= LABEL_SIZE` for landscape). Portrait's even-share rounding stays and is clamped to that minimum. Only very compact windows get slightly smaller boards; phones keep theirs.
 
 - [ ] **Step 4: Run the tests**
   Run: `./gradlew testDebugUnitTest`
@@ -163,7 +164,7 @@
 
 - [ ] **Step 3: Implement `TurnIndicator`.**
   - When `activeArrowDirection` is `null` it draws an empty `Box(modifier)`, so the gap stays the same size.
-  - Otherwise there are two arrows of `TURN_ARROW_SIZE`, centred and 8 dp apart: a `Row` of ↓ ↑ in portrait (the arrow toward the computer first), a `Column` of → ← in landscape.
+  - Otherwise there are two arrows of `TURN_ARROW_SIZE`, centred and 14 dp apart: a `Row` of ↓ ↑ in portrait (the arrow toward the computer first), a `Column` of → ← in landscape.
   - Each arrow is a `Canvas` drawing `turnArrowStrokes` with round caps. It animates `animateFloatAsState(if (active) 1f else 0f, tween(200))` between faint (`foreground` at 0.25 alpha, stroke `0.06 * size`) and active (`foreground`, stroke `0.1 * size`).
   - Each arrow node has `testTag(turnArrowTag(direction))` and `semantics { selected = active }`.
   - The container has `testTag(TURN_INDICATOR_TAG)` and `semantics { liveRegion = LiveRegionMode.Polite; contentDescription = <turn string> }`.

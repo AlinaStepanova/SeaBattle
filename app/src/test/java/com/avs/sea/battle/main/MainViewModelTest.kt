@@ -95,6 +95,7 @@ class MainViewModelTest {
     @Test
     fun tappingAMarkedCellAroundASunkShipIsIgnored() {
         val computerField = viewModel.getComputerBattleField()
+        // getShipsCoordinates lists only ship cells not hit yet, so each tap hits a new cell.
         while (viewModel.uiState.value.computerBoardDots.isEmpty()) {
             viewModel.onComputerBoardTap(computerField.getShipsCoordinates().first())
         }
