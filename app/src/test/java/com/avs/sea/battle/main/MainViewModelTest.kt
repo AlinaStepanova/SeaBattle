@@ -4,6 +4,7 @@ import com.avs.sea.battle.R
 import com.avs.sea.battle.SQUARES_COUNT
 import com.avs.sea.battle.battle_field.Coordinate
 import com.avs.sea.battle.battle_field.FleetLayout
+import com.avs.sea.battle.ui.FleetShipUi
 import com.avs.sea.battle.ui.GamePhase
 import com.avs.sea.battle.ui.UiEvent
 import kotlinx.coroutines.CoroutineScope
@@ -21,6 +22,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import kotlin.math.abs
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MainViewModelTest {
@@ -168,6 +170,46 @@ class MainViewModelTest {
     }
 
     @Test
+    fun battleStartsWithBothFleetsAfloat() {
+        assertEquals(ALL_AFLOAT, viewModel.uiState.value.personFleet)
+        assertEquals(ALL_AFLOAT, viewModel.uiState.value.computerFleet)
+    }
+
+    @Test
+    fun sinkingAComputerShipStrikesItInTheComputerFleet() {
+        val computerField = viewModel.getComputerBattleField()
+        while (viewModel.uiState.value.computerBoardDots.isEmpty()) {
+            viewModel.onComputerBoardTap(computerField.getShipsCoordinates().first())
+        }
+        assertEquals(1, viewModel.uiState.value.computerFleet.count { it.sunk })
+        assertEquals(ALL_AFLOAT, viewModel.uiState.value.personFleet)
+    }
+
+    @Test
+    fun aHitThatDoesNotSinkLeavesTheFleetUnchanged() {
+        val ships = viewModel.getComputerBattleField().getShipsCoordinates()
+        // A cell with a ship neighbour belongs to a ship of two or more decks.
+        val partOfALongerShip = ships.first { cell -> ships.any { abs(it.x - cell.x) + abs(it.y - cell.y) == 1 } }
+        viewModel.onComputerBoardTap(partOfALongerShip)
+        assertTrue(viewModel.uiState.value.computerBoardDots.isEmpty())
+        assertEquals(ALL_AFLOAT, viewModel.uiState.value.computerFleet)
+    }
+
+    @Test
+    fun theComputersShotsUpdateThePlayersFleet() {
+        loseGame()
+        assertEquals(10, viewModel.uiState.value.personFleet.size)
+        assertTrue(viewModel.uiState.value.personFleet.all { it.sunk })
+    }
+
+    @Test
+    fun aNewGameClearsBothFleets() {
+        viewModel.startNewGame()
+        assertEquals(emptyList<FleetShipUi>(), viewModel.uiState.value.personFleet)
+        assertEquals(emptyList<FleetShipUi>(), viewModel.uiState.value.computerFleet)
+    }
+
+    @Test
     fun winningGameEndsGameWithAllComputerShipsSunk() {
         winGame()
         assertEquals(GamePhase.OVER, viewModel.uiState.value.phase)
@@ -210,6 +252,10 @@ class MainViewModelTest {
         assertEquals(FleetLayout.initial().cells(), viewModel.uiState.value.personBoardShips)
         assertEquals(emptyList<Coordinate>(), viewModel.uiState.value.computerBoardCrosses)
         assertNull(viewModel.uiState.value.winner)
+    }
+
+    private companion object {
+        val ALL_AFLOAT = listOf(4, 3, 3, 2, 2, 2, 1, 1, 1, 1).map { FleetShipUi(it, sunk = false) }
     }
 
     private fun findFreeEmptyCell(): Coordinate {
