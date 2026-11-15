@@ -9,7 +9,7 @@ class FleetTrackerLayoutTest {
 
     @Test
     fun cellIsCappedOnWideRows() {
-        assertEquals(10f, fleetTrackerCell(309.dp).value, 0.001f)
+        assertEquals(12f, fleetTrackerCell(309.dp).value, 0.001f)
     }
 
     @Test

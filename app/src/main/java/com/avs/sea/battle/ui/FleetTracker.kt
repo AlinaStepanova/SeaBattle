@@ -89,10 +89,10 @@ private fun FleetShip(ship: FleetShipUi, cell: Dp, modifier: Modifier = Modifier
     }
 }
 
-private val FLEET_MAX_CELL = 10.dp
+private val FLEET_MAX_CELL = 12.dp
 
 // A row is 20 ship cells plus 9 gaps of half a cell between the 10 ships.
 private const val FLEET_ROW_WIDTH_IN_CELLS = 24.5f
 
-// Bolder than a hit cross relative to its cell, so the strike-through reads on a 6-10 dp ship.
+// Bolder than a hit cross relative to its cell, so the strike-through reads on a 6-12 dp ship.
 private const val SUNK_STROKE_TO_CELL = 0.25f

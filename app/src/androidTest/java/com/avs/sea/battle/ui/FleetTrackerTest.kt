@@ -40,7 +40,8 @@ class FleetTrackerTest {
         setTracker(fleetShips(emptyList()))
         val fourDeck = composeTestRule.onNodeWithTag(fleetShipTag(0)).getBoundsInRoot()
         val oneDeck = composeTestRule.onNodeWithTag(fleetShipTag(9)).getBoundsInRoot()
-        assertEquals(4 * (oneDeck.right - oneDeck.left).value, (fourDeck.right - fourDeck.left).value, 0.5f)
+        // Each ship's width is rounded to whole pixels on its own.
+        assertEquals(4 * (oneDeck.right - oneDeck.left).value, (fourDeck.right - fourDeck.left).value, 1f)
     }
 
     @Test

@@ -66,11 +66,11 @@ private val ACTION_AREA_HEIGHT = 56.dp
 internal val LANDSCAPE_STRIP_HEIGHT = 44.dp
 
 // A portrait fleet row and its space to the board.
-private val FLEET_ROW_SLOT = 18.dp
+private val FLEET_ROW_SLOT = 20.dp
 private val FLEET_ROW_SPACING = 8.dp
 
 // Landscape fleet rows stay this share of the grid width, so New game fits between them.
-private const val LANDSCAPE_FLEET_ROW_FRACTION = 0.65f
+private const val LANDSCAPE_FLEET_ROW_FRACTION = 0.72f
 
 // Kept clear above and below the hint and the stacked buttons while placing in portrait.
 private val PLACEMENT_CONTROLS_MARGIN = 16.dp

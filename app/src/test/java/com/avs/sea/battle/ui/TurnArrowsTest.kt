@@ -23,18 +23,18 @@ class TurnArrowsTest {
     }
 
     @Test
-    fun shaftIsCentredAndSpansEightyPercent() {
-        assertStroke(Offset(50f, 10f), Offset(50f, 90f), turnArrowStrokes(100f, ArrowDirection.DOWN)[0])
-        assertStroke(Offset(10f, 50f), Offset(90f, 50f), turnArrowStrokes(100f, ArrowDirection.RIGHT)[0])
+    fun shaftIsCentredAndSpansSixtyPercent() {
+        assertStroke(Offset(50f, 20f), Offset(50f, 80f), turnArrowStrokes(100f, ArrowDirection.DOWN)[0])
+        assertStroke(Offset(20f, 50f), Offset(80f, 50f), turnArrowStrokes(100f, ArrowDirection.RIGHT)[0])
     }
 
     @Test
     fun headMeetsAtTheTipOnTheSideTheArrowPoints() {
         val tips = mapOf(
-            ArrowDirection.DOWN to Offset(50f, 90f),
-            ArrowDirection.UP to Offset(50f, 10f),
-            ArrowDirection.RIGHT to Offset(90f, 50f),
-            ArrowDirection.LEFT to Offset(10f, 50f),
+            ArrowDirection.DOWN to Offset(50f, 80f),
+            ArrowDirection.UP to Offset(50f, 20f),
+            ArrowDirection.RIGHT to Offset(80f, 50f),
+            ArrowDirection.LEFT to Offset(20f, 50f),
         )
         tips.forEach { (direction, tip) ->
             val (shaft, headLeft, headRight) = turnArrowStrokes(100f, direction)

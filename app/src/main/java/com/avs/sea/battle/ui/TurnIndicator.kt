@@ -125,9 +125,9 @@ internal fun turnArrowStrokes(size: Float, direction: ArrowDirection): List<Pair
     return listOf(center - along * halfShaft to tip, tip to tip + back + side, tip to tip + back - side)
 }
 
-private const val ARROW_SHAFT_TO_BOX = 0.8f
+private const val ARROW_SHAFT_TO_BOX = 0.6f
 private const val ARROW_HEAD_TO_BOX = 0.3f
-private val TURN_ARROW_SPACING = 14.dp
+private val TURN_ARROW_SPACING = 20.dp
 private const val TURN_SWITCH_MILLIS = 200
 private const val FAINT_ARROW_ALPHA = 0.25f
 private const val FAINT_ARROW_STROKE = 0.06f
