@@ -200,26 +200,50 @@ class GameScreenSpacingTest {
         assertTrue("New game overlaps the opponent's row", newGameButton().top >= fleetRow(isOpponent = true).bottom)
     }
 
+    // Your column sits left of your board's number column, the opponent's right of their grid.
     @Test
-    fun landscapeFleetRowsAlignWithTheOuterGridEdges() {
+    fun landscapeFleetColumnsSitBesideTheBoards() = assertFleetColumnsSitBesideTheBoards()
+
+    @Test
+    fun smallPhoneLandscapeFleetColumnsSitBesideTheBoards() =
+        assertFleetColumnsSitBesideTheBoards(width = SMALL_PHONE_LONG_SIDE, height = SMALL_PHONE_SHORT_SIDE)
+
+    @Test
+    fun landscapeOpponentsFleetStaysClearOfTheMenu() {
         setGameScreen(isLandscape = true, uiState = BATTLE_WITH_FLEETS)
-        val yours = fleetRow(isOpponent = false)
-        val opponents = fleetRow(isOpponent = true)
-        assertEquals(grid(PERSON).left.value, yours.left.value, 1f)
-        assertEquals(grid(COMPUTER).right.value, opponents.right.value, 1f)
-        assertTrue("your row overlaps your grid", yours.top >= grid(PERSON).bottom)
-        assertTrue("opponent's row overlaps their grid", opponents.top >= grid(COMPUTER).bottom)
+        val menu = composeTestRule.onNodeWithContentDescription(string(R.string.more_settings)).getBoundsInRoot()
+        assertTrue("opponent's fleet runs under the menu", fleetRow(isOpponent = true).top >= menu.bottom)
     }
 
     @Test
-    fun smallPhoneLandscapeNewGameClearsBothFleetRows() {
+    fun smallPhoneLandscapeNewGameClearsBothFleets() {
         setGameScreen(isLandscape = true, uiState = OVER_WITH_FLEETS, width = SMALL_PHONE_LONG_SIDE, height = SMALL_PHONE_SHORT_SIDE)
         val button = newGameButton()
         listOf(false, true).forEach { isOpponent ->
-            val row = fleetRow(isOpponent)
-            val overlaps = button.left < row.right && row.left < button.right && button.top < row.bottom && row.top < button.bottom
-            assertFalse("New game overlaps the ${if (isOpponent) "opponent's" else "your"} row", overlaps)
+            val fleet = fleetRow(isOpponent)
+            val overlaps = button.left < fleet.right && fleet.left < button.right && button.top < fleet.bottom && fleet.top < button.bottom
+            assertFalse("New game overlaps the ${if (isOpponent) "opponent's" else "your"} fleet", overlaps)
         }
+    }
+
+    @Test
+    fun landscapeNewGameIsNotCutOffWithALargerFont() {
+        setGameScreen(isLandscape = true, uiState = OVER_WITH_FLEETS, fontScale = 1.6f)
+        assertFalse("New game is cut off", textIsCutOff(string(R.string.new_game_text)))
+    }
+
+    @Test
+    fun portraitGameOverTextStaysOnOneLineOnANarrowPhoneWithALargeFont() {
+        setGameScreen(
+            isLandscape = false,
+            uiState = OVER_WITH_FLEETS,
+            width = NARROW_PHONE_SHORT_SIDE,
+            height = NARROW_PHONE_LONG_SIDE,
+            fontScale = 2f,
+        )
+        assertEquals(1, textLayout(string(GAME_OVER_STATUS)).lineCount)
+        assertFalse("result text is cut off", textIsCutOff(string(GAME_OVER_STATUS)))
+        assertGameOverTextIsBetweenTheBoards()
     }
 
     @Test
@@ -448,6 +472,25 @@ class GameScreenSpacingTest {
         val text = composeTestRule.onNodeWithText(string(GAME_OVER_STATUS)).getBoundsInRoot()
         assertTrue("result text overlaps your grid", text.top >= grid(PERSON).bottom)
         assertTrue("result text overlaps the computer's board", text.bottom <= grid(COMPUTER).top - LABEL_SIZE)
+    }
+
+    private fun assertFleetColumnsSitBesideTheBoards(
+        width: Dp = PHONE_LONG_SIDE,
+        height: Dp = PHONE_SHORT_SIDE,
+    ) {
+        setGameScreen(isLandscape = true, uiState = BATTLE_WITH_FLEETS, width = width, height = height)
+        val screen = composeTestRule.onNodeWithTag(SCREEN_TAG).getBoundsInRoot()
+        val yours = fleetRow(isOpponent = false)
+        val opponents = fleetRow(isOpponent = true)
+        val yourBoardLeft = grid(PERSON).left - LABEL_SIZE
+        assertTrue("your fleet overlaps your board", yours.right <= yourBoardLeft + 0.5.dp)
+        assertTrue("your fleet is far from your board", yourBoardLeft - yours.right <= 16.dp)
+        assertTrue("opponent's fleet overlaps their grid", opponents.left >= grid(COMPUTER).right - 0.5.dp)
+        assertTrue("opponent's fleet is far from their grid", opponents.left - grid(COMPUTER).right <= 16.dp)
+        listOf(yours, opponents).forEach { fleet ->
+            assertTrue("a fleet leaves the screen", fleet.left >= screen.left && fleet.right <= screen.right)
+            assertTrue("a fleet is taller than the grids", fleet.top >= grid(PERSON).top - 0.5.dp && fleet.bottom <= grid(PERSON).bottom + 0.5.dp)
+        }
     }
 
     private fun fleetRow(isOpponent: Boolean): DpRect =

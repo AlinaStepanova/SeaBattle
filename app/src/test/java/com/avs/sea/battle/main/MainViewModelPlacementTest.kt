@@ -2,6 +2,7 @@ package com.avs.sea.battle.main
 
 import com.avs.sea.battle.R
 import com.avs.sea.battle.REJECTED_FLASH_MILLIS
+import com.avs.sea.battle.SECOND_IN_MILLIS
 import com.avs.sea.battle.battle_field.Coordinate
 import com.avs.sea.battle.battle_field.FleetLayout
 import com.avs.sea.battle.battle_field.ShipPlacement
@@ -186,6 +187,26 @@ class MainViewModelPlacementTest {
         assertEquals(GamePhase.COMPUTER_TURN, state.phase)
         testDispatcher.scheduler.advanceUntilIdle()
         assertTrue(state.personBoardDots.isNotEmpty() || state.personBoardCrosses.isNotEmpty())
+    }
+
+    // Your fleet is the initial layout, so the ships the computer has sunk can be read straight
+    // off the crosses on your board after every shot, hits that don't sink included.
+    @Test
+    fun yourFleetStrikesExactlyTheShipsTheComputerHasSunk() {
+        viewModel.startGame()
+        val ships = viewModel.getComputerBattleField().getShipsCoordinates()
+        val water = (0 until 10).flatMap { x -> (0 until 10).map { y -> Coordinate(x, y) } }.filter { it !in ships }.iterator()
+        while (state.phase != GamePhase.OVER) {
+            if (state.phase == GamePhase.BATTLE) {
+                viewModel.onComputerBoardTap(water.next())
+            } else {
+                testDispatcher.scheduler.advanceTimeBy(SECOND_IN_MILLIS)
+                testDispatcher.scheduler.runCurrent()
+            }
+            val sunk = FleetLayout.initial().ships.filter { ship -> ship.cells().all { it in state.personBoardCrosses } }
+            assertEquals(sunk.map { it.size }.sorted(), state.personFleet.filter { it.sunk }.map { it.size }.sorted())
+            assertTrue("a computer ship is struck though you only missed", state.computerFleet.none { it.sunk })
+        }
     }
 
     @Test

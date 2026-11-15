@@ -17,6 +17,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.avs.sea.battle.R
 import com.avs.sea.battle.ui.theme.SeaBattleTheme
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -53,6 +54,14 @@ class FleetTrackerTest {
     }
 
     @Test
+    fun verticalFleetStacksOneShipPerLine() {
+        setTracker(fleetShips(emptyList()), vertical = true)
+        val first = composeTestRule.onNodeWithTag(fleetShipTag(0)).getBoundsInRoot()
+        val second = composeTestRule.onNodeWithTag(fleetShipTag(1)).getBoundsInRoot()
+        assertTrue("the second ship isn't below the first", second.top >= first.bottom)
+    }
+
+    @Test
     fun emptyFleetDrawsNothing() {
         setTracker(emptyList())
         assertEquals(0, composeTestRule.onAllNodes(hasTestTag(fleetShipTag(0))).fetchSemanticsNodes().size)
@@ -62,11 +71,11 @@ class FleetTrackerTest {
         composeTestRule.onNodeWithTag(fleetShipTag(index)).assert(SemanticsMatcher.expectValue(SunkShipKey, sunk))
     }
 
-    private fun setTracker(ships: List<FleetShipUi>) {
+    private fun setTracker(ships: List<FleetShipUi>, vertical: Boolean = false) {
         composeTestRule.setContent {
             SeaBattleTheme {
                 Box(Modifier.width(300.dp)) {
-                    FleetTracker(ships, isOpponent = true, alignment = Alignment.Start)
+                    FleetTracker(ships, isOpponent = true, cell = 12.dp, vertical = vertical, alignment = Alignment.Start)
                 }
             }
         }

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -41,6 +43,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -62,20 +65,17 @@ private val MENU_BUTTON_SIZE = 48.dp
 private const val LANDSCAPE_GAP_SQUARES = 2
 private val ACTION_AREA_HEIGHT = 56.dp
 
-// In landscape the strip under the boards holds both fleet rows and, at game over, New game.
-internal val LANDSCAPE_STRIP_HEIGHT = 44.dp
+private val LANDSCAPE_ACTION_AREA_HEIGHT = 44.dp
 
 // A portrait fleet row and its space to the board.
 private val FLEET_ROW_SLOT = 20.dp
 private val FLEET_ROW_SPACING = 8.dp
 
-// Landscape fleet rows stay this share of the grid width, so New game fits between them.
-private const val LANDSCAPE_FLEET_ROW_FRACTION = 0.72f
-
 // Kept clear above and below the hint and the stacked buttons while placing in portrait.
 private val PLACEMENT_CONTROLS_MARGIN = 16.dp
 private val PLACEMENT_BUTTON_MIN_WIDTH = 180.dp
 private val PORTRAIT_HINT_SIZE = 21.sp
+private val MIN_FITTED_TEXT_SIZE = 10.sp
 
 // The grid itself spans about 75% of the width, as in the original layout; the rest is labels.
 private const val PORTRAIT_BOARD_WIDTH_FRACTION = 0.8f
@@ -136,16 +136,17 @@ fun GameScreen(
                     isLandscape,
                     onComputerCellClick,
                     onGridPlaced,
-                    onNewGame,
                     Modifier.weight(1f).fillMaxWidth(),
                 )
-                if (!isLandscape) {
-                    Box(
-                        Modifier.fillMaxWidth().heightIn(min = ACTION_AREA_HEIGHT),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        ActionArea(uiState, onNewGame)
-                    }
+                // The button area keeps its height through the battle, so the boards don't move
+                // when New game appears; in landscape it grows with the font so the label fits.
+                val actionArea = if (isLandscape) {
+                    Modifier.height(LANDSCAPE_ACTION_AREA_HEIGHT * maxOf(1f, LocalDensity.current.fontScale))
+                } else {
+                    Modifier.heightIn(min = ACTION_AREA_HEIGHT)
+                }
+                Box(Modifier.fillMaxWidth().then(actionArea), contentAlignment = Alignment.Center) {
+                    ActionArea(uiState, onNewGame)
                 }
             }
         }
@@ -241,64 +242,55 @@ private fun Boards(
     isLandscape: Boolean,
     onComputerCellClick: (Coordinate) -> Unit,
     onGridPlaced: (Rect) -> Unit,
-    onNewGame: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val style = if (isLandscape) BoardStyle.Landscape else BoardStyle.Portrait
-    // Horizontal padding keeps the boards clear of the overflow menu in landscape.
-    val padding = if (isLandscape) Modifier.padding(horizontal = MENU_BUTTON_SIZE, vertical = 4.dp) else Modifier
+    val padding = if (isLandscape) Modifier.padding(vertical = 4.dp) else Modifier
     BoxWithConstraints(modifier.then(padding), contentAlignment = Alignment.Center) {
         when {
             isLandscape -> {
-                val layout = landscapeBoardsLayout(maxWidth, maxHeight - LANDSCAPE_STRIP_HEIGHT)
-                val rowWidth = landscapeFleetRowWidth(layout.boardSize - LABEL_SIZE)
-                Column {
-                    Row {
-                        PersonBoard(uiState, style, Modifier.size(layout.boardSize), onGridPlaced)
-                        // Padded past the letter row, so the arrows centre on the grids.
-                        TurnIndicator(
-                            uiState.phase,
-                            isLandscape = true,
-                            Modifier.size(width = layout.gap, height = layout.boardSize).padding(top = LABEL_SIZE),
-                        )
-                        ComputerBoard(uiState, onComputerCellClick, style, Modifier.size(layout.boardSize))
+                // The boards keep the menu's margin on both sides, so they stay clear of it; the fleet
+                // columns use that margin and whatever width is left beside the boards.
+                val layout = landscapeBoardsLayout(maxWidth - MENU_BUTTON_SIZE * 2, maxHeight)
+                val sideSpace = (maxWidth - layout.boardSize * 2 - layout.gap) / 2
+                val cell = landscapeFleetColumnCell(sideSpace, layout.boardSize - LABEL_SIZE)
+                val side = Modifier.size(width = sideSpace, height = layout.boardSize)
+                Row {
+                    Box(side.padding(top = LABEL_SIZE, end = FLEET_COLUMN_MARGIN), contentAlignment = Alignment.CenterEnd) {
+                        FleetTracker(uiState.personFleet, isOpponent = false, cell, vertical = true, Alignment.End)
                     }
-                    // Each fleet row hangs from its grid's outer edge, leaving the middle for New game.
-                    Box(Modifier.size(width = layout.boardSize * 2 + layout.gap, height = LANDSCAPE_STRIP_HEIGHT)) {
-                        FleetTracker(
-                            uiState.personFleet,
-                            isOpponent = false,
-                            Alignment.Start,
-                            Modifier.align(Alignment.TopStart).padding(start = LABEL_SIZE, top = FLEET_ROW_SPACING).width(rowWidth),
-                        )
-                        FleetTracker(
-                            uiState.computerFleet,
-                            isOpponent = true,
-                            Alignment.End,
-                            Modifier.align(Alignment.TopEnd).padding(top = FLEET_ROW_SPACING).width(rowWidth),
-                        )
-                        Box(Modifier.align(Alignment.Center)) { ActionArea(uiState, onNewGame) }
+                    PersonBoard(uiState, style, Modifier.size(layout.boardSize), onGridPlaced)
+                    // Padded past the letter row, so the arrows centre on the grids.
+                    TurnIndicator(
+                        uiState.phase,
+                        isLandscape = true,
+                        Modifier.size(width = layout.gap, height = layout.boardSize).padding(top = LABEL_SIZE),
+                    )
+                    ComputerBoard(uiState, onComputerCellClick, style, Modifier.size(layout.boardSize))
+                    Box(side.padding(top = LABEL_SIZE, start = FLEET_COLUMN_MARGIN), contentAlignment = Alignment.CenterStart) {
+                        FleetTracker(uiState.computerFleet, isOpponent = true, cell, vertical = true, Alignment.Start)
                     }
                 }
             }
             else -> {
                 val layout = portraitBattleBoardsLayout(maxWidth, maxHeight)
                 // Rows, arrows and the result are padded past the number column to line up with the grids.
+                val cell = fleetTrackerCell(layout.boardSize - LABEL_SIZE)
                 val rowSlot = Modifier.size(width = layout.boardSize, height = FLEET_ROW_SLOT)
                 val gapSlot = Modifier.size(width = layout.boardSize, height = layout.gap).padding(start = LABEL_SIZE)
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Box(rowSlot.padding(start = LABEL_SIZE, bottom = FLEET_ROW_SPACING), contentAlignment = Alignment.BottomStart) {
-                        FleetTracker(uiState.personFleet, isOpponent = false, Alignment.Start)
+                        FleetTracker(uiState.personFleet, isOpponent = false, cell, vertical = false, Alignment.Start)
                     }
                     PersonBoard(uiState, style, Modifier.size(layout.boardSize), onGridPlaced)
                     if (uiState.phase == GamePhase.OVER) {
-                        Box(gapSlot, contentAlignment = Alignment.Center) { StatusText(uiState.statusResId) }
+                        Box(gapSlot, contentAlignment = Alignment.Center) { StatusText(uiState.statusResId, fitOnOneLine = true) }
                     } else {
                         TurnIndicator(uiState.phase, isLandscape = false, gapSlot)
                     }
                     ComputerBoard(uiState, onComputerCellClick, style, Modifier.size(layout.boardSize))
                     Box(rowSlot.padding(start = LABEL_SIZE, top = FLEET_ROW_SPACING), contentAlignment = Alignment.TopStart) {
-                        FleetTracker(uiState.computerFleet, isOpponent = true, Alignment.Start)
+                        FleetTracker(uiState.computerFleet, isOpponent = true, cell, vertical = false, Alignment.Start)
                     }
                 }
             }
@@ -307,11 +299,19 @@ private fun Boards(
 }
 
 // The battle has no status text, but an empty line keeps its slot, so the boards don't move when
-// the game-over text appears.
+// the game-over text appears. fitOnOneLine shrinks the text instead of wrapping it, for slots of
+// a fixed height.
 @Composable
-private fun StatusText(statusResId: Int?, modifier: Modifier = Modifier, fontSize: TextUnit = 18.sp) {
+private fun StatusText(
+    statusResId: Int?,
+    modifier: Modifier = Modifier,
+    fontSize: TextUnit = 18.sp,
+    fitOnOneLine: Boolean = false,
+) {
     BasicText(
         text = statusResId?.let { stringResource(it) } ?: "",
+        maxLines = if (fitOnOneLine) 1 else Int.MAX_VALUE,
+        autoSize = if (fitOnOneLine) TextAutoSize.StepBased(minFontSize = MIN_FITTED_TEXT_SIZE, maxFontSize = fontSize) else null,
         style = TextStyle(
             color = SeaBattleTheme.colors.foreground,
             fontFamily = NeuchaFontFamily,
@@ -479,8 +479,6 @@ internal data class PortraitBoardsLayout(val boardSize: Dp, val gap: Dp)
 // The battle's portrait boards with a fleet row above your board and one below the opponent's.
 internal fun portraitBattleBoardsLayout(maxWidth: Dp, maxHeight: Dp): PortraitBoardsLayout =
     portraitBoardsLayout(maxWidth, maxHeight - FLEET_ROW_SLOT * 2)
-
-internal fun landscapeFleetRowWidth(gridWidth: Dp): Dp = gridWidth * LANDSCAPE_FLEET_ROW_FRACTION
 
 // Two boards stacked, as wide as PORTRAIT_BOARD_WIDTH_FRACTION allows. The computer's grid
 // starts a whole number of notebook squares below the player's grid: at least enough squares

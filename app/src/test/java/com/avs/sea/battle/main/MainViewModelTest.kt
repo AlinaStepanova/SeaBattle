@@ -203,6 +203,13 @@ class MainViewModelTest {
     }
 
     @Test
+    fun winningStrikesTheWholeComputerFleet() {
+        winGame()
+        assertEquals(10, viewModel.uiState.value.computerFleet.size)
+        assertTrue(viewModel.uiState.value.computerFleet.all { it.sunk })
+    }
+
+    @Test
     fun aNewGameClearsBothFleets() {
         viewModel.startNewGame()
         assertEquals(emptyList<FleetShipUi>(), viewModel.uiState.value.personFleet)
