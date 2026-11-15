@@ -38,6 +38,8 @@
     <string name="status_place_ships_text">Tap a ship, then a cell to move it. Tap it again to rotate.</string>
     <string name="turn_yours_text">Your turn</string>
     <string name="turn_opponent_text">Opponent\'s turn</string>
+    <string name="fleet_yours_afloat">Your fleet: %1$d of %2$d ships afloat</string>
+    <string name="fleet_opponent_afloat">Opponent\'s fleet: %1$d of %2$d ships afloat</string>
     <string name="new_game_dialog_title">Start a new game?</string>
     <string name="new_game_dialog_message">The current game will be lost.</string>
     <string name="dialog_yes">Yes</string>
