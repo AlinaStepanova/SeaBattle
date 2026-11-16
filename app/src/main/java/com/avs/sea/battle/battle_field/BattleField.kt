@@ -19,26 +19,23 @@ class BattleField : BaseBattleField() {
         layout.cells().forEach { setCellState(it, CellState.SHIP) }
     }
 
-    fun handleShot(coordinate: Coordinate?): Pair<Boolean, ArrayList<Coordinate>> {
-        var isShipHit = false
-        var killedShipCoordinates: ArrayList<Coordinate> = ArrayList()
-        if (coordinate != null && coordinate.isOnBoard()) {
-            if (battleField[coordinate.x][coordinate.y]?.getCellState() == CellState.EMPTY) {
-                battleField[coordinate.x][coordinate.y]?.setCellState(CellState.SHOT_FAILURE)
-            } else {
-                battleField[coordinate.x][coordinate.y]?.setCellState(CellState.SHOT_SUCCESS)
-                isShipHit = true
-                val ship = getShipByCoordinate(coordinate)
-                ship?.let {
-                    it.setShotSuccessState(coordinate)
-                    if (it.isDead()) {
-                        markNeighbours(ship)
-                        killedShipCoordinates = getShipCoordinates(ship)
-                    }
-                }
-            }
+    // A cell already shot at, or off the board, hits nothing and changes nothing.
+    fun handleShot(coordinate: Coordinate): ShotResult {
+        if (!isCellFreeToBeSelected(coordinate)) return ShotResult.Miss
+        val cell = battleField[coordinate.x][coordinate.y]
+        if (cell?.getCellState() == CellState.EMPTY) {
+            cell.setCellState(CellState.SHOT_FAILURE)
+            return ShotResult.Miss
         }
-        return isShipHit to killedShipCoordinates
+        cell?.setCellState(CellState.SHOT_SUCCESS)
+        val ship = getShipByCoordinate(coordinate)
+        ship?.setShotSuccessState(coordinate)
+        return if (ship != null && ship.isDead()) {
+            markNeighbours(ship)
+            ShotResult.Sunk(getShipCoordinates(ship))
+        } else {
+            ShotResult.Hit
+        }
     }
 
     private fun markNeighbours(ship: Ship) {
