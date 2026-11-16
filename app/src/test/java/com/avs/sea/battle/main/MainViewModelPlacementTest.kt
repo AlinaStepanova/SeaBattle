@@ -172,6 +172,15 @@ class MainViewModelPlacementTest {
     }
 
     @Test
+    fun shotsAreIgnoredBeforeTheBattleStarts() {
+        val placing = state
+        viewModel.getComputerBattleField().getShipsCoordinates().forEach { viewModel.onComputerBoardTap(it) }
+        viewModel.onComputerBoardTap(Coordinate(0, 0))
+        testDispatcher.scheduler.advanceUntilIdle()
+        assertEquals(placing, state)
+    }
+
+    @Test
     fun shufflingIsIgnoredOnceTheBattleStarts() {
         viewModel.startGame()
         val ships = state.personBoardShips

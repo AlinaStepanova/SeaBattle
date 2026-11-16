@@ -141,22 +141,50 @@ class BattleFieldTest {
     }
 
     @Test
-    fun manuallyPlacedShipSinksWhenAllItsCellsAreHit() {
-        val battleField = BattleField()
-        battleField.placeShips(FleetLayout.initial())
-        // The 3-deck at A3-A5 is vertical.
-        assertEquals(true to arrayListOf<Coordinate>(), battleField.handleShot(Coordinate(2, 0)))
-        battleField.handleShot(Coordinate(3, 0))
-        val (hit, sunk) = battleField.handleShot(Coordinate(4, 0))
-        assertTrue(hit)
-        assertEquals(listOf(Coordinate(2, 0), Coordinate(3, 0), Coordinate(4, 0)), sunk)
+    fun shotAtWaterIsAMiss() {
+        assertEquals(ShotResult.Miss, initialFleetField().handleShot(Coordinate(5, 5)))
+    }
+
+    // The 3-deck at A3-A5 is vertical.
+    @Test
+    fun shotAtAShipIsAHitUntilItsLastCellSinksIt() {
+        val battleField = initialFleetField()
+        assertEquals(ShotResult.Hit, battleField.handleShot(Coordinate(2, 0)))
+        assertEquals(ShotResult.Hit, battleField.handleShot(Coordinate(3, 0)))
+        assertEquals(
+            ShotResult.Sunk(listOf(Coordinate(2, 0), Coordinate(3, 0), Coordinate(4, 0))),
+            battleField.handleShot(Coordinate(4, 0)),
+        )
+    }
+
+    // Callers only shoot free cells, but the model must not turn a repeated shot into a hit either.
+    @Test
+    fun shootingAMissAgainChangesNothing() {
+        val battleField = initialFleetField()
+        battleField.handleShot(Coordinate(5, 5))
+        assertEquals(ShotResult.Miss, battleField.handleShot(Coordinate(5, 5)))
+        assertEquals(listOf(Coordinate(5, 5)), battleField.getDotsCoordinates())
+        assertEquals(emptyList<Coordinate>(), battleField.getCrossesCoordinates())
     }
 
     @Test
-    fun missOnAManuallyPlacedFleetIsNotAHit() {
-        val battleField = BattleField()
-        battleField.placeShips(FleetLayout.initial())
-        assertFalse(battleField.handleShot(Coordinate(5, 5)).first)
+    fun shootingAHitAgainNeitherHitsNorSinks() {
+        val battleField = initialFleetField()
+        val fourDeckCell = FleetLayout.initial().ships[INITIAL_FOUR_DECK].cells().first()
+        battleField.handleShot(fourDeckCell)
+        repeat(FOUR_DECK_SHIP_SIZE) { assertEquals(ShotResult.Miss, battleField.handleShot(fourDeckCell)) }
+        assertEquals(listOf(fourDeckCell), battleField.getCrossesCoordinates())
+        assertEquals(emptyList<Int>(), battleField.sunkShipSizes())
+    }
+
+    @Test
+    fun shootingAMarkedCellAroundASunkShipIsNotAHit() {
+        val battleField = initialFleetField()
+        sink(battleField, INITIAL_FIRST_ONE_DECK)
+        val marked = battleField.getDotsCoordinates().first()
+        assertEquals(ShotResult.Miss, battleField.handleShot(marked))
+        assertTrue(marked in battleField.getDotsCoordinates())
+        assertEquals(FleetLayout.initial().ships[INITIAL_FIRST_ONE_DECK].cells(), battleField.getCrossesCoordinates())
     }
 
     @Test

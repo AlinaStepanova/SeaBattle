@@ -5,6 +5,7 @@ import com.avs.sea.battle.battle_field.BaseBattleField
 import com.avs.sea.battle.battle_field.Cell
 import com.avs.sea.battle.battle_field.CellState.*
 import com.avs.sea.battle.battle_field.Coordinate
+import com.avs.sea.battle.battle_field.ShotResult
 import com.avs.sea.battle.ships.Orientation
 import kotlin.random.Random
 
@@ -98,13 +99,13 @@ class ShotManager(private val random: Random = Random.Default) {
         return coordinateSecond
     }
 
-    fun resetValuesAfterShipIsDead(deadShipCoordinates: MutableList<Coordinate>) {
+    fun resetValuesAfterShipIsDead(deadShipCoordinates: List<Coordinate>) {
         ships.remove(deadShipCoordinates.size)
         markEdgeCells(deadShipCoordinates)
         resetCells()
     }
 
-    fun markEdgeCells(cells: MutableList<Coordinate>) {
+    fun markEdgeCells(cells: List<Coordinate>) {
         when {
             cells.size == 1 -> {
                 val coordinate = Cell(cells[0].x, cells[0].y)
@@ -126,7 +127,7 @@ class ShotManager(private val random: Random = Random.Default) {
         }
     }
 
-    fun getMaxCoordinate(list: MutableList<Coordinate>, orientation: Orientation): Coordinate {
+    fun getMaxCoordinate(list: List<Coordinate>, orientation: Orientation): Coordinate {
         return if (orientation == Orientation.VERTICAL) {
             list.maxBy { it.x }
         } else {
@@ -134,7 +135,7 @@ class ShotManager(private val random: Random = Random.Default) {
         }
     }
 
-    fun getMinCoordinate(list: MutableList<Coordinate>, orientation: Orientation): Coordinate {
+    fun getMinCoordinate(list: List<Coordinate>, orientation: Orientation): Coordinate {
         return if (orientation == Orientation.VERTICAL) {
             list.minBy { it.x }
         } else {
@@ -236,8 +237,8 @@ class ShotManager(private val random: Random = Random.Default) {
         return firstCell.getCoordinate()
     }
 
-    fun handleShot(shipState: Pair<Boolean, ArrayList<Coordinate>>) {
-        val shipHit = shipState.first
+    fun handleShot(result: ShotResult) {
+        val shipHit = result != ShotResult.Miss
         if (firstCell.isState(EMPTY) || firstCell.isState(SHOT_FAILURE)) {
             updateBattleField(shipHit, firstCell)
         } else if (firstCell.isState(SHOT_SUCCESS)
@@ -264,8 +265,8 @@ class ShotManager(private val random: Random = Random.Default) {
                 markNeighbours(fourthCell)
             }
         }
-        if (shipState.second.isNotEmpty()) {
-            resetValuesAfterShipIsDead(shipState.second)
+        if (result is ShotResult.Sunk) {
+            resetValuesAfterShipIsDead(result.cells)
         }
     }
 
