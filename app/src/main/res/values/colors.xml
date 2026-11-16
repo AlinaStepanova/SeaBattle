@@ -1,9 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#FFFFFF</color>
     <color name="colorPrimaryDark">#808080</color>
-    <color name="colorAccent">#000000</color>
-    <color name="greySelected">#99C1C0C0</color>
-    <color name="greyTransparent">#99808080</color>
-    <color name="blueAccent">#662196F3</color>
 </resources>

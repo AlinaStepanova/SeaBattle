@@ -2,7 +2,6 @@ package com.avs.sea.battle
 
 import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
 import android.net.Uri
 
 fun openGmail(email: String, subject: String?): Intent {
@@ -30,9 +29,4 @@ fun openMarket(showAppsList: Boolean): Intent {
         Uri.parse("market://details?id=$NAMESPACE")
     }
     return Intent(Intent.ACTION_VIEW, uri)
-}
-
-fun isDarkThemeOn(context: Context): Boolean {
-    return context.resources.configuration.uiMode and
-            Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
 }
