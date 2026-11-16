@@ -10,6 +10,15 @@ import org.junit.Test
 
 class BattleFieldTest {
 
+    // Indices into FleetLayout.initial(): the 4-deck at B1-E1, the 2-deck at A7-A8 and the
+    // 1-decks at J4 and J6.
+    private companion object {
+        const val INITIAL_FOUR_DECK = 0
+        const val INITIAL_TWO_DECK = 3
+        const val INITIAL_FIRST_ONE_DECK = 6
+        const val INITIAL_SECOND_ONE_DECK = 7
+    }
+
     private val expectedFleetSizes = listOf(
         ONE_DECK_SHIP_SIZE, ONE_DECK_SHIP_SIZE, ONE_DECK_SHIP_SIZE, ONE_DECK_SHIP_SIZE,
         TWO_DECK_SHIP_SIZE, TWO_DECK_SHIP_SIZE, TWO_DECK_SHIP_SIZE,
@@ -148,6 +157,45 @@ class BattleFieldTest {
         val battleField = BattleField()
         battleField.placeShips(FleetLayout.initial())
         assertFalse(battleField.handleShot(Coordinate(5, 5)).first)
+    }
+
+    @Test
+    fun noShipIsSunkBeforeAnyShot() {
+        assertEquals(emptyList<Int>(), initialFleetField().sunkShipSizes())
+    }
+
+    @Test
+    fun aHitThatDoesNotSinkCountsNothing() {
+        val battleField = initialFleetField()
+        battleField.handleShot(Coordinate(0, 1))
+        assertEquals(emptyList<Int>(), battleField.sunkShipSizes())
+    }
+
+    @Test
+    fun aSunkShipIsCountedBySize() {
+        val battleField = initialFleetField()
+        sink(battleField, INITIAL_TWO_DECK)
+        assertEquals(listOf(2), battleField.sunkShipSizes())
+    }
+
+    @Test
+    fun severalSunkShipsAreAllCounted() {
+        val battleField = initialFleetField()
+        listOf(INITIAL_FOUR_DECK, INITIAL_FIRST_ONE_DECK, INITIAL_SECOND_ONE_DECK).forEach { sink(battleField, it) }
+        assertEquals(listOf(1, 1, 4), battleField.sunkShipSizes().sorted())
+    }
+
+    @Test
+    fun allShipsSunkGivesTheWholeFleet() {
+        val battleField = initialFleetField()
+        FleetLayout.initial().cells().forEach { battleField.handleShot(it) }
+        assertEquals(expectedFleetSizes, battleField.sunkShipSizes().sorted())
+    }
+
+    private fun initialFleetField() = BattleField().apply { placeShips(FleetLayout.initial()) }
+
+    private fun sink(battleField: BattleField, shipIndex: Int) {
+        FleetLayout.initial().ships[shipIndex].cells().forEach { battleField.handleShot(it) }
     }
 
     @Test

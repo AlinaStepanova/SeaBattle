@@ -185,6 +185,6 @@ class TurnIndicatorTest {
         const val COMPUTER = 1
         val PORTRAIT_CLEARANCE = 3.5.dp
         val LANDSCAPE_CLEARANCE = 7.5.dp
-        val ARROW_SPACING = 13.5.dp
+        val ARROW_SPACING = 19.5.dp
     }
 }

@@ -29,6 +29,8 @@
     <string name="status_place_ships_text">Нажмите на корабль, потом на клетку, чтобы переместить его. Нажмите на него ещё раз, чтобы повернуть.</string>
     <string name="turn_yours_text">Ваш ход</string>
     <string name="turn_opponent_text">Ход оппонента</string>
+    <string name="fleet_yours_afloat">Ваш флот: на плаву %1$d из %2$d</string>
+    <string name="fleet_opponent_afloat">Флот оппонента: на плаву %1$d из %2$d</string>
     <string name="new_game_dialog_title">Начать новую игру?</string>
     <string name="new_game_dialog_message">Текущая игра будет потеряна.</string>
     <string name="dialog_yes">Да</string>

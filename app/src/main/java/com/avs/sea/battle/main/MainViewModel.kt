@@ -13,6 +13,7 @@ import com.avs.sea.battle.battle_field.PlacementResult
 import com.avs.sea.battle.ui.GamePhase
 import com.avs.sea.battle.ui.GameUiState
 import com.avs.sea.battle.ui.UiEvent
+import com.avs.sea.battle.ui.fleetShips
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -127,6 +128,8 @@ class MainViewModel : ViewModel() {
                 personBoardShips = personBattleField.getShipsCoordinates(),
                 selectedShipCells = emptyList(),
                 rejectedCells = emptyList(),
+                personFleet = fleetShips(emptyList()),
+                computerFleet = fleetShips(emptyList()),
             )
         }
     }
@@ -168,6 +171,11 @@ class MainViewModel : ViewModel() {
             _uiState.update {
                 it.copy(
                     computerBoardCrosses = computerBattleField.getCrossesCoordinates(),
+                    computerFleet = if (shipState.second.isNotEmpty()) {
+                        fleetShips(computerBattleField.sunkShipSizes())
+                    } else {
+                        it.computerFleet
+                    },
                     computerBoardDots = if (shipState.second.isNotEmpty()) {
                         computerBattleField.getDotsCoordinates()
                     } else {
@@ -200,6 +208,11 @@ class MainViewModel : ViewModel() {
                 _uiState.update {
                     it.copy(
                         personBoardCrosses = personBattleField.getCrossesCoordinates(),
+                        personFleet = if (shipState.second.isNotEmpty()) {
+                            fleetShips(personBattleField.sunkShipSizes())
+                        } else {
+                            it.personFleet
+                        },
                         personBoardDots = if (shipState.second.isNotEmpty()) {
                             personBattleField.getDotsCoordinates()
                         } else {

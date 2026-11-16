@@ -30,6 +30,16 @@ class PortraitBoardsLayoutTest {
         }
     }
 
+    // The same phones with the fleet rows: portrait drops the top status line during the battle,
+    // so the area grows by that line and the two rows come out of it.
+    @Test
+    fun commonPhonesKeepFullWidthBoardsWithFleetRows() {
+        listOf(360.dp to 652.dp, 393.dp to 747.dp, 411.dp to 785.dp, 412.dp to 835.dp).forEach { (width, height) ->
+            val layout = portraitBattleBoardsLayout(width, height)
+            assertEquals("screen $width x $height", width.value * 0.8f, layout.boardSize.value, 0.01f)
+        }
+    }
+
     @Test
     fun computerGridStartsAWholeNumberOfSquaresBelowThePlayersGrid() {
         screens.forEach { (width, height) ->

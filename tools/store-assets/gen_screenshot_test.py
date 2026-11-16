@@ -63,6 +63,15 @@ def board(fleet, hits, misses):
     return sorted(hits), sorted(dots)
 
 
+FLEET_ORDER = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1]
+
+
+def fleet(ships, hits):
+    """(size, sunk) per ship in FLEET order; within a size the leftmost ships are the sunk ones."""
+    sunk_sizes = [len(s) for s in ships if all(c in hits for c in s)]
+    return [(size, FLEET_ORDER[:i].count(size) < sunk_sizes.count(size)) for i, size in enumerate(FLEET_ORDER)]
+
+
 def remaining(fleet, hits):
     return sorted(c for s in fleet for c in s if c not in hits)
 
@@ -98,16 +107,20 @@ STATES = {
     # The battle has no status text; the turn arrows show whose turn it is.
     "battle": dict(phase="BATTLE",
                    personBoardShips=sorted(all_person), personBoardCrosses=person_mid[0], personBoardDots=person_mid[1],
-                   computerBoardCrosses=computer_mid[0], computerBoardDots=computer_mid[1]),
+                   computerBoardCrosses=computer_mid[0], computerBoardDots=computer_mid[1],
+                   personFleet=fleet(PERSON, person_mid[0]), computerFleet=fleet(COMPUTER, computer_mid[0])),
     "computer_turn": dict(phase="COMPUTER_TURN",
                           personBoardShips=sorted(all_person), personBoardCrosses=person_mid[0], personBoardDots=person_mid[1],
-                          computerBoardCrosses=computer_mid[0], computerBoardDots=computer_mid[1]),
+                          computerBoardCrosses=computer_mid[0], computerBoardDots=computer_mid[1],
+                          personFleet=fleet(PERSON, person_mid[0]), computerFleet=fleet(COMPUTER, computer_mid[0])),
     "win": dict(phase="OVER", status="status_game_over_you_win_text", winner="PERSON",
                 personBoardShips=sorted(all_person), personBoardCrosses=person_at_win[0], personBoardDots=person_at_win[1],
-                computerBoardCrosses=computer_won[0], computerBoardDots=computer_won[1]),
+                computerBoardCrosses=computer_won[0], computerBoardDots=computer_won[1],
+                personFleet=fleet(PERSON, person_at_win[0]), computerFleet=fleet(COMPUTER, computer_won[0])),
     "lose": dict(phase="OVER", status="status_game_over_you_lose_text", winner="COMPUTER",
                  personBoardShips=sorted(all_person), personBoardCrosses=person_lost[0], personBoardDots=person_lost[1],
-                 computerBoardShips=computer_left, computerBoardCrosses=computer_at_loss[0], computerBoardDots=computer_at_loss[1]),
+                 computerBoardShips=computer_left, computerBoardCrosses=computer_at_loss[0], computerBoardDots=computer_at_loss[1],
+                 personFleet=fleet(PERSON, person_lost[0]), computerFleet=fleet(COMPUTER, computer_at_loss[0])),
 }
 
 
@@ -118,6 +131,10 @@ def state_kt(s):
                 "computerBoardShips", "computerBoardCrosses", "computerBoardDots"):
         if key in s:
             parts.append(f"{key} = {kt(s[key])}")
+    for key in ("personFleet", "computerFleet"):
+        if key in s:
+            ships = ", ".join(f"FleetShipUi({size}, {'true' if sunk else 'false'})" for size, sunk in s[key])
+            parts.append(f"{key} = listOf({ships})")
     if "winner" in s:
         parts.append(f"winner = Player.{s['winner']}")
     return "GameUiState(\n            " + ",\n            ".join(parts) + ",\n        )"

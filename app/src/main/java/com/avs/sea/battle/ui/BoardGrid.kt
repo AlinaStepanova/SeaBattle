@@ -198,7 +198,7 @@ internal fun boardSideFor(maxWidth: Dp, maxHeight: Dp): Dp =
 data class BoardStyle(val labelFontSize: TextUnit, val dotRadiusToCell: Float) {
     companion object {
         val Portrait = BoardStyle(labelFontSize = 18.sp, dotRadiusToCell = 0.07f)
-        val Landscape = BoardStyle(labelFontSize = 15.sp, dotRadiusToCell = 0.045f)
+        val Landscape = BoardStyle(labelFontSize = 15.sp, dotRadiusToCell = 0.06f)
     }
 }
 
