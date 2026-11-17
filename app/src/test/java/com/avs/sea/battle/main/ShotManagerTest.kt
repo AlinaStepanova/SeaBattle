@@ -1,8 +1,11 @@
 package com.avs.sea.battle.main
 
+import com.avs.sea.battle.battle_field.BattleField
 import com.avs.sea.battle.battle_field.Cell
 import com.avs.sea.battle.battle_field.CellState
 import com.avs.sea.battle.battle_field.Coordinate
+import com.avs.sea.battle.battle_field.FleetLayout
+import com.avs.sea.battle.battle_field.ShotResult
 import com.avs.sea.battle.ships.Orientation
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -248,9 +251,9 @@ class ShotManagerTest {
         val second = ShotManager(Random(SEED))
         repeat(10) {
             val coordinate = first.getCoordinateToShot()
-            first.handleShot(false to ArrayList())
+            first.handleShot(ShotResult.Miss)
             assertEquals(coordinate, second.getCoordinateToShot())
-            second.handleShot(false to ArrayList())
+            second.handleShot(ShotResult.Miss)
         }
     }
 
@@ -261,44 +264,44 @@ class ShotManagerTest {
         shotManager = ShotManager(Random(SEED))
         val coordinate1 = shotManager.getCoordinateToShot()
         assertEquals(coordinate1, shotManager.getFirstCell().getCoordinate())
-        shotManager.handleShot(true to ArrayList())
+        shotManager.handleShot(ShotResult.Hit)
         assertFalse(shotManager.getBattleField().isCellFreeToBeSelected(coordinate1))
         val coordinate2 = shotManager.getCoordinateToShot()
         assertEquals(coordinate2, shotManager.getSecondCell().getCoordinate())
-        shotManager.handleShot(true to ArrayList())
+        shotManager.handleShot(ShotResult.Hit)
         assertFalse(shotManager.getBattleField().isCellFreeToBeSelected(coordinate2))
         val coordinate3 = shotManager.getCoordinateToShot()
         assertEquals(coordinate3, shotManager.getThirdCell().getCoordinate())
-        shotManager.handleShot(true to ArrayList())
+        shotManager.handleShot(ShotResult.Hit)
         assertFalse(shotManager.getBattleField().isCellFreeToBeSelected(coordinate3))
         val coordinate4 = shotManager.getCoordinateToShot()
         assertEquals(coordinate4, shotManager.getFourthCell().getCoordinate())
-        shotManager.handleShot(true to arrayListOf(coordinate1, coordinate2, coordinate3, coordinate4))
+        shotManager.handleShot(ShotResult.Sunk(listOf(coordinate1, coordinate2, coordinate3, coordinate4)))
         assertFalse(shotManager.getBattleField().isCellFreeToBeSelected(coordinate4))
         val coordinate5 = shotManager.getCoordinateToShot()
         assertEquals(coordinate5, shotManager.getFirstCell().getCoordinate())
-        shotManager.handleShot(false to ArrayList())
+        shotManager.handleShot(ShotResult.Miss)
         assertFalse(shotManager.getBattleField().isCellFreeToBeSelected(coordinate5))
         val coordinate6 = shotManager.getCoordinateToShot()
         assertEquals(coordinate6, shotManager.getFirstCell().getCoordinate())
-        shotManager.handleShot(true to ArrayList())
+        shotManager.handleShot(ShotResult.Hit)
         assertFalse(shotManager.getBattleField().isCellFreeToBeSelected(coordinate6))
         val coordinate7 = shotManager.getCoordinateToShot()
         assertEquals(coordinate7, shotManager.getSecondCell().getCoordinate())
-        shotManager.handleShot(false to ArrayList())
+        shotManager.handleShot(ShotResult.Miss)
         assertFalse(shotManager.getBattleField().isCellFreeToBeSelected(coordinate7))
         val coordinate8 = shotManager.getCoordinateToShot()
         assertEquals(coordinate8, shotManager.getSecondCell().getCoordinate())
-        shotManager.handleShot(true to ArrayList())
+        shotManager.handleShot(ShotResult.Hit)
         assertFalse(shotManager.getBattleField().isCellFreeToBeSelected(coordinate8))
     }
 
     @Test
     fun getRandomCoordinateResetsHuntState() {
         shotManager.getCoordinateToShot()
-        shotManager.handleShot(true to ArrayList())
+        shotManager.handleShot(ShotResult.Hit)
         shotManager.getCoordinateToShot()
-        shotManager.handleShot(true to ArrayList())
+        shotManager.handleShot(ShotResult.Hit)
         assertTrue(shotManager.getSecondCell().isState(CellState.SHOT_SUCCESS))
         shotManager.getRandomCoordinate()
         assertTrue(shotManager.getFirstCell().isState(CellState.EMPTY))
@@ -307,7 +310,25 @@ class ShotManagerTest {
         assertTrue(shotManager.getFourthCell().isState(CellState.EMPTY))
     }
 
+    // BattleField ignores a repeated shot, so the AI must never spend a turn on one. Every shot hits a
+    // free cell, so each game also ends within the board's 100 cells.
+    @Test
+    fun computerNeverFiresAtACellAlreadyShotAt() {
+        repeat(SEEDED_GAMES) { seed ->
+            val board = BattleField().apply { placeShips(FleetLayout.random(Random(seed))) }
+            val ai = ShotManager(Random(SEEDED_GAMES + seed))
+            var shots = 0
+            while (!board.isGameOver()) {
+                val target = ai.getCoordinateToShot()
+                shots++
+                assertTrue("game $seed, shot $shots at $target was already shot at", board.isCellFreeToBeSelected(target))
+                ai.handleShot(board.handleShot(target))
+            }
+        }
+    }
+
     private companion object {
         const val SEED = 42
+        const val SEEDED_GAMES = 200
     }
 }

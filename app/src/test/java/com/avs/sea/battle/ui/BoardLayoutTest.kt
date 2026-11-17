@@ -75,6 +75,11 @@ class BoardLayoutTest {
     }
 
     @Test
+    fun landscapeMissDotsAreBigEnoughToRead() {
+        assertTrue(dotRadiusFor(80f, BoardStyle.Landscape) * 2 >= 80f * 0.12f)
+    }
+
+    @Test
     fun missDotsAreSmallPenDots() {
         val cell = 80f
         listOf(BoardStyle.Portrait, BoardStyle.Landscape).forEach { style ->

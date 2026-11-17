@@ -72,7 +72,7 @@ class LabeledBoardTest {
                         ships = emptyList(),
                         crosses = emptyList(),
                         dots = emptyList(),
-                        selected = null,
+                        highlighted = emptyList(),
                         onCellTap = null,
                         modifier = Modifier.width(width),
                     )

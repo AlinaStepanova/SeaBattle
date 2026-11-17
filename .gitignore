@@ -7,6 +7,10 @@
 /.idea/workspace.xml
 /.idea/navEditor.xml
 /keystore.properties
+# Signed release bundles and their R8 mapping files
+/app/release
+# Python bytecode from the store-asset scripts and their tests
+__pycache__/
 /.idea/assetWizardSettings.xml
 .DS_Store
 /build
