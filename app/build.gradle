@@ -15,8 +15,8 @@ android {
         applicationId "com.avs.sea.battle"
         minSdkVersion 23
         targetSdkVersion 37
-        versionCode 18
-        versionName "1.0.$versionCode"
+        versionCode 19
+        versionName "1.1.0"
         vectorDrawables.useSupportLibrary = true
         resourceConfigurations += ['en', 'uk', 'ru']
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

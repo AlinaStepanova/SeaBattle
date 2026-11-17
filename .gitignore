@@ -7,6 +7,8 @@
 /.idea/workspace.xml
 /.idea/navEditor.xml
 /keystore.properties
+# Signed release bundles and their R8 mapping files
+/app/release
 /.idea/assetWizardSettings.xml
 .DS_Store
 /build
