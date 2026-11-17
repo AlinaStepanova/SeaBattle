@@ -35,7 +35,12 @@ landscape, a loss in landscape and a loss in portrait, across light and dark the
 - `gen_screenshot_test.py` validates the game positions (same rules as the banner) and writes a
   temporary instrumented test that renders the real `GameScreen` in each position. The script
   deletes the test again when it finishes; never commit `StoreScreenshots.kt`.
-- The status bar is switched to demo mode (12:00, full battery, no notifications) while capturing.
-  The phone's theme, rotation and the app's language are reset afterwards.
-- `fit_screenshot.html` trims the system bars and fits each image within Play's 2:1 limit. The trim
-  values in `capture_screenshots.sh` are for a Pixel 8a (1080×2400).
+- The test captures only the app's window, so there are no system bar icons, only paper behind
+  the bars. The phone's theme and rotation settings are restored afterwards, and the app's
+  language is reset.
+- The test also saves where the game content and the system bars are. `crop_screenshot.py` uses
+  that to crop each shot on any phone: portrait drops the system bar areas, and landscape keeps the
+  full height and is centred on the boards and fleets with equal paper on both sides. It stops with
+  an error rather than cut into the game.
+- `fit_screenshot.html` applies the crop and fits each image within Play's 2:1 limit.
+- `python3 -m unittest discover -s tools/store-assets` runs the crop tests.

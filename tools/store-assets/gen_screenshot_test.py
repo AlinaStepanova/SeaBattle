@@ -151,15 +151,26 @@ import android.content.res.Configuration
 import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.semantics.SemanticsNode
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onRoot
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
 import com.avs.sea.battle.R
 import com.avs.sea.battle.battle_field.Coordinate
 import com.avs.sea.battle.main.Player
 import com.avs.sea.battle.ui.theme.SeaBattleTheme
 import org.junit.Rule
 import org.junit.Test
+import org.json.JSONObject
 import org.junit.runner.RunWith
 import java.io.File
 
@@ -193,13 +204,43 @@ class StoreScreenshots {{
         val theme = if (config.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) "dark" else "light"
         val orientation = if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) "landscape" else "portrait"
         val language = config.locales[0].language
-        val bitmap = InstrumentationRegistry.getInstrumentation().uiAutomation.takeScreenshot()
+        // Only the app's window: the paper continues behind the system bars, without their icons.
+        val bitmap = rule.onRoot().captureToImage().asAndroidBitmap()
         val dir = File(rule.activity.getExternalFilesDir(null), "store")
         dir.mkdirs()
-        File(dir, "${{language}}_${{orientation}}_${{theme}}_$name.png").outputStream().use {{
+        val file = "${{language}}_${{orientation}}_${{theme}}_$name"
+        File(dir, "$file.png").outputStream().use {{
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
         }}
+        File(dir, "$file.json").writeText(layout(bitmap.width, bitmap.height).toString())
     }}
+
+    // Where the game content and the system bars are in the capture, in pixels, so
+    // crop_screenshot.py can crop around the content on any phone.
+    private fun layout(width: Int, height: Int): JSONObject {{
+        val insets = rule.runOnUiThread {{
+            ViewCompat.getRootWindowInsets(rule.activity.window.decorView)!!
+                .getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
+        }}
+        val boards = rule.onAllNodesWithTag(BOARD_GRID_TAG).fetchSemanticsNodes()
+        val fleets = listOf(false, true).flatMap {{ rule.onAllNodesWithTag(fleetTrackerTag(it)).fetchSemanticsNodes() }}
+        // Includes the boards' letter and number labels.
+        val texts = rule.onAllNodes(SemanticsMatcher.keyIsDefined(SemanticsProperties.Text), useUnmergedTree = true)
+            .fetchSemanticsNodes()
+        val content = (boards + fleets + texts).map {{ it.rootRect() }}.reduce {{ a, b ->
+            Rect(minOf(a.left, b.left), minOf(a.top, b.top), maxOf(a.right, b.right), maxOf(a.bottom, b.bottom))
+        }}
+        return JSONObject()
+            .put("width", width)
+            .put("height", height)
+            .put("insets", JSONObject().put("left", insets.left).put("top", insets.top).put("right", insets.right).put("bottom", insets.bottom))
+            .put("content", content.json())
+    }}
+
+    // Not boundsInRoot: that clips, and an empty text slot then reports itself at (0, 0).
+    private fun SemanticsNode.rootRect() = Rect(positionInRoot, Size(size.width.toFloat(), size.height.toFloat()))
+
+    private fun Rect.json() = JSONObject().put("left", left).put("top", top).put("right", right).put("bottom", bottom)
 
 {methods}}}
 """
