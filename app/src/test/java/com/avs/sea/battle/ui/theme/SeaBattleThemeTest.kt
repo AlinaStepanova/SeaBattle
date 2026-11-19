@@ -24,6 +24,16 @@ class SeaBattleThemeTest {
     }
 
     @Test
+    fun dialogsAreDrawnInThePenOnTheGameBackgroundInBothThemes() {
+        listOf(LightColors to false, DarkColors to true).forEach { (colors, isDark) ->
+            val scheme = materialColorSchemeFor(colors, isDark)
+            assertEquals(colors.background, scheme.surfaceContainerHigh)
+            assertEquals(colors.foreground, scheme.onSurfaceVariant)
+            assertEquals(colors.foreground, scheme.primary)
+        }
+    }
+
+    @Test
     fun materialSchemeUsesGameBackgroundForPlainSurfaces() {
         val scheme = materialColorSchemeFor(DarkColors, isDark = true)
         assertEquals(DarkColors.background, scheme.surface)
@@ -51,11 +61,18 @@ class SeaBattleThemeTest {
     }
 
     @Test
-    fun selectedCellIsShadedWithThePenAtThirtyPercent() {
-        listOf(LightColors, DarkColors).forEach {
-            assertEquals(it.foreground, it.selected.copy(alpha = 1f))
-            assertEquals(0.3f, it.selected.alpha, 0.01f)
-        }
+    fun dayPageShadesTheSelectedCellWithThePenAtThirtyPercent() {
+        assertEquals(LightColors.foreground, LightColors.selected.copy(alpha = 1f))
+        assertEquals(0.3f, LightColors.selected.alpha, 0.01f)
+    }
+
+    // The warm night pen hatches the ships, so a selection shaded in it would barely show.
+    @Test
+    fun nightPageShadesTheSelectedCellInBlueInkThatStandsOutFromTheHatching() {
+        val selected = DarkColors.selected
+        assertNotEquals(DarkColors.foreground, selected.copy(alpha = 1f))
+        assertTrue("selection is not blue: $selected", selected.blue > selected.red && selected.blue > selected.green)
+        assertTrue("selection is too faint: ${selected.alpha}", selected.alpha >= 0.45f)
     }
 
     @Test
@@ -71,6 +88,14 @@ class SeaBattleThemeTest {
         listOf(LightColors, DarkColors).forEach {
             assertTrue(it.pageLine.alpha in 0.05f..0.35f)
             assertTrue(it.pageLine.alpha < it.shipHatch.alpha)
+        }
+    }
+
+    @Test
+    fun refusedPlacementsFlashInAFaintRedPenInBothThemes() {
+        listOf(LightColors, DarkColors).forEach {
+            assertEquals(it.hit.copy(alpha = 0.35f), it.rejected)
+            assertNotEquals(it.selected, it.rejected)
         }
     }
 }

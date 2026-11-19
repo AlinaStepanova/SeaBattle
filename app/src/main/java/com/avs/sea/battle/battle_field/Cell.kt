@@ -1,7 +1,5 @@
 package com.avs.sea.battle.battle_field
 
-import com.avs.sea.battle.SQUARES_COUNT
-
 class Cell() {
 
     private var coordinate = Coordinate()
@@ -34,7 +32,7 @@ class Cell() {
     }
 
     fun setCoordinates(x: Int, y: Int) {
-        if (x in 0 until SQUARES_COUNT && y in 0 until SQUARES_COUNT) {
+        if (Coordinate(x, y).isOnBoard()) {
             this.coordinate.x = x
             this.coordinate.y = y
         }

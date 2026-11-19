@@ -123,4 +123,27 @@ class ShipTest {
         assertEquals(twoDeckShip.getLength(), TWO_DECK_SHIP_SIZE)
         assertEquals(oneDeckShip.getLength(), ONE_DECK_SHIP_SIZE)
     }
+
+    @Test
+    fun placeSetsTheGivenDirectionAndCells() {
+        fourDeckShip.place(Coordinate(1, 2), Orientation.VERTICAL)
+        assertEquals(Orientation.VERTICAL, fourDeckShip.getShipOrientation())
+        assertEquals(IntRange(1, 4), fourDeckShip.getRowCoordinates())
+        assertEquals(IntRange(2, 2), fourDeckShip.getColumnCoordinates())
+        threeDeckShip.place(Coordinate(5, 0), Orientation.HORIZONTAL)
+        assertEquals(IntRange(5, 5), threeDeckShip.getRowCoordinates())
+        assertEquals(IntRange(0, 2), threeDeckShip.getColumnCoordinates())
+    }
+
+    @Test
+    fun ofSizeCreatesTheMatchingShip() {
+        listOf(FOUR_DECK_SHIP_SIZE, THREE_DECK_SHIP_SIZE, TWO_DECK_SHIP_SIZE, ONE_DECK_SHIP_SIZE).forEach { size ->
+            assertEquals(size, Ship.ofSize(size).getLength())
+        }
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun ofSizeRejectsAnUnknownSize() {
+        Ship.ofSize(5)
+    }
 }

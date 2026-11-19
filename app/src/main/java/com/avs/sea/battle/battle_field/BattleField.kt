@@ -1,54 +1,41 @@
 package com.avs.sea.battle.battle_field
 
-import com.avs.sea.battle.SQUARES_COUNT
 import com.avs.sea.battle.ships.*
+import kotlin.random.Random
 
 class BattleField : BaseBattleField() {
 
     private lateinit var ships: List<Ship>
 
-    fun randomizeShips() {
-        ships = listOf(
-            FourDeckShip(), ThreeDeckShip(), ThreeDeckShip(),
-            TwoDeckShip(), TwoDeckShip(), TwoDeckShip(),
-            OneDeckShip(), OneDeckShip(), OneDeckShip(), OneDeckShip()
-        )
-        var isAdded: Boolean
-        for (ship in ships) {
-            isAdded = false
-            while (!isAdded) {
-                val coordinate = getRandomCoordinate(ship)
-                if (isPlacementAreaEmpty(coordinate, ship)) {
-                    ship.setCellsCoordinates(coordinate.x, coordinate.y)
-                    for (cell in ship.getShipCells()) {
-                        battleField[cell.getX()][cell.getY()]?.setCellState(cell.getCellState())
-                    }
-                    isAdded = true
-                }
-            }
-        }
+    fun randomizeShips(random: Random = Random.Default) {
+        placeShips(FleetLayout.random(random))
     }
 
-    fun handleShot(coordinate: Coordinate?): Pair<Boolean, ArrayList<Coordinate>> {
-        var isShipHit = false
-        var killedShipCoordinates: ArrayList<Coordinate> = ArrayList()
-        if (coordinate != null && coordinate.x in 0 until SQUARES_COUNT && coordinate.y in 0 until SQUARES_COUNT) {
-            if (battleField[coordinate.x][coordinate.y]?.getCellState() == CellState.EMPTY) {
-                battleField[coordinate.x][coordinate.y]?.setCellState(CellState.SHOT_FAILURE)
-            } else {
-                battleField[coordinate.x][coordinate.y]?.setCellState(CellState.SHOT_SUCCESS)
-                isShipHit = true
-                val ship = getShipByCoordinate(coordinate)
-                ship?.let {
-                    it.setShotSuccessState(coordinate)
-                    if (it.isDead()) {
-                        markNeighbours(ship)
-                        killedShipCoordinates = getShipCoordinates(ship)
-                    }
-                }
-            }
+    fun placeShips(layout: FleetLayout) {
+        initBattleShip()
+        ships = layout.ships.map { placement ->
+            Ship.ofSize(placement.size).apply { place(placement.origin, placement.orientation) }
         }
-        return isShipHit to killedShipCoordinates
+        layout.cells().forEach { setCellState(it, CellState.SHIP) }
+    }
+
+    // A cell already shot at, or off the board, hits nothing and changes nothing.
+    fun handleShot(coordinate: Coordinate): ShotResult {
+        if (!isCellFreeToBeSelected(coordinate)) return ShotResult.Miss
+        val cell = battleField[coordinate.x][coordinate.y]
+        if (cell?.getCellState() == CellState.EMPTY) {
+            cell.setCellState(CellState.SHOT_FAILURE)
+            return ShotResult.Miss
+        }
+        cell?.setCellState(CellState.SHOT_SUCCESS)
+        val ship = getShipByCoordinate(coordinate)
+        ship?.setShotSuccessState(coordinate)
+        return if (ship != null && ship.isDead()) {
+            markNeighbours(ship)
+            ShotResult.Sunk(getShipCoordinates(ship))
+        } else {
+            ShotResult.Hit
+        }
     }
 
     private fun markNeighbours(ship: Ship) {
@@ -126,6 +113,8 @@ class BattleField : BaseBattleField() {
         return null
     }
 
+    fun sunkShipSizes(): List<Int> = ships.filter { it.isDead() }.map { it.getLength() }
+
     fun isGameOver(): Boolean {
         var result = true
         for (ship in ships) {
@@ -179,33 +168,5 @@ class BattleField : BaseBattleField() {
             }
         }
         return crossesCoordinates
-    }
-
-    // A ship can be placed only if every cell it will occupy, plus the one-cell
-    // border around them, is empty - ships must not touch, even diagonally.
-    private fun isPlacementAreaEmpty(coordinate: Coordinate, ship: Ship): Boolean {
-        val isVertical = ship.getShipOrientation() == Orientation.VERTICAL
-        val lastX = if (isVertical) coordinate.x + ship.getLength() - 1 else coordinate.x
-        val lastY = if (isVertical) coordinate.y else coordinate.y + ship.getLength() - 1
-        for (i in (coordinate.x - 1).coerceAtLeast(0)..(lastX + 1).coerceAtMost(SQUARES_COUNT - 1)) {
-            for (j in (coordinate.y - 1).coerceAtLeast(0)..(lastY + 1).coerceAtMost(SQUARES_COUNT - 1)) {
-                if (battleField[i][j]?.getCellState() != CellState.EMPTY) {
-                    return false
-                }
-            }
-        }
-        return true
-    }
-
-    private fun getRandomCoordinate(ship: Ship): Coordinate {
-        val coordinate = Coordinate()
-        if (ship.getShipOrientation() == Orientation.HORIZONTAL) {
-            coordinate.x = (0 until SQUARES_COUNT).random()
-            coordinate.y = (0..SQUARES_COUNT - ship.getLength()).random()
-        } else {
-            coordinate.x = (0..SQUARES_COUNT - ship.getLength()).random()
-            coordinate.y = (0 until SQUARES_COUNT).random()
-        }
-        return coordinate
     }
 }

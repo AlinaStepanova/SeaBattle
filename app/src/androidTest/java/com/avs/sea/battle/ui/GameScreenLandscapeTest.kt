@@ -41,13 +41,15 @@ class GameScreenLandscapeTest {
                     // Pixel 8a landscape window size
                     Box(Modifier.requiredSize(width = 914.dp, height = 411.dp)) {
                         GameScreen(
-                            uiState = GameUiState(),
+                            uiState = GameUiState(phase = GamePhase.BATTLE),
                             onGenerateShips = {},
                             onStartGame = {},
                             onNewGame = {},
-                            onCellClick = {},
-                            onFire = {},
+                            onComputerCellClick = {},
                             onMenuAction = {},
+                            onPersonCellClick = {},
+                            onConfirmNewGame = {},
+                            onDismissNewGame = {},
                         )
                     }
                 }
